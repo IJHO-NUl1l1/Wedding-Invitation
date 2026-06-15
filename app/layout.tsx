@@ -22,12 +22,22 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://wedding-invitation-git-main-ijho-nul1l1s-projects.vercel.app"),
   title: "고희성 ♥ 박지서 결혼합니다",
   description: "2026년 11월 14일 토요일 오후 12시 20분, 신도림 웨스턴 베니비스 그레이스홀에서 결혼합니다.",
   openGraph: {
     title: "고희성 ♥ 박지서 결혼합니다",
-    description: "2026년 11월 14일 토요일 오후 12시 20분",
+    description: "2026년 11월 14일 토요일 오후 12시 20분 · 신도림 웨스턴 베니비스 그레이스홀",
     type: "website",
+    locale: "ko_KR",
+    images: [
+      {
+        url: "https://picsum.photos/seed/wedding-heesung-jiseo/1200/630",
+        width: 1200,
+        height: 630,
+        alt: "고희성 ♥ 박지서 결혼합니다",
+      },
+    ],
   },
 };
 
