@@ -103,11 +103,38 @@ export default function AdminPage() {
     rejected: entries.filter((e) => e.status === "rejected").length,
   };
 
+  const ActionButtons = ({ entry }: { entry: Entry }) => (
+    <>
+      {entry.status !== "approved" && (
+        <button onClick={() => updateStatus(entry.id, "approved")}
+          className="whitespace-nowrap text-xs font-medium text-emerald-600 hover:bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md transition-colors">
+          승인
+        </button>
+      )}
+      {entry.status !== "rejected" && (
+        <button onClick={() => updateStatus(entry.id, "rejected")}
+          className="whitespace-nowrap text-xs font-medium text-rose-500 hover:bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md transition-colors">
+          거부
+        </button>
+      )}
+      {entry.status !== "pending" && (
+        <button onClick={() => updateStatus(entry.id, "pending")}
+          className="whitespace-nowrap text-xs font-medium text-amber-600 hover:bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md transition-colors">
+          대기
+        </button>
+      )}
+      <button onClick={() => deleteEntry(entry.id)}
+        className="whitespace-nowrap text-xs font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md transition-colors">
+        삭제
+      </button>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* ── 헤더 ── */}
       <header className="sticky top-0 z-10 bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-5xl mx-auto px-8 h-14 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="font-script text-gold text-2xl leading-none">H&amp;J</span>
             <span className="h-4 w-px bg-slate-200" />
@@ -127,25 +154,23 @@ export default function AdminPage() {
               className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 bg-white px-3 py-1.5 rounded-lg transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
-              로그아웃
+              <span className="hidden sm:inline">로그아웃</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* ── 메인 카드 ── */}
-      <main className="max-w-5xl mx-auto px-8 py-6">
-        <div
-          className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col"
-          style={{ height: "calc(100vh - 8rem)" }}
-        >
+      <main className="max-w-5xl mx-auto px-3 md:px-8 py-4 md:py-6">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:h-[calc(100vh-8rem)]">
+
           {/* 탭 */}
-          <div className="flex items-center px-6 border-b border-slate-100 flex-shrink-0">
+          <div className="flex items-center px-3 md:px-6 border-b border-slate-100 flex-shrink-0">
             {TABS.map(({ key, label, color }) => (
               <button
                 key={key}
                 onClick={() => changeFilter(key)}
-                className={`relative flex items-center gap-1.5 px-4 py-3.5 text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-1.5 px-3 md:px-4 py-3.5 text-sm font-medium transition-colors ${
                   filter === key ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
                 }`}
               >
@@ -153,13 +178,8 @@ export default function AdminPage() {
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-800 rounded-t" />
                 )}
                 {label}
-                <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
-                  filter === key
-                    ? `${color} bg-current/10`
-                    : "text-slate-300 bg-slate-50"
-                }`}
-                  style={filter === key ? { backgroundColor: "transparent" } : {}}
-                >
+                <span className="text-xs px-1.5 py-0.5 rounded-full font-medium"
+                  style={filter === key ? { backgroundColor: "transparent" } : {}}>
                   <span className={filter === key ? color : "text-slate-400"}>
                     {counts[key]}
                   </span>
@@ -168,8 +188,8 @@ export default function AdminPage() {
             ))}
           </div>
 
-          {/* 컬럼 헤더 */}
-          <div className="flex items-center gap-4 px-6 py-2.5 bg-slate-50 border-b border-slate-100 flex-shrink-0">
+          {/* 컬럼 헤더 — 데스크탑만 */}
+          <div className="hidden md:flex items-center gap-4 px-6 py-2.5 bg-slate-50 border-b border-slate-100 flex-shrink-0">
             <span className="w-24 flex-shrink-0 text-[11px] font-semibold text-slate-400 tracking-wider uppercase text-center">작성자</span>
             <span className="w-16 flex-shrink-0 text-[11px] font-semibold text-slate-400 tracking-wider uppercase text-center">상태</span>
             <span className="flex-1 text-[11px] font-semibold text-slate-400 tracking-wider uppercase">메시지</span>
@@ -178,13 +198,13 @@ export default function AdminPage() {
           </div>
 
           {/* 목록 */}
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col md:overflow-hidden">
             {loading ? (
-              <div className="flex-1 flex items-center justify-center">
+              <div className="flex-1 flex items-center justify-center py-16">
                 <p className="text-sm text-slate-400">불러오는 중...</p>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center gap-2">
+              <div className="flex-1 flex flex-col items-center justify-center gap-2 py-16">
                 <p className="text-sm font-medium text-slate-400">항목이 없습니다</p>
                 <p className="text-xs text-slate-300">새로운 방명록이 들어오면 여기 표시됩니다</p>
               </div>
@@ -193,80 +213,71 @@ export default function AdminPage() {
                 {paginated.map((entry) => {
                   const isExp = expanded.has(entry.id);
                   return (
-                    <div
-                      key={entry.id}
-                      className="flex items-center gap-4 px-6 py-0 hover:bg-slate-50/80 transition-colors"
-                      style={{ minHeight: "56px" }}
-                    >
-                      {/* 작성자 */}
-                      <div className="w-24 flex-shrink-0 flex justify-center">
-                        <p className="text-sm font-semibold text-slate-700 truncate">{entry.name}</p>
-                      </div>
-
-                      {/* 상태 */}
-                      <div className="w-16 flex-shrink-0 flex justify-center">
-                        <span className={`inline-flex items-center text-[11px] px-2.5 py-1 rounded-full font-semibold tracking-wide ${STATUS_BADGE[entry.status]}`}>
-                          {STATUS_LABEL[entry.status]}
-                        </span>
-                      </div>
-
-                      {/* 메시지 */}
-                      <div className="flex-1 min-w-0 py-3.5">
+                    <div key={entry.id}>
+                      {/* ── 모바일 카드 ── */}
+                      <div className="md:hidden px-4 py-3.5 space-y-2 hover:bg-slate-50/80 transition-colors">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-sm font-semibold text-slate-700 truncate">{entry.name}</span>
+                          <span className={`flex-shrink-0 inline-flex items-center text-[11px] px-2.5 py-0.5 rounded-full font-semibold tracking-wide ${STATUS_BADGE[entry.status]}`}>
+                            {STATUS_LABEL[entry.status]}
+                          </span>
+                        </div>
                         <p className={`text-sm text-slate-600 leading-relaxed break-words ${!isExp ? "line-clamp-2" : "whitespace-pre-wrap"}`}>
                           {entry.message}
                         </p>
                         {entry.message.length > 80 && (
-                          <button
-                            onClick={() => toggleExpand(entry.id)}
-                            className="mt-0.5 text-xs text-slate-400 hover:text-slate-600 transition-colors"
-                          >
+                          <button onClick={() => toggleExpand(entry.id)}
+                            className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
                             {isExp ? "접기 ↑" : "펼치기 ↓"}
                           </button>
                         )}
+                        <div className="flex items-center justify-between pt-0.5">
+                          <span className="text-[11px] text-slate-400">
+                            {new Date(entry.created_at).toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
+                            {" "}
+                            {new Date(entry.created_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <ActionButtons entry={entry} />
+                          </div>
+                        </div>
                       </div>
 
-                      {/* 일시 */}
-                      <div className="w-28 flex-shrink-0 text-center">
-                        <p className="text-xs text-slate-500">
-                          {new Date(entry.created_at).toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
-                        </p>
-                        <p className="text-xs text-slate-400">
-                          {new Date(entry.created_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
-                        </p>
-                      </div>
-
-                      {/* 액션 — 항상 가로 */}
-                      <div className="w-44 flex-shrink-0 flex items-center justify-center gap-1">
-                        {entry.status !== "approved" && (
-                          <button
-                            onClick={() => updateStatus(entry.id, "approved")}
-                            className="whitespace-nowrap text-xs font-medium text-emerald-600 hover:bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md transition-colors"
-                          >
-                            승인
-                          </button>
-                        )}
-                        {entry.status !== "rejected" && (
-                          <button
-                            onClick={() => updateStatus(entry.id, "rejected")}
-                            className="whitespace-nowrap text-xs font-medium text-rose-500 hover:bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md transition-colors"
-                          >
-                            거부
-                          </button>
-                        )}
-                        {entry.status !== "pending" && (
-                          <button
-                            onClick={() => updateStatus(entry.id, "pending")}
-                            className="whitespace-nowrap text-xs font-medium text-amber-600 hover:bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md transition-colors"
-                          >
-                            대기
-                          </button>
-                        )}
-                        <button
-                          onClick={() => deleteEntry(entry.id)}
-                          className="whitespace-nowrap text-xs font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md transition-colors"
-                        >
-                          삭제
-                        </button>
+                      {/* ── 데스크탑 테이블 행 ── */}
+                      <div
+                        className="hidden md:flex items-center gap-4 px-6 py-0 hover:bg-slate-50/80 transition-colors"
+                        style={{ minHeight: "56px" }}
+                      >
+                        <div className="w-24 flex-shrink-0 flex justify-center">
+                          <p className="text-sm font-semibold text-slate-700 truncate">{entry.name}</p>
+                        </div>
+                        <div className="w-16 flex-shrink-0 flex justify-center">
+                          <span className={`inline-flex items-center text-[11px] px-2.5 py-1 rounded-full font-semibold tracking-wide ${STATUS_BADGE[entry.status]}`}>
+                            {STATUS_LABEL[entry.status]}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0 py-3.5">
+                          <p className={`text-sm text-slate-600 leading-relaxed break-words ${!isExp ? "line-clamp-2" : "whitespace-pre-wrap"}`}>
+                            {entry.message}
+                          </p>
+                          {entry.message.length > 80 && (
+                            <button onClick={() => toggleExpand(entry.id)}
+                              className="mt-0.5 text-xs text-slate-400 hover:text-slate-600 transition-colors">
+                              {isExp ? "접기 ↑" : "펼치기 ↓"}
+                            </button>
+                          )}
+                        </div>
+                        <div className="w-28 flex-shrink-0 text-center">
+                          <p className="text-xs text-slate-500">
+                            {new Date(entry.created_at).toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
+                          </p>
+                          <p className="text-xs text-slate-400">
+                            {new Date(entry.created_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                          </p>
+                        </div>
+                        <div className="w-44 flex-shrink-0 flex items-center justify-center gap-1">
+                          <ActionButtons entry={entry} />
+                        </div>
                       </div>
                     </div>
                   );
@@ -276,7 +287,7 @@ export default function AdminPage() {
           </div>
 
           {/* 페이지네이션 */}
-          <div className="flex-shrink-0 flex items-center justify-center px-6 py-3 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl">
+          <div className="flex-shrink-0 flex items-center justify-center px-4 md:px-6 py-3 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl">
             <div className="flex items-center gap-0.5">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -285,7 +296,6 @@ export default function AdminPage() {
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-
               {getPageNumbers(page, totalPages).map((p, i) =>
                 p === "..." ? (
                   <span key={`e-${i}`} className="w-8 text-center text-xs text-slate-400 select-none">…</span>
@@ -294,16 +304,13 @@ export default function AdminPage() {
                     key={p}
                     onClick={() => setPage(p)}
                     className={`w-8 h-8 text-xs font-medium rounded-md transition-colors ${
-                      page === p
-                        ? "bg-slate-800 text-white shadow-sm"
-                        : "text-slate-500 hover:bg-slate-100"
+                      page === p ? "bg-slate-800 text-white shadow-sm" : "text-slate-500 hover:bg-slate-100"
                     }`}
                   >
                     {p}
                   </button>
                 )
               )}
-
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
