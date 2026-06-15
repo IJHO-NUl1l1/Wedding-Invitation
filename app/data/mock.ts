@@ -45,8 +45,8 @@ export const weddingData = {
     bus: "신도림역 정류장 하차 후 테크노마트 방향 도보 1분",
     parking: "테크노마트 건물 지하주차장 (2시간 무료)",
     mapQuery: "신도림 웨스턴 베니비스",
-    kakaoMapUrl: "https://map.kakao.com/link/search/신도림테크노마트",
-    naverMapUrl: "https://map.naver.com/v5/search/신도림테크노마트",
+    kakaoMapUrl: "https://map.kakao.com/link/search/서울시 구로구 구로동 3-25",
+    naverMapUrl: "https://map.naver.com/v5/search/서울시 구로구 구로동 3-25",
   },
   story: [
     {
