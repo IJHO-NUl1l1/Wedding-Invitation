@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { weddingData } from "@/app/data/mock";
 
 const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -18,8 +18,17 @@ function buildCalendar(year: number, month: number) {
 export default function DateSection() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [dDays, setDDays] = useState<number | null>(null);
 
   const { year, month, day } = weddingData.wedding;
+
+  useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const wedding = new Date(year, month - 1, day);
+    wedding.setHours(0, 0, 0, 0);
+    setDDays(Math.round((wedding.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+  }, [year, month, day]);
   const cells = buildCalendar(year, month);
 
   return (
@@ -35,6 +44,32 @@ export default function DateSection() {
         <h2 className="font-serif text-2xl text-charcoal">결혼식 날짜</h2>
         <div className="w-12 h-px bg-blush mx-auto mt-3" />
       </div>
+
+      {/* D-Day 카운터 */}
+      {dDays !== null && (
+        <motion.div
+          className="text-center mb-6"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, duration: 0.6 }}
+        >
+          <div className="inline-flex items-baseline gap-1.5">
+            <span className="font-cormorant italic text-gold text-2xl tracking-wider">D</span>
+            <span className="font-cormorant text-charcoal-light text-xl">
+              {dDays >= 0 ? "-" : "+"}
+            </span>
+            <span className="font-cormorant text-6xl font-light text-charcoal leading-none">
+              {dDays === 0 ? "Day" : Math.abs(dDays)}
+            </span>
+          </div>
+          {dDays === 0 && (
+            <p className="font-cormorant italic text-gold text-sm tracking-widest mt-1">
+              오늘이 결혼식 날입니다 🎉
+            </p>
+          )}
+        </motion.div>
+      )}
 
       {/* 날짜 강조 텍스트 */}
       <motion.div

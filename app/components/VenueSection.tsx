@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MapPin, Clock, Car, Utensils } from "lucide-react";
+import { MapPin, Clock, Car, Utensils, Train, Bus } from "lucide-react";
 import { weddingData } from "@/app/data/mock";
 
 export default function VenueSection() {
@@ -58,6 +58,16 @@ export default function VenueSection() {
           <div className="flex items-start gap-3 mb-3">
             <Utensils className="w-4 h-4 text-blush-dark mt-0.5 flex-shrink-0" />
             <p className="text-xs text-charcoal-light leading-5">{venue.meal}</p>
+          </div>
+
+          <div className="flex items-start gap-3 mb-3">
+            <Train className="w-4 h-4 text-blush-dark mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-charcoal-light leading-5">{venue.subway}</p>
+          </div>
+
+          <div className="flex items-start gap-3 mb-3">
+            <Bus className="w-4 h-4 text-blush-dark mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-charcoal-light leading-5">{venue.bus}</p>
           </div>
 
           <div className="flex items-start gap-3">
