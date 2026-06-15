@@ -2,15 +2,15 @@
 
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { weddingData } from "@/app/data/mock";
 
 const CARD_W = 200;
 const CARD_H = 305;
-const SIDE_OFFSET = 180;   // 좌우 카드 중심 거리
-const SIDE_SCALE = 0.83;   // 크기 차이 축소 (was 0.67)
-const SIDE_OPACITY = 0.6;  // 더 선명하게
-const SIDE_BLUR = 1.6;     // 흐림 대폭 감소 (was 3.5)
+const SIDE_OFFSET = 180;
+const SIDE_SCALE = 0.83;
+const SIDE_OPACITY = 0.6;
+const SIDE_BLUR = 1.6;
 const THRESHOLD = 46;
 
 function SlideCard({
@@ -51,9 +51,12 @@ export default function StoryGallery() {
   const prevIdx = (current - 1 + n) % n;
   const nextIdx = (current + 1) % n;
 
-  // 포인터 드래그 상태
-  const pointerStart = useRef<{ x: number; t: number } | null>(null);
-  const sessionId = useRef(0); // 중간에 새 드래그 시작 시 이전 await 무효화
+  const containerRef = useRef<HTMLDivElement>(null);
+  // { x, y: 터치 시작 좌표, t: 시작 시각 }
+  const pointerStart = useRef<{ x: number; y: number; t: number } | null>(null);
+  const sessionId = useRef(0);
+  // 수평 드래그 여부 판정 (최초 이동 방향으로 결정)
+  const isHorizontal = useRef<boolean | null>(null);
 
   // ── Current 카드 transforms ──────────────────────────────────────────────
   const curScale = useTransform(
@@ -73,7 +76,7 @@ export default function StoryGallery() {
   );
   const curFilter = useTransform(curBlurRaw, (v) => `blur(${v}px)`);
 
-  // ── Prev 카드 (기본 위치: −SIDE_OFFSET) ─────────────────────────────────
+  // ── Prev 카드 transforms ─────────────────────────────────────────────────
   const prevCardX = useTransform(dragX, (d) => d - SIDE_OFFSET);
   const prevAbsDist = useTransform(prevCardX, (x) => Math.abs(x));
   const prevScale = useTransform(
@@ -89,7 +92,7 @@ export default function StoryGallery() {
   const prevBlurRaw = useTransform(prevAbsDist, [0, SIDE_OFFSET], [0, SIDE_BLUR]);
   const prevFilter = useTransform(prevBlurRaw, (v) => `blur(${v}px)`);
 
-  // ── Next 카드 (기본 위치: +SIDE_OFFSET) ─────────────────────────────────
+  // ── Next 카드 transforms ─────────────────────────────────────────────────
   const nextCardX = useTransform(dragX, (d) => d + SIDE_OFFSET);
   const nextAbsDist = useTransform(nextCardX, (x) => Math.abs(x));
   const nextScale = useTransform(
@@ -105,26 +108,8 @@ export default function StoryGallery() {
   const nextBlurRaw = useTransform(nextAbsDist, [0, SIDE_OFFSET], [0, SIDE_BLUR]);
   const nextFilter = useTransform(nextBlurRaw, (v) => `blur(${v}px)`);
 
-  // ── 전체 영역 포인터 이벤트 핸들러 ────────────────────────────────────────
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    e.currentTarget.setPointerCapture(e.pointerId); // 영역 벗어나도 추적
-    sessionId.current++;
-    pointerStart.current = { x: e.clientX, t: Date.now() };
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!pointerStart.current) return;
-    dragX.set(e.clientX - pointerStart.current.x);
-  };
-
-  const handlePointerUp = async (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!pointerStart.current) return;
-    const dx = e.clientX - pointerStart.current.x;
-    const dt = Math.max(1, Date.now() - pointerStart.current.t);
-    const vel = (dx / dt) * 1000; // px/s
-    pointerStart.current = null;
-    const sid = sessionId.current;
-
+  // ── 슬라이드 완료 처리 ───────────────────────────────────────────────────
+  const doTransition = async (dx: number, vel: number, sid: number) => {
     if (dx < -THRESHOLD || vel < -380) {
       await animate(dragX, -SIDE_OFFSET, { duration: 0.19, ease: "easeOut" });
       if (sessionId.current !== sid) return;
@@ -136,14 +121,100 @@ export default function StoryGallery() {
       setCurrent((c) => (c - 1 + n) % n);
       dragX.set(0);
     } else {
-      // 임계값 미달 → 부드럽게 원위치
       animate(dragX, 0, { type: "spring", stiffness: 260, damping: 26 });
     }
   };
 
-  const handlePointerCancel = () => {
+  // ── 네이티브 터치 이벤트 (non-passive로 scroll preventDefault 가능) ──────
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      sessionId.current++;
+      isHorizontal.current = null; // 방향 미결정
+      pointerStart.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+        t: Date.now(),
+      };
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!pointerStart.current) return;
+      const dx = e.touches[0].clientX - pointerStart.current.x;
+      const dy = e.touches[0].clientY - pointerStart.current.y;
+
+      // 최초 이동 방향 결정 (5px 이상 움직였을 때)
+      if (isHorizontal.current === null && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+        isHorizontal.current = Math.abs(dx) >= Math.abs(dy);
+      }
+
+      if (isHorizontal.current) {
+        e.preventDefault(); // 수평 드래그 → 페이지 스크롤 차단
+        dragX.set(dx);
+      }
+      // 수직이면 preventDefault 하지 않아 페이지 스크롤 정상 동작
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!pointerStart.current || !isHorizontal.current) {
+        pointerStart.current = null;
+        isHorizontal.current = null;
+        return;
+      }
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - pointerStart.current.x;
+      const dt = Math.max(1, Date.now() - pointerStart.current.t);
+      const vel = (dx / dt) * 1000;
+      const sid = sessionId.current;
+      pointerStart.current = null;
+      isHorizontal.current = null;
+      void doTransition(dx, vel, sid);
+    };
+
+    const onTouchCancel = () => {
+      pointerStart.current = null;
+      isHorizontal.current = null;
+      animate(dragX, 0, { type: "spring", stiffness: 260, damping: 26 });
+    };
+
+    // touchmove는 non-passive여야 preventDefault() 동작
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    el.addEventListener("touchcancel", onTouchCancel, { passive: true });
+
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchCancel);
+    };
+  }, [n]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── 데스크탑 마우스 드래그 (포인터 이벤트) ──────────────────────────────
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") return; // 터치는 위 useEffect에서 처리
+    e.currentTarget.setPointerCapture(e.pointerId);
+    sessionId.current++;
+    pointerStart.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+    isHorizontal.current = true;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch" || !pointerStart.current) return;
+    dragX.set(e.clientX - pointerStart.current.x);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch" || !pointerStart.current) return;
+    const dx = e.clientX - pointerStart.current.x;
+    const dt = Math.max(1, Date.now() - pointerStart.current.t);
+    const vel = (dx / dt) * 1000;
+    const sid = sessionId.current;
     pointerStart.current = null;
-    animate(dragX, 0, { type: "spring", stiffness: 260, damping: 26 });
+    void doTransition(dx, vel, sid);
   };
 
   return (
@@ -160,24 +231,20 @@ export default function StoryGallery() {
         <div className="w-12 h-px bg-blush mx-auto mt-3" />
       </div>
 
-      {/* ── 슬라이더: 전체 영역이 터치 감지 ── */}
+      {/* ── 슬라이더 ── */}
       <div
-        className="relative flex items-center justify-center overflow-hidden touch-none select-none"
-        style={{ height: CARD_H + 24, cursor: "grab" }}
+        ref={containerRef}
+        className="relative flex items-center justify-center overflow-hidden select-none"
+        style={{ height: CARD_H + 24, cursor: "grab", touchAction: "pan-y" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerCancel}
+        onPointerCancel={handlePointerUp}
       >
         {/* Prev */}
         <motion.div
           className="absolute pointer-events-none"
-          style={{
-            x: prevCardX,
-            scale: prevScale,
-            opacity: prevOpacity,
-            filter: prevFilter,
-          }}
+          style={{ x: prevCardX, scale: prevScale, opacity: prevOpacity, filter: prevFilter }}
         >
           <SlideCard story={stories[prevIdx]} />
         </motion.div>
@@ -185,25 +252,15 @@ export default function StoryGallery() {
         {/* Next */}
         <motion.div
           className="absolute pointer-events-none"
-          style={{
-            x: nextCardX,
-            scale: nextScale,
-            opacity: nextOpacity,
-            filter: nextFilter,
-          }}
+          style={{ x: nextCardX, scale: nextScale, opacity: nextOpacity, filter: nextFilter }}
         >
           <SlideCard story={stories[nextIdx]} />
         </motion.div>
 
-        {/* Current – on top */}
+        {/* Current */}
         <motion.div
           className="absolute pointer-events-none z-10"
-          style={{
-            x: dragX,
-            scale: curScale,
-            opacity: curOpacity,
-            filter: curFilter,
-          }}
+          style={{ x: dragX, scale: curScale, opacity: curOpacity, filter: curFilter }}
         >
           <SlideCard story={stories[current]} showCaption />
         </motion.div>
@@ -219,9 +276,7 @@ export default function StoryGallery() {
               dragX.set(0);
             }}
             className={`rounded-full transition-all duration-300 ${
-              idx === current
-                ? "w-5 h-1.5 bg-blush-dark"
-                : "w-1.5 h-1.5 bg-blush/40"
+              idx === current ? "w-5 h-1.5 bg-blush-dark" : "w-1.5 h-1.5 bg-blush/40"
             }`}
           />
         ))}
