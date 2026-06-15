@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Serif_KR, Cormorant_Garamond, Great_Vibes } from "next/font/google";
 import "./globals.css";
 
@@ -20,6 +20,13 @@ const greatVibes = Great_Vibes({
   subsets: ["latin"],
   weight: "400",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://wedding-invitation-three-omega.vercel.app"),
