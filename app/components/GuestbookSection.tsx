@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle } from "lucide-react";
 
@@ -10,6 +10,129 @@ type Entry = {
   message: string;
   created_at: string;
 };
+
+const PAGE_SIZE = 3;
+
+function GuestbookCarousel({ entries }: { entries: Entry[] }) {
+  const [page, setPage] = useState(0);
+  const [dir, setDir] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pointerStart = useRef<{ x: number; y: number } | null>(null);
+  const isHorizontal = useRef<boolean | null>(null);
+  const totalPages = Math.ceil(entries.length / PAGE_SIZE);
+
+  const go = (dx: number) => {
+    if (dx < -40 && page < totalPages - 1) { setDir(-1); setPage((p) => p + 1); }
+    else if (dx > 40 && page > 0) { setDir(1); setPage((p) => p - 1); }
+    pointerStart.current = null;
+    isHorizontal.current = null;
+  };
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onTouchStart = (e: TouchEvent) => {
+      pointerStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      isHorizontal.current = null;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!pointerStart.current) return;
+      const dx = e.touches[0].clientX - pointerStart.current.x;
+      const dy = e.touches[0].clientY - pointerStart.current.y;
+      if (isHorizontal.current === null && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+        isHorizontal.current = Math.abs(dx) >= Math.abs(dy);
+      }
+      if (isHorizontal.current) e.preventDefault();
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!pointerStart.current || !isHorizontal.current) return;
+      go(e.changedTouches[0].clientX - pointerStart.current.x);
+    };
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd);
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [page, totalPages]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const startX = e.clientX;
+    const onUp = (ev: MouseEvent) => {
+      go(ev.clientX - startX);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mouseup", onUp);
+  };
+
+  const pageEntries = entries.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+
+  const variants = {
+    enter: (d: number) => ({ x: d < 0 ? "55%" : "-55%", opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit:  (d: number) => ({ x: d < 0 ? "-55%" : "55%", opacity: 0 }),
+  };
+
+  return (
+    <div className="px-6">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-blush/20" />
+        <MessageCircle className="w-3.5 h-3.5 text-blush/50" />
+        <div className="flex-1 h-px bg-blush/20" />
+      </div>
+
+      <div
+        ref={containerRef}
+        onMouseDown={handleMouseDown}
+        className="select-none cursor-grab active:cursor-grabbing overflow-hidden"
+        style={{ touchAction: "pan-y" }}
+      >
+        <AnimatePresence mode="wait" custom={dir}>
+          <motion.div
+            key={page}
+            custom={dir}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.32, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="space-y-2"
+          >
+            {pageEntries.map((entry) => (
+              <div key={entry.id} className="bg-cream rounded-2xl px-5 py-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-serif text-sm text-charcoal">{entry.name}</span>
+                  <span className="text-[10px] text-charcoal-light font-cormorant">
+                    {new Date(entry.created_at).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}
+                  </span>
+                </div>
+                <p className="font-serif text-xs text-charcoal leading-5 whitespace-pre-wrap line-clamp-3">
+                  {entry.message}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-1.5 mt-3">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { setDir(i > page ? -1 : 1); setPage(i); }}
+              className={`rounded-full transition-all duration-300 ${
+                i === page ? "w-4 h-1.5 bg-blush-dark" : "w-1.5 h-1.5 bg-blush/30"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function GuestbookSection() {
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -124,39 +247,8 @@ export default function GuestbookSection() {
         )}
       </div>
 
-      {/* 승인된 방명록 목록 */}
-      {entries.length > 0 && (
-        <div className="px-6 space-y-3">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex-1 h-px bg-blush/20" />
-            <MessageCircle className="w-3.5 h-3.5 text-blush/50" />
-            <div className="flex-1 h-px bg-blush/20" />
-          </div>
-          {entries.map((entry) => (
-            <motion.div
-              key={entry.id}
-              className="bg-cream rounded-2xl px-5 py-4"
-              initial={{ opacity: 0, y: 8 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-serif text-sm text-charcoal">{entry.name}</span>
-                <span className="text-[10px] text-charcoal-light font-cormorant">
-                  {new Date(entry.created_at).toLocaleDateString("ko-KR", {
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-              <p className="font-serif text-xs text-charcoal leading-5 whitespace-pre-wrap">
-                {entry.message}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      )}
+      {/* 승인된 방명록 — 가로 스와이프 캐러셀 */}
+      {entries.length > 0 && <GuestbookCarousel entries={entries} />}
     </motion.section>
   );
 }
