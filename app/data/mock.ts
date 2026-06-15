@@ -1,0 +1,77 @@
+export const weddingData = {
+  groom: {
+    name: "고희성",
+    firstName: "희성",
+    nameEn: "Heesung",
+    birthday: "1993.03.23",
+    job: "METRO 9 역무원",
+    hobbies: "맛집 투어, 헬스",
+    personality: "책임감 있고 성실한 성격",
+    parents: "고기환 · 김미영",
+    account: { bank: "카카오뱅크", number: "3333-12-3456789" },
+    phone: "010-9113-3596",
+    decisionStory:
+      "감정에 휘둘리지 않고 항상 중심을 잘 잡는 사람이라 같이 있을 때는 늘 마음이 편안하고 안정됩니다. 앞으로 어떤 상황이 닥치더라도 함께 잘 풀어나갈 수 있겠다는 믿음이 있어 결혼을 결심하게 되었습니다.",
+  },
+  bride: {
+    name: "박지서",
+    firstName: "지서",
+    nameEn: "Jiseo",
+    birthday: "1999.12.13",
+    job: "시흥 진말초등학교 교사",
+    hobbies: "독서, 뜨개질",
+    personality: "차분하고 꾸준한 성격",
+    parents: "박준석 · 남양희",
+    account: { bank: "국민은행", number: "1234-5678-9012-34" },
+    phone: "010-3343-6779",
+    decisionStory:
+      "한결같은 믿음과 신뢰로 저를 배려해 주는 모습에 큰 감동을 받았습니다. 누구보다도 믿음직스럽고 단단한 사람이라는 확신이 들어 결혼을 결심하게 되었습니다.",
+  },
+  wedding: {
+    date: "2026년 11월 14일",
+    dayOfWeek: "토요일",
+    time: "오후 12시 20분",
+    year: 2026,
+    month: 11,
+    day: 14,
+  },
+  venue: {
+    name: "신도림 웨스턴 베니비스",
+    hall: "그레이스홀",
+    address: "서울시 구로구 구로동 3-25",
+    addressDetail: "신도림테크노마트 7층 그레이스홀",
+    meal: "예식 후 피로연 (고급 뷔페)",
+    parking: "신도림테크노마트 건물 주차장 이용 가능",
+    mapQuery: "신도림 웨스턴 베니비스",
+    kakaoMapUrl: "https://map.kakao.com/link/search/신도림테크노마트",
+    naverMapUrl: "https://map.naver.com/v5/search/신도림테크노마트",
+  },
+  story: [
+    {
+      id: 1,
+      image: "https://picsum.photos/seed/wedding1/400/600",
+      caption: "2025년 2월, 첫 만남",
+    },
+    {
+      id: 2,
+      image: "https://picsum.photos/seed/wedding2/400/600",
+      caption: "함께 웃고, 때로는 울며",
+    },
+    {
+      id: 3,
+      image: "https://picsum.photos/seed/wedding3/400/600",
+      caption: "소중한 순간들을 쌓아온 우리",
+    },
+    {
+      id: 4,
+      image: "https://picsum.photos/seed/wedding4/400/600",
+      caption: "서로가 가장 편안한 존재",
+    },
+  ],
+  storyQuote:
+    "2025년 2월 첫 만남을 시작으로, 함께 웃고, 때로는 울며,\n소중한 순간들을 쌓아왔고 서로가 가장 편안한 존재임을 깨달았습니다.",
+  greeting: `저희 두 사람이 사랑을 약속하는 자리에\n소중한 분들을 모시고자 합니다.\n\n함께해 주시는 발걸음 하나하나가\n저희에게 큰 기쁨과 힘이 됩니다.`,
+  parentMessage: `그동안 저희를 사랑으로 길러주시고,\n한결같이 응원해 주신 양가 부모님께 진심으로 감사드립니다.\n\n부모님께서 보여주신 따뜻한 사랑과 존중, 배려를 본받아\n저희도 서로를 아끼고 존중하며 행복한 가정을 만들어 가겠습니다.\n\n저희 두 사람의 새로운 시작을 따뜻하게 지켜봐 주시고,\n변함없는 사랑과 응원을 부탁드립니다.`,
+  closingMessage: `비로소 하나가 되는 두 사람의 소중한 첫걸음,\n부디 함께하시어 빛내주시면\n더없는 기쁨으로 간직하겠습니다.`,
+  guestbookUrl: "#guestbook",
+};

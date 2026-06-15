@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cream: #F9F5F0;
+  --blush: #E8C5D0;
+  --blush-dark: #D4A0B5;
+  --sage: #8B9E7E;
+  --charcoal: #2C2C2C;
+  --charcoal-light: #5A5A5A;
+  --gold: #C4A35A;
+  --gold-light: #E8D5A3;
+  --white: #FFFFFF;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: var(--cream);
+  --color-blush: var(--blush);
+  --color-blush-dark: var(--blush-dark);
+  --color-sage: var(--sage);
+  --color-charcoal: var(--charcoal);
+  --color-charcoal-light: var(--charcoal-light);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --font-serif: var(--font-noto-serif);
+  --font-cormorant: var(--font-cormorant);
+  --font-script: var(--font-great-vibes);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--font-noto-serif), "Noto Serif KR", Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 스크롤바 숨김 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* 모바일 탭 하이라이트 제거 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 텍스트 선택 방지 (청첩장 UX) */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
 }
