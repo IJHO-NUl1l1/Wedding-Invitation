@@ -57,3 +57,68 @@ body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* ── 봉투 ── */
+/* $color-env: #FAF0E8  $color-env2: #F2E5D8  $color-flap: #EDCFBC */
+.envelope {
+  position: relative;
+  width: 280px;
+  height: 180px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  background-color: #EDCFBC;
+  box-shadow: 0 4px 20px rgba(0,0,0,.2);
+  cursor: pointer;
+}
+.envelope .front {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 3;
+}
+.envelope .flap {
+  border-left:   140px solid transparent;
+  border-right:  140px solid transparent;
+  border-bottom:  82px solid transparent;
+  border-top:     98px solid #EDCFBC;
+  transform-origin: top;
+  pointer-events: none;
+}
+.envelope .pocket {
+  border-left:   140px solid #FAF0E8;
+  border-right:  140px solid #FAF0E8;
+  border-bottom:  90px solid #F2E5D8;
+  border-top:     90px solid transparent;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.envelope .letter {
+  position: relative;
+  background-color: #fff;
+  width: 90%;
+  margin: 0 auto;
+  height: 90%;
+  top: 5%;
+  border-radius: 6px;
+  box-shadow: 0 2px 26px rgba(0,0,0,.12);
+}
+.envelope.open .flap {
+  transform: rotateX(180deg);
+  transition: transform .4s ease, z-index .6s;
+  z-index: 1;
+}
+.envelope.close .flap {
+  transform: rotateX(0deg);
+  transition: transform .4s .6s ease, z-index 1s;
+  z-index: 5;
+}
+.envelope.close .letter {
+  transform: translateY(0);
+  transition: transform .4s ease, z-index 1s;
+  z-index: 1;
+}
+.envelope.open .letter {
+  transform: translateY(-60px);
+  transition: transform .4s .6s ease, z-index .6s;
+  z-index: 2;
+}
