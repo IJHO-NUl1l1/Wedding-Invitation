@@ -18,37 +18,28 @@ declare global {
 const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY ?? "";
 
 const SITE_URL = "https://wedding-invitation-three-omega.vercel.app";
-const OG_IMAGE = `${SITE_URL}/icon.svg`;
+const OG_IMAGE = `${SITE_URL}/icon.png`;
 
 export default function KakaoShareButton() {
   useEffect(() => {
-    console.log("[Kakao] SDK 로드 확인:", !!window.Kakao);
-    console.log("[Kakao] JS Key:", KAKAO_JS_KEY ? "있음" : "없음 (env 확인 필요)");
-    if (!window.Kakao) {
-      console.warn("[Kakao] window.Kakao 없음 — SDK 스크립트 미로드");
-      return;
-    }
-    if (window.Kakao.isInitialized()) {
-      console.log("[Kakao] 이미 초기화됨");
-      return;
-    }
-    if (KAKAO_JS_KEY) {
+    // SDK가 이미 로드된 경우 미리 초기화 (race condition 방지)
+    if (window.Kakao && !window.Kakao.isInitialized() && KAKAO_JS_KEY) {
       window.Kakao.init(KAKAO_JS_KEY);
-      console.log("[Kakao] init 완료, isInitialized:", window.Kakao.isInitialized());
-    } else {
-      console.error("[Kakao] NEXT_PUBLIC_KAKAO_JS_KEY 없음");
     }
   }, []);
 
   const handleShare = () => {
-    console.log("[Kakao] 버튼 클릭");
-    console.log("[Kakao] window.Kakao:", !!window.Kakao);
-    console.log("[Kakao] isInitialized:", window.Kakao?.isInitialized());
-    if (!window.Kakao?.isInitialized()) {
-      console.error("[Kakao] 초기화 안 됨 — 공유 중단");
+    if (!window.Kakao) {
+      alert("카카오 SDK를 불러오는 중입니다. 잠시 후 다시 눌러주세요.");
       return;
     }
-    console.log("[Kakao] sendDefault 호출");
+    if (!window.Kakao.isInitialized()) {
+      if (!KAKAO_JS_KEY) {
+        alert("카카오 공유 설정이 필요합니다. (env key missing)");
+        return;
+      }
+      window.Kakao.init(KAKAO_JS_KEY);
+    }
     window.Kakao.Share.sendDefault({
       objectType: "feed",
       content: {
