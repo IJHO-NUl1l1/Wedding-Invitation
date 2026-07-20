@@ -11,6 +11,7 @@ import VenueSection from "@/app/components/VenueSection";
 import DecisionSection from "@/app/components/DecisionSection";
 import GuestbookSection from "@/app/components/GuestbookSection";
 import ClosingSection from "@/app/components/ClosingSection";
+import KakaoShareButton from "@/app/components/KakaoShareButton";
 
 export default function Home() {
   const [opened, setOpened] = useState(false);
@@ -35,6 +36,7 @@ export default function Home() {
           <VenueSection />
           <GuestbookSection />
           <ClosingSection />
+          <KakaoShareButton />
         </>
       )}
     </main>
