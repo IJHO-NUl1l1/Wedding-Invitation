@@ -7,7 +7,7 @@ import { weddingData } from "@/app/data/mock";
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full h-screen overflow-hidden">
+    <section className="relative w-full h-svh overflow-hidden">
       {/* 배경 사진 */}
       <motion.div
         className="absolute inset-0"
