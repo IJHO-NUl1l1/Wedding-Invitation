@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { weddingData } from "@/app/data/mock";
 
 declare global {
   interface Window {
@@ -9,7 +10,6 @@ declare global {
       isInitialized: () => boolean;
       Share: {
         sendDefault: (options: object) => void;
-        sendScrap: (options: object) => void;
       };
     };
   }
@@ -39,8 +39,17 @@ export default function KakaoShareButton() {
       }
       window.Kakao.init(KAKAO_JS_KEY);
     }
-    window.Kakao.Share.sendScrap({
-      requestUrl: SITE_URL,
+    window.Kakao.Share.sendDefault({
+      objectType: "feed",
+      content: {
+        title: `${weddingData.groom.name} ♥ ${weddingData.bride.name} 결혼합니다`,
+        description: `${weddingData.wedding.date} ${weddingData.wedding.dayOfWeek} ${weddingData.wedding.time} · ${weddingData.venue.name}`,
+        imageUrl: `${SITE_URL}/icon.png`,
+        link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
+      },
+      buttons: [
+        { title: "청첩장 보기", link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL } },
+      ],
     });
   };
 
