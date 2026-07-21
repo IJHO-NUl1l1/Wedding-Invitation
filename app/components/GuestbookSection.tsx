@@ -76,7 +76,7 @@ function GuestbookCarousel({ entries }: { entries: Entry[] }) {
   };
 
   return (
-    <div className="px-6">
+    <div className="max-w-sm mx-auto px-6">
       <div className="flex items-center gap-2 mb-4">
         <div className="flex-1 h-px bg-blush/20" />
         <MessageCircle className="w-3.5 h-3.5 text-blush/50" />
@@ -190,7 +190,7 @@ export default function GuestbookSection() {
       </div>
 
       {/* 작성 폼 */}
-      <div className="px-6 mb-10">
+      <div className="max-w-sm mx-auto px-6 mb-10">
         {submitted ? (
           <motion.div
             className="bg-cream rounded-2xl p-6 text-center"

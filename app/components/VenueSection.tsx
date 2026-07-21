@@ -22,7 +22,7 @@ export default function VenueSection() {
       </div>
 
       {/* 지도 */}
-      <div className="mx-4 rounded-2xl overflow-hidden shadow-md mb-6 border border-blush/20">
+      <div className="max-w-sm mx-4 sm:mx-auto rounded-2xl overflow-hidden shadow-md mb-6 border border-blush/20">
         <iframe
           src={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address)}&output=embed&z=16`}
           width="100%"
@@ -36,7 +36,7 @@ export default function VenueSection() {
       </div>
 
       {/* 장소 정보 */}
-      <div className="px-6 space-y-4 mb-8">
+      <div className="max-w-sm mx-auto px-6 space-y-4 mb-8">
         <div className="bg-white rounded-xl p-5 shadow-sm border border-blush/10">
           <div className="flex items-start gap-3 mb-3">
             <MapPin className="w-4 h-4 text-blush-dark mt-0.5 flex-shrink-0" />
@@ -78,7 +78,7 @@ export default function VenueSection() {
       </div>
 
       {/* 길찾기 버튼 */}
-      <div className="flex gap-3 px-6">
+      <div className="max-w-sm mx-auto flex gap-3 px-6">
         <a
           href={venue.kakaoMapUrl}
           target="_blank"
