@@ -23,7 +23,8 @@ export default function VenueSection() {
       </div>
 
       {/* 지도 */}
-      <div className="max-w-sm mx-4 sm:mx-auto rounded-2xl overflow-hidden shadow-md mb-6 border border-blush/20">
+      <div className="max-w-sm mx-auto px-6 mb-6">
+        <div className="rounded-2xl overflow-hidden shadow-md border border-blush/20">
         <iframe
           src={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address)}&output=embed&z=16`}
           width="100%"
@@ -34,6 +35,7 @@ export default function VenueSection() {
           referrerPolicy="no-referrer-when-downgrade"
           title="웨딩홀 위치"
         />
+        </div>
       </div>
 
       {/* 장소 정보 */}
@@ -84,7 +86,7 @@ export default function VenueSection() {
           href={venue.kakaoMapUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-charcoal bg-white border border-blush/20 rounded-full shadow-sm active:bg-cream transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-[#191919] bg-[#FEE500] rounded-full shadow-sm active:brightness-95 transition-all"
         >
           <Image
             src="/map-kakao.png"
@@ -99,7 +101,7 @@ export default function VenueSection() {
           href={venue.naverMapUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-charcoal bg-white border border-blush/20 rounded-full shadow-sm active:bg-cream transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-white bg-[#03C75A] rounded-full shadow-sm active:brightness-95 transition-all"
         >
           <Image
             src="/map-naver.png"
