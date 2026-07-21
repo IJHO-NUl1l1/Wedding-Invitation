@@ -47,6 +47,9 @@ export default function KakaoShareButton() {
         imageUrl: `${SITE_URL}/icon.png`,
         link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
       },
+      buttons: [
+        { title: "청첩장 보기", link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL } },
+      ],
     });
   };
 
