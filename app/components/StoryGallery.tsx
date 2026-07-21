@@ -294,11 +294,11 @@ export default function StoryGallery() {
         viewport={{ once: true }}
         transition={{ delay: 0.3, duration: 0.6 }}
       >
-        <p className="font-script text-blush-dark text-3xl mb-1">&ldquo;</p>
+        <p className="font-script text-blush-dark text-3xl -mb-4">&ldquo;</p>
         <p className="font-serif text-charcoal text-xs leading-6 whitespace-pre-line">
           {weddingData.storyQuote}
         </p>
-        <p className="font-script text-blush-dark text-3xl mt-1">&rdquo;</p>
+        <p className="font-script text-blush-dark text-3xl -mt-1">&rdquo;</p>
       </motion.div>
     </motion.section>
   );
