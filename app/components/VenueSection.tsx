@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { MapPin, Clock, Car, Utensils, Train, Bus } from "lucide-react";
 import { weddingData } from "@/app/data/mock";
 
@@ -83,23 +84,30 @@ export default function VenueSection() {
           href={venue.kakaoMapUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium text-[#191919] bg-[#FEE500] rounded-full active:brightness-95 transition-all"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-charcoal bg-white border border-blush/20 rounded-full shadow-sm active:bg-cream transition-colors"
         >
-          <MapPin className="w-3.5 h-3.5 text-[#191919]" fill="#191919" strokeWidth={0} />
+          <Image
+            src="/map-kakao.png"
+            alt=""
+            width={20}
+            height={20}
+            className="rounded-md"
+          />
           카카오맵
         </a>
         <a
           href={venue.naverMapUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium text-white bg-[#03C75A] rounded-full active:brightness-95 transition-all"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-charcoal bg-white border border-blush/20 rounded-full shadow-sm active:bg-cream transition-colors"
         >
-          <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M16.273 12.845 7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"
-              fill="#fff"
-            />
-          </svg>
+          <Image
+            src="/map-naver.png"
+            alt=""
+            width={20}
+            height={20}
+            className="rounded-md"
+          />
           네이버 지도
         </a>
       </div>
