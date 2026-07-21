@@ -1,13 +1,24 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { weddingData } from "@/app/data/mock";
 
 export default function HeroSection() {
+  // 모바일 주소창 접힘으로 뷰포트 높이가 변해도 히어로 크기가 변하지 않도록
+  // 마운트 시점의 높이를 픽셀로 고정한다
+  const [fixedHeight, setFixedHeight] = useState<number | null>(null);
+  useEffect(() => {
+    setFixedHeight(window.innerHeight);
+  }, []);
+
   return (
-    <section className="relative w-full h-svh overflow-hidden">
+    <section
+      className="relative w-full h-svh overflow-hidden"
+      style={fixedHeight ? { height: `${fixedHeight}px` } : undefined}
+    >
       {/* 배경 사진 */}
       <motion.div
         className="absolute inset-0"
