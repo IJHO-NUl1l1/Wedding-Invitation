@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { weddingData } from "@/app/data/mock";
 
 declare global {
   interface Window {
@@ -10,6 +9,7 @@ declare global {
       isInitialized: () => boolean;
       Share: {
         sendDefault: (options: object) => void;
+        sendScrap: (options: object) => void;
       };
     };
   }
@@ -18,7 +18,6 @@ declare global {
 const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY ?? "";
 
 const SITE_URL = "https://wedding-invitation-three-omega.vercel.app";
-const OG_IMAGE = `${SITE_URL}/icon.png`;
 
 export default function KakaoShareButton() {
   useEffect(() => {
@@ -40,20 +39,8 @@ export default function KakaoShareButton() {
       }
       window.Kakao.init(KAKAO_JS_KEY);
     }
-    window.Kakao.Share.sendDefault({
-      objectType: "feed",
-      content: {
-        title: `${weddingData.groom.name} ♥ ${weddingData.bride.name} 결혼합니다`,
-        description: `${weddingData.wedding.date} ${weddingData.wedding.dayOfWeek} ${weddingData.wedding.time}\n${weddingData.venue.name} ${weddingData.venue.hall}`,
-        imageUrl: OG_IMAGE,
-        link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
-      },
-      buttons: [
-        {
-          title: "청첩장 보기",
-          link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
-        },
-      ],
+    window.Kakao.Share.sendScrap({
+      requestUrl: SITE_URL,
     });
   };
 
