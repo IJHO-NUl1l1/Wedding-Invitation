@@ -12,6 +12,7 @@ import DecisionSection from "@/app/components/DecisionSection";
 import GuestbookSection from "@/app/components/GuestbookSection";
 import ClosingSection from "@/app/components/ClosingSection";
 import KakaoShareButton from "@/app/components/KakaoShareButton";
+import MusicToggle from "@/app/components/MusicToggle";
 
 export default function Home() {
   const [opened, setOpened] = useState(false);
@@ -21,7 +22,14 @@ export default function Home() {
       {/* 봉투 커버: z-50 오버레이로 콘텐츠 위에 표시되다가 페이드아웃 */}
       <AnimatePresence>
         {!opened && (
-          <EnvelopeCover key="envelope" onOpen={() => setOpened(true)} />
+          <EnvelopeCover
+            key="envelope"
+            onOpen={() => {
+              setOpened(true);
+              // 클릭 제스처 안에서 재생을 시작해야 자동재생이 허용된다
+              window.dispatchEvent(new Event("bgm-start"));
+            }}
+          />
         )}
       </AnimatePresence>
 
@@ -39,6 +47,9 @@ export default function Home() {
           <KakaoShareButton />
         </>
       )}
+
+      {/* 항상 마운트: 봉투 열기 클릭 제스처에서 bgm-start를 받아 재생 시작 */}
+      <MusicToggle />
     </main>
   );
 }
