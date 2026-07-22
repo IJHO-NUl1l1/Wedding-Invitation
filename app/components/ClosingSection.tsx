@@ -66,6 +66,11 @@ export default function ClosingSection() {
       <p className="mt-6 text-xs text-charcoal-light/50 font-cormorant tracking-wider">
         {wedding.date} {wedding.dayOfWeek}
       </p>
+
+      {/* BGM 출처 (CC BY 3.0 라이선스 표기 의무) */}
+      <p className="mt-4 text-[10px] text-charcoal-light/35 font-cormorant tracking-wide">
+        Music: &ldquo;Heartwarming&rdquo; Kevin MacLeod (incompetech.com) · CC BY 3.0
+      </p>
     </motion.section>
   );
 }
