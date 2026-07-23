@@ -8,16 +8,18 @@ type Step = "choice" | "form" | "thanks" | "done";
 type Mode = "hidden" | "open" | "min";
 
 const STORAGE_KEY = "rsvp-status"; // "done" | "later"
+const ID_KEY = "rsvp-id"; // 마지막 응답의 uuid — 재제출 시 교체용
+const ANSWER_KEY = "rsvp-answer"; // "attend" | "decline" — done 화면 표시용
 
 export default function RsvpModal() {
   const [mode, setMode] = useState<Mode>("hidden");
   const [step, setStep] = useState<Step>("choice");
-  const [attending, setAttending] = useState(true);
   const [name, setName] = useState("");
   const [side, setSide] = useState<"groom" | "bride" | null>(null);
   const [headcount, setHeadcount] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [thanksText, setThanksText] = useState("소중한 마음 감사합니다");
 
   // 봉투 열림 후 page.tsx가 쏘는 이벤트로 등장
   useEffect(() => {
@@ -36,41 +38,66 @@ export default function RsvpModal() {
   }, []);
 
   const minimize = (remember?: "later") => {
-    if (remember) localStorage.setItem(STORAGE_KEY, remember);
+    if (remember && localStorage.getItem(STORAGE_KEY) !== "done") {
+      localStorage.setItem(STORAGE_KEY, remember);
+    }
     setMode("min");
   };
 
-  const choose = (isAttending: boolean) => {
-    setAttending(isAttending);
-    setStep("form");
-  };
-
-  const submit = async () => {
-    if (!name.trim()) { setError("이름을 입력해주세요"); return; }
-    if (!side) { setError("신랑측/신부측을 선택해주세요"); return; }
-    setError("");
+  const send = async (payload: {
+    attending: boolean;
+    name?: string;
+    side?: "groom" | "bride" | null;
+    headcount?: number;
+  }) => {
     setSubmitting(true);
+    setError("");
     try {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), side, attending, headcount }),
+        body: JSON.stringify({
+          ...payload,
+          replaceId: localStorage.getItem(ID_KEY) ?? undefined,
+        }),
       });
+      const data = await res.json().catch(() => null);
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
         setError(data?.error ?? "전송에 실패했어요. 잠시 후 다시 시도해주세요");
-        return;
+        return false;
       }
+      if (data?.id) localStorage.setItem(ID_KEY, data.id);
       localStorage.setItem(STORAGE_KEY, "done");
-      setStep("thanks");
-      // 감사 문구를 잠깐 보여주고 좌하단으로 축소
-      setTimeout(() => {
-        setStep("done");
-        setMode("min");
-      }, 1400);
+      localStorage.setItem(ANSWER_KEY, payload.attending ? "attend" : "decline");
+      return true;
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // 불참: 입력 없이 익명 원탭 제출
+  const declineNow = async () => {
+    const ok = await send({ attending: false });
+    if (!ok) return;
+    setThanksText("마음만으로도 감사합니다");
+    setStep("thanks");
+    setTimeout(() => {
+      setStep("done");
+      setMode("min");
+    }, 1400);
+  };
+
+  const submitAttend = async () => {
+    if (!name.trim()) { setError("이름을 입력해주세요"); return; }
+    if (!side) { setError("신랑측/신부측을 선택해주세요"); return; }
+    const ok = await send({ attending: true, name: name.trim(), side, headcount });
+    if (!ok) return;
+    setThanksText("소중한 마음 감사합니다");
+    setStep("thanks");
+    setTimeout(() => {
+      setStep("done");
+      setMode("min");
+    }, 1400);
   };
 
   const reopen = () => {
@@ -92,6 +119,8 @@ export default function RsvpModal() {
     </button>
   );
 
+  const answered = typeof window !== "undefined" ? localStorage.getItem(ANSWER_KEY) : null;
+
   return (
     <>
       <AnimatePresence>
@@ -102,7 +131,7 @@ export default function RsvpModal() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => minimize(step === "done" ? undefined : "later")}
+            onClick={() => minimize("later")}
           />
         )}
       </AnimatePresence>
@@ -118,7 +147,7 @@ export default function RsvpModal() {
             <div className="relative px-6 py-8">
               {/* 닫기(최소화) */}
               <button
-                onClick={() => minimize(step === "done" ? undefined : "later")}
+                onClick={() => minimize("later")}
                 aria-label="닫기"
                 className="absolute top-4 right-4 text-charcoal-light/50 active:text-charcoal transition-colors"
               >
@@ -136,16 +165,17 @@ export default function RsvpModal() {
                   </p>
                   <div className="space-y-2.5">
                     <button
-                      onClick={() => choose(true)}
+                      onClick={() => setStep("form")}
                       className="w-full py-3 bg-blush-dark text-white text-sm font-serif rounded-xl active:brightness-95 transition-all"
                     >
                       참석할게요
                     </button>
                     <button
-                      onClick={() => choose(false)}
-                      className="w-full py-3 bg-white border border-blush/40 text-charcoal text-sm font-serif rounded-xl active:bg-blush/10 transition-colors"
+                      onClick={declineNow}
+                      disabled={submitting}
+                      className="w-full py-3 bg-white border border-blush/40 text-charcoal text-sm font-serif rounded-xl active:bg-blush/10 disabled:opacity-60 transition-colors"
                     >
-                      참석이 어려워요
+                      {submitting ? "전달 중..." : "참석이 어려워요"}
                     </button>
                     <button
                       onClick={() => minimize("later")}
@@ -154,13 +184,14 @@ export default function RsvpModal() {
                       나중에 답할게요
                     </button>
                   </div>
+                  {error && <p className="mt-3 text-xs text-rose-400 font-serif">{error}</p>}
                 </div>
               )}
 
               {step === "form" && (
                 <div>
                   <p className="text-center font-serif text-sm text-charcoal mb-5">
-                    {attending ? "참석 정보를 알려주세요" : "성함을 남겨주세요"}
+                    참석 정보를 알려주세요
                   </p>
                   <div className="space-y-3">
                     <input
@@ -175,31 +206,29 @@ export default function RsvpModal() {
                       {sideButton("groom", "신랑측")}
                       {sideButton("bride", "신부측")}
                     </div>
-                    {attending && (
-                      <div className="flex items-center justify-between bg-white border border-blush/30 rounded-xl px-4 py-2.5">
-                        <span className="text-xs font-serif text-charcoal-light">본인 포함 인원</span>
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => setHeadcount((n) => Math.max(1, n - 1))}
-                            aria-label="인원 줄이기"
-                            className="w-6 h-6 flex items-center justify-center rounded-full border border-blush/40 text-charcoal-light active:bg-blush/10"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="w-6 text-center text-sm font-serif text-charcoal">{headcount}</span>
-                          <button
-                            onClick={() => setHeadcount((n) => Math.min(10, n + 1))}
-                            aria-label="인원 늘리기"
-                            className="w-6 h-6 flex items-center justify-center rounded-full border border-blush/40 text-charcoal-light active:bg-blush/10"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
+                    <div className="flex items-center justify-between bg-white border border-blush/30 rounded-xl px-4 py-2.5">
+                      <span className="text-xs font-serif text-charcoal-light">본인 포함 인원</span>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setHeadcount((n) => Math.max(1, n - 1))}
+                          aria-label="인원 줄이기"
+                          className="w-6 h-6 flex items-center justify-center rounded-full border border-blush/40 text-charcoal-light active:bg-blush/10"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="w-6 text-center text-sm font-serif text-charcoal">{headcount}</span>
+                        <button
+                          onClick={() => setHeadcount((n) => Math.min(10, n + 1))}
+                          aria-label="인원 늘리기"
+                          className="w-6 h-6 flex items-center justify-center rounded-full border border-blush/40 text-charcoal-light active:bg-blush/10"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
                       </div>
-                    )}
+                    </div>
                     {error && <p className="text-xs text-rose-400 font-serif text-center">{error}</p>}
                     <button
-                      onClick={submit}
+                      onClick={submitAttend}
                       disabled={submitting}
                       className="w-full py-3 bg-blush-dark text-white text-sm font-serif rounded-xl active:brightness-95 disabled:opacity-60 transition-all"
                     >
@@ -218,20 +247,26 @@ export default function RsvpModal() {
               {step === "thanks" && (
                 <div className="text-center py-6">
                   <p className="font-script text-blush-dark text-4xl mb-3">♥</p>
-                  <p className="font-serif text-sm text-charcoal">소중한 마음 감사합니다</p>
+                  <p className="font-serif text-sm text-charcoal">{thanksText}</p>
                 </div>
               )}
 
               {step === "done" && (
                 <div className="text-center py-2">
                   <p className="font-script text-blush-dark text-4xl mb-3">♥</p>
-                  <p className="font-serif text-sm text-charcoal mb-1">참석 의사가 전달되었어요</p>
-                  <p className="font-serif text-xs text-charcoal-light mb-5">변경이 필요하면 다시 알려주세요</p>
+                  <p className="font-serif text-sm text-charcoal mb-1">
+                    {answered === "decline"
+                      ? "불참 의사가 전달되었어요"
+                      : "참석 의사가 전달되었어요"}
+                  </p>
+                  <p className="font-serif text-xs text-charcoal-light mb-5">
+                    사정이 바뀌면 언제든 변경할 수 있어요
+                  </p>
                   <button
-                    onClick={() => { setName(""); setSide(null); setHeadcount(1); setStep("choice"); }}
+                    onClick={() => { setError(""); setStep("choice"); }}
                     className="text-xs font-serif text-blush-dark underline underline-offset-2"
                   >
-                    다시 제출하기
+                    응답 변경하기
                   </button>
                 </div>
               )}

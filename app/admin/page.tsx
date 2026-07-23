@@ -14,11 +14,17 @@ type Entry = {
 
 type Rsvp = {
   id: string;
-  name: string;
-  side: "groom" | "bride";
+  name: string | null;
+  side: "groom" | "bride" | null;
   attending: boolean;
   headcount: number;
   created_at: string;
+};
+
+const SIDE_BADGE: Record<string, { label: string; cls: string }> = {
+  groom: { label: "신랑측", cls: "bg-sky-50 text-sky-600 ring-1 ring-sky-200" },
+  bride: { label: "신부측", cls: "bg-pink-50 text-pink-500 ring-1 ring-pink-200" },
+  none:  { label: "-",     cls: "bg-slate-50 text-slate-400 ring-1 ring-slate-200" },
 };
 
 type Filter = "all" | "pending" | "approved" | "rejected";
@@ -461,11 +467,9 @@ export default function AdminPage() {
                     <div className="md:hidden px-4 py-3.5 space-y-1.5">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-slate-700">{r.name}</span>
-                          <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
-                            r.side === "groom" ? "bg-sky-50 text-sky-600 ring-1 ring-sky-200" : "bg-pink-50 text-pink-500 ring-1 ring-pink-200"
-                          }`}>
-                            {r.side === "groom" ? "신랑측" : "신부측"}
+                          <span className={`text-sm font-semibold ${r.name ? "text-slate-700" : "text-slate-400"}`}>{r.name ?? "익명"}</span>
+                          <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${SIDE_BADGE[r.side ?? "none"].cls}`}>
+                            {SIDE_BADGE[r.side ?? "none"].label}
                           </span>
                           <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
                             r.attending ? "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200" : "bg-rose-50 text-rose-500 ring-1 ring-rose-200"
@@ -488,13 +492,11 @@ export default function AdminPage() {
                     {/* 데스크탑 행 */}
                     <div className="hidden md:flex items-center gap-4 px-6 py-3 hover:bg-slate-50/80 transition-colors">
                       <div className="w-24 flex-shrink-0 text-center">
-                        <p className="text-sm font-semibold text-slate-700 truncate">{r.name}</p>
+                        <p className={`text-sm font-semibold truncate ${r.name ? "text-slate-700" : "text-slate-400"}`}>{r.name ?? "익명"}</p>
                       </div>
                       <div className="w-16 flex-shrink-0 flex justify-center">
-                        <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
-                          r.side === "groom" ? "bg-sky-50 text-sky-600 ring-1 ring-sky-200" : "bg-pink-50 text-pink-500 ring-1 ring-pink-200"
-                        }`}>
-                          {r.side === "groom" ? "신랑측" : "신부측"}
+                        <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${SIDE_BADGE[r.side ?? "none"].cls}`}>
+                          {SIDE_BADGE[r.side ?? "none"].label}
                         </span>
                       </div>
                       <div className="w-16 flex-shrink-0 flex justify-center">

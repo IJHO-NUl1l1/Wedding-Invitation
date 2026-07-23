@@ -16,8 +16,8 @@ export type GuestbookEntry = {
 
 export type RsvpEntry = {
   id: string;
-  name: string;
-  side: "groom" | "bride";
+  name: string | null;
+  side: "groom" | "bride" | null;
   attending: boolean;
   headcount: number;
   created_at: string;
