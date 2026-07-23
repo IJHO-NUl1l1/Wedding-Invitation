@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     images: [
       {
-        url: "https://picsum.photos/seed/wedding-heesung-jiseo/1200/630",
-        width: 1200,
-        height: 630,
+        url: "/icon.png",
+        width: 1324,
+        height: 1324,
         alt: "고희성 ♥ 박지서 결혼합니다",
       },
     ],
