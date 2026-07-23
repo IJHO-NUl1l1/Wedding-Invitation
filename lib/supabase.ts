@@ -13,3 +13,12 @@ export type GuestbookEntry = {
   status: "pending" | "approved" | "rejected";
   created_at: string;
 };
+
+export type RsvpEntry = {
+  id: string;
+  name: string;
+  side: "groom" | "bride";
+  attending: boolean;
+  headcount: number;
+  created_at: string;
+};

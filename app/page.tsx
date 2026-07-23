@@ -13,6 +13,7 @@ import GuestbookSection from "@/app/components/GuestbookSection";
 import ClosingSection from "@/app/components/ClosingSection";
 import KakaoShareButton from "@/app/components/KakaoShareButton";
 import MusicToggle from "@/app/components/MusicToggle";
+import RsvpModal from "@/app/components/RsvpModal";
 
 export default function Home() {
   const [opened, setOpened] = useState(false);
@@ -28,6 +29,8 @@ export default function Home() {
               setOpened(true);
               // 클릭 제스처 안에서 재생을 시작해야 자동재생이 허용된다
               window.dispatchEvent(new Event("bgm-start"));
+              // 봉투 연출이 끝난 뒤 참석 여부 모달 등장
+              setTimeout(() => window.dispatchEvent(new Event("rsvp-show")), 1600);
             }}
           />
         )}
@@ -50,6 +53,7 @@ export default function Home() {
 
       {/* 항상 마운트: 봉투 열기 클릭 제스처에서 bgm-start를 받아 재생 시작 */}
       <MusicToggle />
+      <RsvpModal />
     </main>
   );
 }
