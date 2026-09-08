@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     images: [
       {
-        url: "/icon.png",
+        url: "/icons/icon.png",
         width: 1324,
         height: 1324,
         alt: "고희성 ♥ 박지서 결혼합니다",

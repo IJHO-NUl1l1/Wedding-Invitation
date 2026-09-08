@@ -39,7 +39,7 @@ export default function MusicToggle() {
 
   return (
     <>
-      <audio ref={audioRef} src="/bgm.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/audio/bgm.mp3" loop preload="auto" />
       <button
         onClick={toggle}
         aria-label={playing ? "배경음악 끄기" : "배경음악 켜기"}

@@ -89,7 +89,7 @@ export default function VenueSection() {
           className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-[#191919] bg-[#FEE500] rounded-full shadow-sm active:brightness-95 transition-all"
         >
           <Image
-            src="/map-kakao.png"
+            src="/icons/map-kakao.png"
             alt=""
             width={20}
             height={20}
@@ -104,7 +104,7 @@ export default function VenueSection() {
           className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium text-white bg-[#03C75A] rounded-full shadow-sm active:brightness-95 transition-all"
         >
           <Image
-            src="/map-naver.png"
+            src="/icons/map-naver.png"
             alt=""
             width={20}
             height={20}
