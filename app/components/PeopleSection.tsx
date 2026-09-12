@@ -20,7 +20,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
   const { people } = weddingData;
 
   return (
-    <section className="bg-ink">
+    <section id="people-section" className="bg-ink">
       <div className="relative max-w-md mx-auto">
         <Image
           src="/images/bg-pink-paper.jpg"

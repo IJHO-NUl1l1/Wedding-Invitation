@@ -5,7 +5,9 @@ export default function RsvpButton() {
     <button
       onClick={() => window.dispatchEvent(new Event("rsvp-show"))}
       aria-label="참석 여부 알리기"
-      className="fixed bottom-6 left-5 z-50 flex flex-col items-center justify-center w-20 h-20 active:scale-95 transition-transform"
+      // 박스를 하트 모양 크기에 맞춘다. 큰 박스에 가운데 정렬하면 하트가 카톡보다 위에 떠 보인다.
+      // 하트 끝이 viewBox 안에서 약 4px 남으므로 그만큼 아래로 내려 카톡과 바닥선을 맞춘다.
+      className="fixed bottom-5 left-4 z-50 flex items-center justify-center w-[65px] h-[60px] active:scale-95 transition-transform"
     >
       {/* viewBox는 그대로 두고 렌더 크기만 키워서 비율·내부 글자 위치를 유지한다 */}
       <svg width="65" height="60" viewBox="0 0 52 48" aria-hidden="true">

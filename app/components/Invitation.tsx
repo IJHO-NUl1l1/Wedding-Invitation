@@ -16,6 +16,7 @@ import KakaoShareButton from "@/app/components/KakaoShareButton";
 import MusicToggle from "@/app/components/MusicToggle";
 import RsvpButton from "@/app/components/RsvpButton";
 import RsvpModal from "@/app/components/RsvpModal";
+import CollagePreloader from "@/app/components/CollagePreloader";
 import { CLOSE_AT, isClosed } from "@/lib/expiry";
 
 type Person = "groom" | "bride" | "story";
@@ -50,6 +51,9 @@ export default function Invitation() {
 
       {/* 이 지점이 보이면 참석여부 모달이 자동으로 열린다 (RsvpModal이 감시) */}
       <div id="rsvp-bottom-sentinel" aria-hidden className="h-px" />
+
+      {/* 내부 페이지 사진을 미리 받아둔다 */}
+      <CollagePreloader />
 
       <Overlay
         open={person !== null}

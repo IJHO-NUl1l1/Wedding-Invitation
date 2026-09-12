@@ -59,13 +59,13 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               width: `${it.w}%`,
               translate: "-50% -50%",
             }}
-            initial={{ opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }}
+            initial={{ opacity: 0, y: 10, rotate: it.deg }}
             animate={
               loaded[it.key]
-                ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", rotate: it.deg }
-                : { opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }
+                ? { opacity: 1, y: 0, rotate: it.deg }
+                : { opacity: 0, y: 10, rotate: it.deg }
             }
-            transition={{ duration: 0.9, delay: i * 0.14, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
               src={it.src}
@@ -73,7 +73,7 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               width={1000}
               height={1300}
               // 손글씨 편지라 기본 압축(75)에서는 획이 뭉갠다
-              quality={92}
+              quality={90}
               className="w-full h-auto"
               onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
             />

@@ -41,13 +41,13 @@ export default function StoryDetail() {
               width: `${it.w}%`,
               translate: "-50% -50%",
             }}
-            initial={{ opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }}
+            initial={{ opacity: 0, y: 10, rotate: it.deg }}
             animate={
               it.kind === "memo" || loaded[it.key]
-                ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", rotate: it.deg }
-                : { opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }
+                ? { opacity: 1, y: 0, rotate: it.deg }
+                : { opacity: 0, y: 10, rotate: it.deg }
             }
-            transition={{ duration: 0.9, delay: i * 0.14, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
           >
             {it.kind === "photo" ? (
               <Image
@@ -55,7 +55,7 @@ export default function StoryDetail() {
                 alt=""
                 width={1000}
                 height={1400}
-                quality={88}
+                quality={90}
                 className="w-full h-auto"
                 onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
               />
