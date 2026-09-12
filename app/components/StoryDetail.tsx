@@ -17,10 +17,10 @@ export default function StoryDetail() {
   const { storyPage } = weddingData;
 
   const items: Item[] = [
-    { kind: "photo", key: "bubbles", src: storyPage.photos[0], cx: 30, cy: 24, w: 59, deg: -3 },
-    { kind: "memo", key: "memo1", paper: "grid", text: storyPage.notes[0], cx: 76, cy: 29, w: 52, deg: 2 },
-    { kind: "memo", key: "memo2", paper: "lined", text: storyPage.notes[1], cx: 25, cy: 70, w: 51, deg: -3 },
-    { kind: "photo", key: "roses", src: storyPage.photos[1], cx: 67, cy: 76, w: 55, deg: 1 },
+    { kind: "photo", key: "bubbles", src: storyPage.photos[0], cx: 30, cy: 24, w: 59, deg: 10 },
+    { kind: "memo", key: "memo1", paper: "grid", text: storyPage.notes[0], cx: 88, cy: 25, w: 60, deg: -12 },
+    { kind: "photo", key: "roses", src: storyPage.photos[1], cx: 67, cy: 76, w: 55, deg: 0 },
+    { kind: "memo", key: "memo2", paper: "lined", text: storyPage.notes[1], cx: 18, cy: 72, w: 60, deg: 10 },
   ];
 
   return (

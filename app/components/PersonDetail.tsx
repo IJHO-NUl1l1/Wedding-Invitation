@@ -4,16 +4,6 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
 
-/**
- * 시안 4·5페이지를 그대로 옮긴 콜라주.
- *
- * 시안 페이지가 495x881(≈9:16)이라 같은 비율의 캔버스를 두고, 각 요소를
- * 시안에서 실측한 "중심 좌표 + 폭 + 회전각"으로 배치한다. 폭만 지정하고
- * 높이는 원본 비율대로 두는데, 시안은 편지를 크롭해 썼기 때문에 세로 길이는
- * 시안보다 조금 길다. 편지 내용이 잘리지 않는 쪽을 택했다.
- *
- * 배열 순서가 곧 z-order(뒤 → 앞)다.
- */
 type Item = {
   key: string;
   src: string;
@@ -29,18 +19,20 @@ type Item = {
   card?: boolean;
 };
 
+// 배열 순서 = 뒤→앞. 가족사진(맨뒤) → 흰 편지(엄마) → 아이사진 → 갈색 편지(아빠, 맨앞은 그대로 유지).
 const GROOM: Item[] = [
-  { key: "letter-m", src: "/images/letter-groom-mother.jpg", alt: "어머니의 편지", cx: 32, cy: 17, w: 55, deg: -2 },
-  { key: "family", src: "/images/family-groom.jpg", alt: "가족사진", cx: 30, cy: 57, w: 61, deg: 0 },
-  { key: "child", src: "/images/child-groom.jpg", alt: "어린 시절", cx: 72, cy: 28, w: 28, deg: 4, card: true },
-  { key: "letter-f", src: "/images/letter-groom-father.jpg", alt: "아버지의 편지", cx: 62, cy: 72, w: 64, deg: -8 },
+  { key: "family", src: "/images/family-groom.jpg", alt: "가족사진", cx: 32, cy: 57, w: 65, deg: 0 },
+  { key: "letter-m", src: "/images/letter-groom-mother.jpg", alt: "어머니의 편지", cx: 33, cy: 19, w: 59, deg: 17 },
+  { key: "child", src: "/images/child-groom.jpg", alt: "어린 시절", cx: 79, cy: 28, w: 29, deg: -15, card: true },
+  { key: "letter-f", src: "/images/letter-groom-father.jpg", alt: "아버지의 편지", cx: 66, cy: 76, w: 65, deg: -15 },
 ];
 
+// 배열 순서 = 뒤→앞. 흰 편지가 맨 뒤, 가족사진이 맨 앞.
 const BRIDE: Item[] = [
-  { key: "letter-f", src: "/images/letter-bride-father.jpg", alt: "아버지의 편지", cx: 25, cy: 29, w: 43, deg: -2 },
-  { key: "child", src: "/images/child-bride-cutout.png", alt: "어린 시절", cx: 78, cy: 22, w: 27, deg: 3 },
-  { key: "letter-m", src: "/images/letter-bride-mother.jpg", alt: "어머니의 편지", cx: 75, cy: 43, w: 52, deg: 4 },
-  { key: "family", src: "/images/family-bride.jpg", alt: "가족사진", cx: 48, cy: 74, w: 86, deg: -1 },
+  { key: "letter-f", src: "/images/letter-bride-father.jpg", alt: "아버지의 편지", cx: 25, cy: 29, w: 50, deg: -5 },
+  { key: "letter-m", src: "/images/letter-bride-mother.jpg", alt: "어머니의 편지", cx: 72, cy: 40, w: 53, deg: 13 },
+  { key: "child", src: "/images/child-bride-cutout.png", alt: "어린 시절", cx: 92, cy: 22, w: 24, deg: 0 },
+  { key: "family", src: "/images/family-bride.jpg", alt: "가족사진", cx: 48, cy: 77, w: 88, deg: 0 },
 ];
 
 export default function PersonDetail({ who }: { who: "groom" | "bride" }) {

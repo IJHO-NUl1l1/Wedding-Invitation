@@ -49,7 +49,7 @@ export default function DateSection() {
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
-      <SectionTitle>달력</SectionTitle>
+      <SectionTitle>D-DAY</SectionTitle>
 
       <div className="max-w-md mx-auto">
         {/* 시안의 분홍 달력. 샴페인잔 일러스트는 시안 원본에서 추출해 겹친다. */}

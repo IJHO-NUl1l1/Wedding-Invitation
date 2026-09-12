@@ -2,9 +2,29 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Phone, Train, Bus, Car, Utensils } from "lucide-react";
+import {
+  Phone,
+  Train,
+  Bus,
+  Car,
+  SquareParking,
+  Banknote,
+  ArrowUpDown,
+  Utensils,
+} from "lucide-react";
 import { weddingData } from "@/app/data/mock";
 import SectionTitle from "@/app/components/SectionTitle";
+
+/** 안내 항목별 아이콘. 시안처럼 핑크로 칠해 쓴다. */
+const GUIDE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  지하철: Train,
+  버스: Bus,
+  자가용: Car,
+  주차: SquareParking,
+  ATM: Banknote,
+  엘리베이터: ArrowUpDown,
+  식사: Utensils,
+};
 
 export default function VenueSection() {
   const { venue, wedding } = weddingData;
@@ -59,11 +79,51 @@ export default function VenueSection() {
           웨딩홀 전화 {venue.phone}
         </a>
 
-        <div className="mt-8 space-y-4 text-white/85">
-          <Info icon={<Train className="w-4 h-4" />} label="지하철" text={venue.subway} />
-          <Info icon={<Bus className="w-4 h-4" />} label="버스" text={venue.bus} />
-          <Info icon={<Car className="w-4 h-4" />} label="주차" text={venue.parking} />
-          <Info icon={<Utensils className="w-4 h-4" />} label="식사" text={venue.meal} />
+        <div className="mt-9 space-y-7">
+          {venue.guide.map((g) => {
+            const Icon = GUIDE_ICONS[g.label];
+            return (
+            <div key={g.label}>
+              <p className="flex items-center gap-2 text-[17px] text-pink">
+                {Icon && <Icon className="w-[18px] h-[18px]" />}
+                {g.label}
+              </p>
+
+              {g.badges && (
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  {g.badges.map((n) => (
+                    <span
+                      key={n}
+                      className="rounded-md border border-white/20 bg-white/5 px-2 py-1 text-[13px] tabular-nums text-white/85"
+                    >
+                      {n}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {g.steps && (
+                <ol className="mt-2.5 space-y-1.5">
+                  {g.steps.map((step, i) => (
+                    <li key={step} className="flex gap-2.5">
+                      <span className="shrink-0 mt-[3px] w-5 h-5 rounded-full bg-white/10 text-[11px] text-pink flex items-center justify-center tabular-nums">
+                        {i + 1}
+                      </span>
+                      <span className="text-[14px] leading-6 text-white/80 break-keep">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              {g.note && (
+                <p className="mt-2 text-[14px] leading-6 text-white/80 break-keep">{g.note}</p>
+              )}
+              {g.sub && (
+                <p className="mt-1 text-[13px] leading-6 text-white/55 break-keep">{g.sub}</p>
+              )}
+            </div>
+            );
+          })}
         </div>
       </div>
     </motion.section>
@@ -90,14 +150,3 @@ function MapLink({ href, label, icon }: { href: string; label: string; icon?: st
   );
 }
 
-function Info({ icon, label, text }: { icon: React.ReactNode; label: string; text: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <span className="text-pink mt-0.5 shrink-0">{icon}</span>
-      <div>
-        <p className="text-[15px] text-pink">{label}</p>
-        <p className="text-[15px] leading-7 text-white/80 mt-0.5">{text}</p>
-      </div>
-    </div>
-  );
-}

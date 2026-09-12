@@ -32,6 +32,24 @@ export default function RsvpModal() {
     return () => window.removeEventListener("rsvp-show", show);
   }, []);
 
+  // 맨 아래까지 내려가면 한 번만 자동으로 띄운다. 이미 응답했으면 띄우지 않는다.
+  useEffect(() => {
+    if (localStorage.getItem(ANSWER_KEY)) return;
+    let fired = false;
+    const onScroll = () => {
+      if (fired || document.body.classList.contains("overlay-open")) return;
+      const reachedBottom =
+        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+      if (!reachedBottom) return;
+      fired = true;
+      setDone(false);
+      setError("");
+      setOpen(true);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // 모달이 열려 있는 동안 뒤로가기로 닫히게 하고 배경 스크롤을 잠근다
   useEffect(() => {
     if (!open) return;
