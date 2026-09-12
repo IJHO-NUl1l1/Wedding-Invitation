@@ -100,10 +100,13 @@ export default function DateSection() {
         </div>
 
         {/* D-DAY */}
-        <div className="mt-5 flex justify-center gap-2 text-white">
+        <div className="mt-5 flex justify-center text-white">
           <Unit value={days} label="DAYS" />
+          <Colon />
           <Unit value={hours} label="HOUR" />
+          <Colon />
           <Unit value={mins} label="MIN" />
+          <Colon />
           <Unit value={secs} label="SEC" />
         </div>
       </div>
@@ -117,5 +120,14 @@ function Unit({ value, label }: { value: number | null; label: string }) {
       <p className="text-[26px] tabular-nums leading-none">{value === null ? "–" : value}</p>
       <p className="text-[11px] text-pink tracking-[0.2em] mt-1.5">{label}</p>
     </div>
+  );
+}
+
+/** 숫자 줄에 맞춰 놓는 구분 기호. 라벨 높이만큼 위로 올려 정렬한다. */
+function Colon() {
+  return (
+    <span aria-hidden className="py-3 text-[26px] leading-none text-white/45">
+      :
+    </span>
   );
 }
