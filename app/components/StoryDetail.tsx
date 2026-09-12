@@ -1,46 +1,77 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
 
-/** 시안 6페이지: 적갈색 바탕에 사진과 메모지를 번갈아 배치. 메모 문구는 아직 미작성. */
+/**
+ * 시안 6페이지. 적갈 바탕에 사진 2장과 메모지 2장을 어긋나게 배치한다.
+ * 시안에서 실측한 중심 좌표·폭·각도를 그대로 쓰며, 배열 순서가 z-order(뒤 → 앞)다.
+ * 메모지는 시안처럼 오른쪽 위가 흰 모눈종이, 왼쪽 아래가 노란 줄종이다.
+ */
+type Item =
+  | { kind: "photo"; key: string; src: string; cx: number; cy: number; w: number; deg: number }
+  | { kind: "memo"; key: string; paper: "grid" | "lined"; text: string; cx: number; cy: number; w: number; deg: number };
+
 export default function StoryDetail() {
   const { storyPage } = weddingData;
 
-  return (
-    <div className="min-h-dvh bg-maroon px-5 pt-12 pb-28">
-      <div className="max-w-md mx-auto space-y-10">
-        <p className="font-hand text-[27px] text-white/85 text-center">우리의 이야기</p>
+  const items: Item[] = [
+    { kind: "photo", key: "bubbles", src: storyPage.photos[0], cx: 30, cy: 24, w: 59, deg: -3 },
+    { kind: "memo", key: "memo1", paper: "grid", text: storyPage.notes[0], cx: 76, cy: 29, w: 52, deg: 2 },
+    { kind: "memo", key: "memo2", paper: "lined", text: storyPage.notes[1], cx: 25, cy: 70, w: 51, deg: -3 },
+    { kind: "photo", key: "roses", src: storyPage.photos[1], cx: 67, cy: 76, w: 55, deg: 1 },
+  ];
 
-        {storyPage.photos.map((src, i) => (
-          <div key={src} className="space-y-4">
-            <Image
-              src={src}
-              alt=""
-              width={1000}
-              height={1400}
-              className={`w-full h-auto ${i % 2 ? "rotate-1" : "-rotate-2"}`}
-            />
-            <Memo text={storyPage.notes[i]} tilt={i % 2 ? -1.5 : 1.5} />
-          </div>
+  return (
+    <div className="min-h-dvh bg-maroon px-4 pt-16 pb-24">
+      <p className="font-hand text-[27px] text-white/85 text-center mb-3">우리의 이야기</p>
+
+      <div className="relative w-full max-w-md mx-auto aspect-[495/881]">
+        {items.map((it, i) => (
+          <motion.div
+            key={it.key}
+            className="absolute"
+            style={{
+              left: `${it.cx}%`,
+              top: `${it.cy}%`,
+              width: `${it.w}%`,
+              translate: "-50% -50%",
+            }}
+            initial={{ opacity: 0, y: 14, rotate: it.deg }}
+            animate={{ opacity: 1, y: 0, rotate: it.deg }}
+            transition={{ duration: 0.6, delay: 0.1 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {it.kind === "photo" ? (
+              <Image src={it.src} alt="" width={1000} height={1400} quality={88} className="w-full h-auto" />
+            ) : (
+              <Memo paper={it.paper} text={it.text} />
+            )}
+          </motion.div>
         ))}
       </div>
     </div>
   );
 }
 
-/** 시안의 노란 메모지 */
-function Memo({ text, tilt }: { text: string; tilt: number }) {
+function Memo({ paper, text }: { paper: "grid" | "lined"; text: string }) {
+  const grid = paper === "grid";
   return (
     <div
-      className="relative bg-[#FBF3B6] px-5 py-7 min-h-[7rem]"
-      style={{ transform: `rotate(${tilt}deg)` }}
+      className={`relative aspect-[5/4] px-4 py-6 ${grid ? "bg-white" : "bg-[#FBF3B6]"}`}
+      style={
+        grid
+          ? {
+              backgroundImage:
+                "repeating-linear-gradient(rgba(90,140,200,.28) 0 1px, transparent 1px 15px), repeating-linear-gradient(90deg, rgba(90,140,200,.28) 0 1px, transparent 1px 15px)",
+            }
+          : {
+              backgroundImage:
+                "repeating-linear-gradient(transparent 0 26px, rgba(0,0,0,.12) 26px 27px)",
+            }
+      }
     >
-      <div
-        aria-hidden
-        className="absolute inset-x-5 top-0 bottom-0 bg-[repeating-linear-gradient(transparent,transparent_31px,rgba(0,0,0,0.09)_32px)]"
-      />
-      <p className="relative font-hand text-[24px] text-ink/70">{text}</p>
+      <p className="font-hand text-[24px] text-ink/75">{text}</p>
     </div>
   );
 }

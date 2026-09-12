@@ -102,30 +102,35 @@ export const weddingData = {
     notes: ["미작성", "미작성"],
   },
 
-  /** 갤러리 — 기본 9장 노출, 나머지는 '더보기' */
+  /**
+   * 갤러리 — 촬영 회차별로 묶어 21장(3의 배수). 기본 9장 노출 + '더보기'.
+   * 야간 한강 컷은 '우리 이야기' 페이지에서 이미 쓰므로 갤러리에서는 뺐다.
+   */
   gallery: [
+    // 야외 · 흰 드레스
     "/images/gallery-01.jpg",
-    "/images/gallery-02.jpg",
+    "/images/gallery-20.jpg",
+    "/images/gallery-19.jpg",
+    "/images/gallery-18.jpg",
     "/images/gallery-03.jpg",
-    "/images/gallery-04.jpg",
-    "/images/gallery-05.jpg",
-    "/images/gallery-06.jpg",
-    "/images/gallery-07.jpg",
-    "/images/gallery-08.jpg",
-    "/images/gallery-09.jpg",
-    "/images/gallery-10.jpg",
-    "/images/gallery-11.jpg",
-    "/images/gallery-12.jpg",
-    "/images/gallery-13.jpg",
     "/images/gallery-14.jpg",
     "/images/gallery-15.jpg",
+    "/images/gallery-02.jpg",
     "/images/gallery-16.jpg",
-    "/images/gallery-17.jpg",
-    "/images/gallery-18.jpg",
-    "/images/gallery-19.jpg",
-    "/images/gallery-20.jpg",
+    "/images/gallery-05.jpg",
+    // 한복
+    "/images/gallery-06.jpg",
+    "/images/gallery-07.jpg",
+    "/images/gallery-10.jpg",
+    "/images/gallery-08.jpg",
+    "/images/gallery-09.jpg",
+    "/images/gallery-11.jpg",
     "/images/gallery-21.jpg",
     "/images/gallery-22.jpg",
+    // 우산 · 다리
+    "/images/gallery-12.jpg",
+    "/images/gallery-13.jpg",
+    "/images/gallery-17.jpg",
   ],
   galleryPreviewCount: 9,
   /** 초대 문구 — 시안 2페이지 */

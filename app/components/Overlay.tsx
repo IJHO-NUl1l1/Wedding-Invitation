@@ -55,10 +55,11 @@ export default function Overlay({ open, onClose, background = "var(--ink)", chil
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
+          {/* 음악 토글이 우상단에 고정이라 닫기는 좌상단에 둔다 */}
           <button
             onClick={onClose}
             aria-label="닫기"
-            className="fixed top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/90 active:scale-95 transition-transform"
+            className="fixed top-4 left-4 z-10 w-10 h-10 rounded-full bg-black/35 flex items-center justify-center text-white active:scale-95 transition-transform"
           >
             <X className="w-5 h-5" />
           </button>

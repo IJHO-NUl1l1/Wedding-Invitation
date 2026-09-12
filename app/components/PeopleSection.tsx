@@ -24,11 +24,12 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
           onClick={() => onOpen("groom")}
           src={people.groom.thumb}
           alt="신랑 가족사진"
+          width="w-[48%]"
           rotate={-3}
           side="left"
         >
-          <p className="text-[16px] text-ink/75">{people.groom.label}</p>
-          <p className="mt-2 text-[20px]">
+          <p className="text-[22px] text-ink/80 break-keep">{people.groom.label}</p>
+          <p className="mt-3 text-[31px]">
             <span className="text-pink-deep">신랑</span>{" "}
             <span className="text-ink">{people.groom.name}</span>
           </p>
@@ -38,11 +39,12 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
           onClick={() => onOpen("bride")}
           src={people.bride.thumb}
           alt="신부 가족사진"
+          width="w-[56%]"
           rotate={2.5}
           side="right"
         >
-          <p className="text-[16px] text-ink/75">{people.bride.label}</p>
-          <p className="mt-2 text-[20px]">
+          <p className="text-[22px] text-ink/80 break-keep">{people.bride.label}</p>
+          <p className="mt-3 text-[31px]">
             <span className="text-pink-deep">신부</span>{" "}
             <span className="text-ink">{people.bride.name}</span>
           </p>
@@ -50,13 +52,13 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
 
         {/* 우리의 이야기 — 시안처럼 사진 좌우로 글자를 나눠 배치 */}
         <div className="relative pt-2">
-          <p className="font-hand text-[22px] text-ink absolute left-0 top-6">
+          <p className="font-hand text-[34px] text-ink absolute left-0 top-6">
             {people.story.label}
           </p>
           <motion.button
             onClick={() => onOpen("story")}
             aria-label="우리의 이야기"
-            className="block w-[62%] mx-auto active:scale-[0.98] transition-transform"
+            className="block w-[56%] mx-auto active:scale-[0.98] transition-transform"
             initial={{ opacity: 0, y: 18, rotate: -1 }}
             whileInView={{ opacity: 1, y: 0, rotate: -1 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -70,7 +72,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
               className="w-full h-auto"
             />
           </motion.button>
-          <p className="font-hand text-[22px] text-ink absolute right-0 top-[58%]">
+          <p className="font-hand text-[34px] text-ink absolute right-0 top-[58%]">
             {people.story.name}
           </p>
         </div>
@@ -85,6 +87,7 @@ function Row({
   onClick,
   rotate,
   side,
+  width,
   children,
 }: {
   src: string;
@@ -92,13 +95,14 @@ function Row({
   onClick: () => void;
   rotate: number;
   side: "left" | "right";
+  width: string;
   children: React.ReactNode;
 }) {
   const photo = (
     <motion.button
       onClick={onClick}
       aria-label={alt}
-      className="w-[56%] shrink-0 active:scale-[0.98] transition-transform"
+      className={`${width} shrink-0 active:scale-[0.98] transition-transform`}
       initial={{ opacity: 0, y: 18, rotate }}
       whileInView={{ opacity: 1, y: 0, rotate }}
       viewport={{ once: true, margin: "-60px" }}
