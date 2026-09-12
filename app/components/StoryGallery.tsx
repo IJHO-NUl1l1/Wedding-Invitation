@@ -23,7 +23,7 @@ export default function StoryGallery() {
 
   return (
     /* 시안 지시: 갤러리는 섹션 제목 없음 */
-    <section className="bg-ink px-5 py-16">
+    <section className="bg-ink px-5 py-12">
       <div className="max-w-md mx-auto grid grid-cols-3 gap-1.5">
         {visible.map((src, i) => (
           <motion.button
@@ -50,7 +50,7 @@ export default function StoryGallery() {
         <div className="flex justify-center mt-6">
           <button
             onClick={() => setExpanded(true)}
-            className="px-7 py-2.5 rounded-full bg-pink-soft text-ink text-sm active:scale-95 transition-transform"
+            className="px-9 py-3 rounded-full bg-pink-soft text-ink text-[17px] active:scale-95 transition-transform"
           >
             더보기
           </button>

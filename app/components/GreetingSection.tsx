@@ -22,10 +22,10 @@ export default function GreetingSection() {
   const { greetingQuote, greetingLines } = weddingData;
 
   return (
-    <section className="relative bg-ink px-6 py-20 overflow-hidden">
+    <section className="relative bg-ink px-6 py-14 overflow-hidden">
       {/* 인용시 */}
       <motion.div
-        className="max-w-md mx-auto text-white/90 font-hand text-[19px] leading-9 text-center"
+        className="max-w-md mx-auto text-white/90 font-hand text-[22px] leading-10 text-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
@@ -34,11 +34,11 @@ export default function GreetingSection() {
         {greetingQuote.lines.map((line) => (
           <p key={line}>{line}</p>
         ))}
-        <p className="mt-3 text-right text-white/70 text-[17px]">{greetingQuote.source}</p>
+        <p className="mt-3 text-right text-white/70 text-[20px]">{greetingQuote.source}</p>
       </motion.div>
 
       {/* 초대 문구 */}
-      <div className="relative max-w-md mx-auto mt-16">
+      <div className="relative max-w-md mx-auto mt-12">
         <div aria-hidden className="absolute inset-0 pointer-events-none">
           {ORNAMENTS.map((o, i) => (
             <span
@@ -51,7 +51,7 @@ export default function GreetingSection() {
           ))}
         </div>
 
-        <div className="relative font-hand text-white text-[26px] leading-[2.6] text-center">
+        <div className="relative font-hand text-white text-[30px] leading-[2.1] text-center">
           {greetingLines.map((line, i) => (
             <motion.p
               key={line}

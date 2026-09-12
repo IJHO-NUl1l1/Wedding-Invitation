@@ -13,9 +13,9 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
   const cutout = who === "bride";
 
   return (
-    <div className="min-h-dvh bg-cream px-5 pt-14 pb-28">
+    <div className="min-h-dvh bg-cream px-5 pt-12 pb-28">
       <div className="max-w-md mx-auto">
-        <p className="font-hand text-[22px] text-ink/80 text-center mb-8">
+        <p className="font-hand text-[27px] text-ink/85 text-center mb-7">
           {who === "groom" ? "신랑" : "신부"} {person.name}
         </p>
 
@@ -27,16 +27,16 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               alt={`${data.letters[0].from}의 편지`}
               width={1200}
               height={1400}
-              className="w-full h-auto shadow-md"
+              className="w-full h-auto"
             />
-            <figcaption className="font-hand text-[16px] text-ink/70 mt-2 text-right pr-1">
+            <figcaption className="font-hand text-[18px] text-ink/70 mt-2 text-right pr-1">
               {data.letters[0].from}가 보내는 편지
             </figcaption>
           </figure>
 
           {/* 어린시절 + 가족사진 */}
           <div className="flex items-end gap-4">
-            <div className={`w-[38%] ${cutout ? "" : "bg-white p-2 shadow-md"} rotate-2`}>
+            <div className={`w-[38%] ${cutout ? "" : "bg-white p-2"} rotate-2`}>
               <Image
                 src={data.childhood}
                 alt="어린시절"
@@ -51,7 +51,7 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
                 alt="가족사진"
                 width={1100}
                 height={800}
-                className="w-full h-auto shadow-md"
+                className="w-full h-auto"
               />
             </figure>
           </div>
@@ -63,9 +63,9 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               alt={`${data.letters[1].from}의 편지`}
               width={1200}
               height={1400}
-              className="w-full h-auto shadow-md"
+              className="w-full h-auto"
             />
-            <figcaption className="font-hand text-[16px] text-ink/70 mt-2 text-right pr-1">
+            <figcaption className="font-hand text-[18px] text-ink/70 mt-2 text-right pr-1">
               {data.letters[1].from}가 보내는 편지
             </figcaption>
           </figure>

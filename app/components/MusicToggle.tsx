@@ -44,7 +44,7 @@ export default function MusicToggle() {
       <button
         onClick={toggle}
         aria-label={playing ? "배경음악 끄기" : "배경음악 켜기"}
-        className="fixed top-4 right-4 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/25 active:scale-95 transition-transform"
+        className="fixed top-4 right-4 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-white/25 active:scale-95 transition-transform"
       >
         <span className="relative flex items-center justify-center">
           <Music className={`w-4 h-4 ${playing ? "text-pink" : "text-white/50"}`} />

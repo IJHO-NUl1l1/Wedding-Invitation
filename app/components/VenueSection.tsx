@@ -11,7 +11,7 @@ export default function VenueSection() {
 
   return (
     <motion.section
-      className="bg-ink px-6 py-16"
+      className="bg-ink px-6 py-12"
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
@@ -21,10 +21,10 @@ export default function VenueSection() {
 
       <div className="max-w-md mx-auto">
         <div className="text-center text-white mb-6">
-          <p className="text-lg">
+          <p className="text-[24px]">
             {wedding.date.replace("년 ", ".").replace("월 ", ".").replace("일", "")} 12:20
           </p>
-          <p className="mt-1.5 text-[15px]">
+          <p className="mt-2 text-[18px]">
             {venue.addressDetail.replace(venue.hall, "")}
             <span className="text-pink">{venue.hall}</span>
           </p>
@@ -34,7 +34,7 @@ export default function VenueSection() {
           <iframe
             src={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address)}&output=embed&z=16`}
             width="100%"
-            height="230"
+            height="260"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"
@@ -53,7 +53,7 @@ export default function VenueSection() {
         {/* 웨딩홀 전화 */}
         <a
           href={`tel:${venue.phone}`}
-          className="mt-3 flex items-center justify-center gap-2 w-full py-3 rounded-full bg-pink-soft text-ink text-sm active:scale-[0.98] transition-transform"
+          className="mt-3 flex items-center justify-center gap-2 w-full py-3 rounded-full bg-pink-soft text-ink text-[16px] active:scale-[0.98] transition-transform"
         >
           <Phone className="w-4 h-4" />
           웨딩홀 전화 {venue.phone}
@@ -76,7 +76,7 @@ function MapLink({ href, label, icon }: { href: string; label: string; icon?: st
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-white/20 bg-white/5 text-white text-xs active:scale-95 transition-transform"
+      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-white/20 bg-white/5 text-white text-[13px] active:scale-95 transition-transform"
     >
       {icon ? (
         <Image src={icon} alt="" width={16} height={16} className="rounded" />
@@ -95,8 +95,8 @@ function Info({ icon, label, text }: { icon: React.ReactNode; label: string; tex
     <div className="flex items-start gap-3">
       <span className="text-pink mt-0.5 shrink-0">{icon}</span>
       <div>
-        <p className="text-[13px] text-pink">{label}</p>
-        <p className="text-[13px] leading-6 text-white/80 mt-0.5">{text}</p>
+        <p className="text-[15px] text-pink">{label}</p>
+        <p className="text-[15px] leading-7 text-white/80 mt-0.5">{text}</p>
       </div>
     </div>
   );

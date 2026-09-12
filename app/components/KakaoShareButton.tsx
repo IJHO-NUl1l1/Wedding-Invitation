@@ -57,7 +57,7 @@ export default function KakaoShareButton() {
     <button
       onClick={handleShare}
       aria-label="카카오톡으로 공유"
-      className="fixed bottom-6 right-5 z-50 flex flex-col items-center justify-center w-16 h-16 rounded-full bg-kakao text-[#3C1E1E] shadow-lg active:scale-95 transition-transform"
+      className="fixed bottom-6 right-5 z-50 flex flex-col items-center justify-center w-16 h-16 rounded-full bg-kakao text-[#3C1E1E] active:scale-95 transition-transform"
     >
       <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true">
         <path

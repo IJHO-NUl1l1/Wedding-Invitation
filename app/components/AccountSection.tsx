@@ -27,11 +27,11 @@ function AccountCard({
   return (
     <div className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 px-4 py-3.5">
       <div>
-        <p className="text-[11px] text-pink tracking-wider">{side}</p>
-        <p className="text-sm text-white mt-1">
+        <p className="text-[13px] text-pink tracking-wider">{side}</p>
+        <p className="text-[17px] text-white mt-1">
           {bank} {number}
         </p>
-        <p className="text-xs text-white/60 mt-0.5">{name}</p>
+        <p className="text-[13px] text-white/60 mt-0.5">{name}</p>
       </div>
       <button
         onClick={handleCopy}
@@ -48,7 +48,7 @@ export default function AccountSection() {
   const { groom, bride } = weddingData;
 
   return (
-    <section className="bg-ink px-6 py-14">
+    <section className="bg-ink px-6 py-12">
       <SectionTitle>마음 전하실 곳</SectionTitle>
       <div className="max-w-md mx-auto space-y-3">
         <AccountCard
