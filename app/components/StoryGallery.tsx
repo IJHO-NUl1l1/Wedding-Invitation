@@ -34,8 +34,18 @@ export default function StoryGallery() {
     return () => ro.disconnect();
   }, []);
 
-  const move = (step: number) =>
+  /** 넘김 방향. 0이면 처음 열린 것이라 좌우 이동 없이 페이드로만 등장한다. */
+  const [dir, setDir] = useState(0);
+
+  const move = (step: number) => {
+    setDir(step);
     setViewerIndex((i) => (i === null ? i : (i + step + gallery.length) % gallery.length));
+  };
+
+  const openViewer = (i: number) => {
+    setDir(0);
+    setViewerIndex(i);
+  };
 
   return (
     /* 시안 지시: 갤러리는 섹션 제목 없음 */
@@ -53,7 +63,7 @@ export default function StoryGallery() {
             {gallery.map((src, i) => (
               <motion.button
                 key={src}
-                onClick={() => setViewerIndex(i)}
+                onClick={() => openViewer(i)}
                 className="relative aspect-square overflow-hidden"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -120,29 +130,70 @@ export default function StoryGallery() {
         background="rgba(0,0,0,0.96)"
       >
         {viewerIndex !== null && (
-          <div className="min-h-dvh flex flex-col items-center justify-center gap-4 px-4">
-            <div className="relative w-full max-w-md aspect-[2/3]">
-              <Image
-                src={gallery[viewerIndex]}
-                alt=""
-                fill
-                quality={90}
-                sizes="100vw"
-                className="object-contain"
-              />
+          <motion.div
+            className="min-h-dvh flex flex-col items-center justify-center gap-5 px-4"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* 이전/다음 사진이 겹쳐진 채 교차하도록 절대 배치한다 */}
+            <div className="relative w-full max-w-md aspect-[2/3] overflow-hidden">
+              <AnimatePresence custom={dir} initial={false}>
+                <motion.div
+                  key={viewerIndex}
+                  className="absolute inset-0"
+                  custom={dir}
+                  variants={{
+                    enter: (d: number) => ({ x: d === 0 ? 0 : d > 0 ? 70 : -70, opacity: 0 }),
+                    center: { x: 0, opacity: 1 },
+                    exit: (d: number) => ({ x: d > 0 ? -70 : 70, opacity: 0 }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    // 충분히 끌었거나 빠르게 튕겼으면 넘긴다
+                    if (info.offset.x < -70 || info.velocity.x < -450) move(1);
+                    else if (info.offset.x > 70 || info.velocity.x > 450) move(-1);
+                  }}
+                >
+                  <Image
+                    src={gallery[viewerIndex]}
+                    alt=""
+                    fill
+                    quality={90}
+                    sizes="100vw"
+                    draggable={false}
+                    className="object-contain select-none"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
+
             <div className="flex items-center gap-6 text-white/80">
-              <button onClick={() => move(-1)} aria-label="이전 사진" className="p-2">
+              <button
+                onClick={() => move(-1)}
+                aria-label="이전 사진"
+                className="p-2 active:scale-90 transition-transform"
+              >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <span className="text-sm tabular-nums">
                 {viewerIndex + 1} / {gallery.length}
               </span>
-              <button onClick={() => move(1)} aria-label="다음 사진" className="p-2">
+              <button
+                onClick={() => move(1)}
+                aria-label="다음 사진"
+                className="p-2 active:scale-90 transition-transform"
+              >
                 <ChevronRight className="w-6 h-6" />
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
       </Overlay>
     </section>

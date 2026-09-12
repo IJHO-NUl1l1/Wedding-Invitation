@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
@@ -38,6 +39,8 @@ const BRIDE: Item[] = [
 export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
   const items = who === "groom" ? GROOM : BRIDE;
   const person = who === "groom" ? weddingData.groom : weddingData.bride;
+  // 사진이 실제로 준비된 뒤에 나타나게 한다. 로딩 전에 애니메이션이 끝나면 툭 튀어나온다.
+  const [loaded, setLoaded] = useState<Record<string, boolean>>({});
 
   return (
     <div className="min-h-dvh bg-cream px-4 pt-16 pb-24">
@@ -56,9 +59,13 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               width: `${it.w}%`,
               translate: "-50% -50%",
             }}
-            initial={{ opacity: 0, y: 14, rotate: it.deg }}
-            animate={{ opacity: 1, y: 0, rotate: it.deg }}
-            transition={{ duration: 0.6, delay: 0.1 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }}
+            animate={
+              loaded[it.key]
+                ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", rotate: it.deg }
+                : { opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }
+            }
+            transition={{ duration: 0.9, delay: i * 0.14, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
               src={it.src}
@@ -68,6 +75,7 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               // 손글씨 편지라 기본 압축(75)에서는 획이 뭉갠다
               quality={92}
               className="w-full h-auto"
+              onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
             />
           </motion.div>
         ))}

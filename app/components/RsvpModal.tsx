@@ -2,11 +2,31 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus, X } from "lucide-react";
+import { Check, Minus, Plus, X } from "lucide-react";
 import { weddingData } from "@/app/data/mock";
 
-const ID_KEY = "rsvp-id"; // 마지막 응답의 uuid — 재제출 시 교체용
-const ANSWER_KEY = "rsvp-answer"; // "attend" | "decline"
+/**
+ * 직전 응답을 브라우저에 저장해 둔다. id를 함께 보내면 서버가 이전 행을 지우고
+ * 새로 넣으므로 같은 사람이 여러 번 보내도 한 건만 남는다.
+ */
+const SAVED_KEY = "rsvp-saved";
+
+type Saved = {
+  id?: string;
+  attending: boolean;
+  name: string;
+  side: Side;
+  headcount: number;
+};
+
+function readSaved(): Saved | null {
+  try {
+    const raw = localStorage.getItem(SAVED_KEY);
+    return raw ? (JSON.parse(raw) as Saved) : null;
+  } catch {
+    return null;
+  }
+}
 
 type Side = "groom" | "bride";
 
@@ -21,9 +41,19 @@ export default function RsvpModal() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  /** 이전에 보낸 응답. 있으면 폼을 채우고 "수정" 문구로 바꾼다. */
+  const [saved, setSaved] = useState<Saved | null>(null);
 
   useEffect(() => {
     const show = () => {
+      const prev = readSaved();
+      setSaved(prev);
+      if (prev) {
+        setAttending(prev.attending);
+        setName(prev.name);
+        setSide(prev.side);
+        setHeadcount(prev.headcount || 1);
+      }
       setDone(false);
       setError("");
       setOpen(true);
@@ -33,21 +63,28 @@ export default function RsvpModal() {
   }, []);
 
   // 맨 아래까지 내려가면 한 번만 자동으로 띄운다. 이미 응답했으면 띄우지 않는다.
+  // 모바일은 주소창 때문에 innerHeight가 계속 바뀌어 스크롤 계산이 어긋나므로,
+  // 페이지 끝에 둔 감시용 요소가 화면에 들어오는지로 판단한다.
   useEffect(() => {
-    if (localStorage.getItem(ANSWER_KEY)) return;
+    if (readSaved()) return;
+    const sentinel = document.getElementById("rsvp-bottom-sentinel");
+    if (!sentinel) return;
+
     let fired = false;
-    const onScroll = () => {
-      if (fired || document.body.classList.contains("overlay-open")) return;
-      const reachedBottom =
-        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
-      if (!reachedBottom) return;
-      fired = true;
-      setDone(false);
-      setError("");
-      setOpen(true);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (fired || !entries.some((e) => e.isIntersecting)) return;
+        if (document.body.classList.contains("overlay-open")) return;
+        fired = true;
+        io.disconnect();
+        setDone(false);
+        setError("");
+        setOpen(true);
+      },
+      { rootMargin: "0px 0px 120px 0px" }
+    );
+    io.observe(sentinel);
+    return () => io.disconnect();
   }, []);
 
   // 모달이 열려 있는 동안 뒤로가기로 닫히게 하고 배경 스크롤을 잠근다
@@ -92,7 +129,8 @@ export default function RsvpModal() {
           name: name.trim(),
           side,
           headcount: attending ? headcount : 0,
-          replaceId: localStorage.getItem(ID_KEY) ?? undefined,
+          // 이전 응답 id를 함께 보내면 서버가 그 행을 지우고 새로 넣는다 → 중복 방지
+          replaceId: saved?.id,
         }),
       });
       const data = await res.json().catch(() => null);
@@ -100,10 +138,17 @@ export default function RsvpModal() {
         setError(data?.error ?? "전송에 실패했어요. 잠시 후 다시 시도해주세요");
         return;
       }
-      if (data?.id) localStorage.setItem(ID_KEY, data.id);
-      localStorage.setItem(ANSWER_KEY, attending ? "attend" : "decline");
+      const next: Saved = {
+        id: data?.id,
+        attending,
+        name: name.trim(),
+        side,
+        headcount: attending ? headcount : 0,
+      };
+      localStorage.setItem(SAVED_KEY, JSON.stringify(next));
+      setSaved(next);
       setDone(true);
-      setTimeout(() => setOpen(false), 1500);
+      setTimeout(() => setOpen(false), 2600);
     } finally {
       setSubmitting(false);
     }
@@ -136,14 +181,50 @@ export default function RsvpModal() {
             </button>
 
             {done ? (
-              <p className="py-10 text-center text-white text-lg">
-                소중한 마음 감사합니다
-              </p>
+              <motion.div
+                className="py-8 text-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <motion.span
+                  className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pink-soft text-ink"
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.08, type: "spring", stiffness: 260, damping: 18 }}
+                >
+                  <Check className="h-7 w-7" />
+                </motion.span>
+
+                <p className="mt-5 text-[19px] text-white">
+                  {attending ? "참석 여부를 전달했어요" : "마음 전해드렸어요"}
+                </p>
+                <p className="mt-2 text-[14px] leading-6 text-white/70">
+                  {attending
+                    ? "당일 뵙기를 기다리고 있을게요"
+                    : "함께해 주시는 마음만으로 충분합니다"}
+                </p>
+
+                <div className="mx-auto mt-5 w-full max-w-[15rem] rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-[14px] text-white/85">
+                  <p>
+                    {side === "groom" ? "신랑측" : "신부측"} · {name.trim()}
+                  </p>
+                  <p className="mt-1 text-pink">
+                    {attending ? `참석 ${headcount}명` : "불참"}
+                  </p>
+                </div>
+
+                <p className="mt-4 text-[12px] text-white/45">
+                  마음이 바뀌시면 다시 보내주셔도 괜찮아요
+                </p>
+              </motion.div>
             ) : (
               <>
                 {/* 시안 2-2: 감사 인사 대신 예식 정보 */}
                 <div className="text-center text-white pb-5 mb-5 border-b border-white/12">
-                  <p className="text-pink text-sm">참석 여부</p>
+                  <p className="text-pink text-sm">
+                    {saved ? "참석 여부 수정" : "참석 여부"}
+                  </p>
                   <p className="mt-2.5 text-[15px]">
                     {wedding.date} {wedding.dayOfWeek} {wedding.time}
                   </p>
@@ -216,10 +297,12 @@ export default function RsvpModal() {
                   disabled={submitting}
                   className="w-full mt-6 py-3.5 rounded-full bg-pink-soft text-ink text-sm disabled:opacity-40 active:scale-[0.99] transition-transform"
                 >
-                  {submitting ? "전송 중…" : "전달하기"}
+                  {submitting ? "전송 중…" : saved ? "수정해서 다시 보내기" : "전달하기"}
                 </button>
                 <p className="text-[11px] text-white/45 text-center mt-3">
-                  마음이 바뀌시면 다시 보내주셔도 괜찮아요
+                  {saved
+                    ? "이전에 보내주신 응답을 불러왔어요. 다시 보내면 그 응답이 바뀝니다"
+                    : "마음이 바뀌시면 다시 보내주셔도 괜찮아요"}
                 </p>
               </>
             )}

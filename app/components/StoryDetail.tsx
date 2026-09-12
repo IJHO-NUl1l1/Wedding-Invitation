@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
@@ -15,6 +16,8 @@ type Item =
 
 export default function StoryDetail() {
   const { storyPage } = weddingData;
+  // 사진은 로딩이 끝난 뒤 나타나게 한다. 메모지는 이미지가 아니라 바로 등장.
+  const [loaded, setLoaded] = useState<Record<string, boolean>>({});
 
   const items: Item[] = [
     { kind: "photo", key: "bubbles", src: storyPage.photos[0], cx: 30, cy: 24, w: 59, deg: 10 },
@@ -38,12 +41,24 @@ export default function StoryDetail() {
               width: `${it.w}%`,
               translate: "-50% -50%",
             }}
-            initial={{ opacity: 0, y: 14, rotate: it.deg }}
-            animate={{ opacity: 1, y: 0, rotate: it.deg }}
-            transition={{ duration: 0.6, delay: 0.1 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }}
+            animate={
+              it.kind === "memo" || loaded[it.key]
+                ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", rotate: it.deg }
+                : { opacity: 0, y: 22, scale: 0.96, filter: "blur(8px)", rotate: it.deg }
+            }
+            transition={{ duration: 0.9, delay: i * 0.14, ease: [0.22, 1, 0.36, 1] }}
           >
             {it.kind === "photo" ? (
-              <Image src={it.src} alt="" width={1000} height={1400} quality={88} className="w-full h-auto" />
+              <Image
+                src={it.src}
+                alt=""
+                width={1000}
+                height={1400}
+                quality={88}
+                className="w-full h-auto"
+                onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
+              />
             ) : (
               <Memo paper={it.paper} text={it.text} />
             )}

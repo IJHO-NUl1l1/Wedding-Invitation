@@ -53,7 +53,7 @@ export default function Overlay({ open, onClose, background = "var(--ink)", chil
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* 음악 토글이 우상단에 고정이라 닫기는 좌상단에 둔다 */}
           <button

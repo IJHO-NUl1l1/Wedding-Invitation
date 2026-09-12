@@ -48,6 +48,9 @@ export default function Invitation() {
       <GuestbookSection />
       <AccountSection />
 
+      {/* 이 지점이 보이면 참석여부 모달이 자동으로 열린다 (RsvpModal이 감시) */}
+      <div id="rsvp-bottom-sentinel" aria-hidden className="h-px" />
+
       <Overlay
         open={person !== null}
         onClose={() => setPerson(null)}
