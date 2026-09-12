@@ -41,8 +41,10 @@ export default function RsvpModal() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
-  /** 이전에 보낸 응답. 있으면 폼을 채우고 "수정" 문구로 바꾼다. */
+  /** 이전에 보낸 응답. 있으면 폼 대신 요약 화면부터 보여준다. */
   const [saved, setSaved] = useState<Saved | null>(null);
+  /** 이미 응답한 사람이 요약을 보고 "다시 제출하기"를 눌렀는지 */
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     const show = () => {
@@ -54,6 +56,7 @@ export default function RsvpModal() {
         setSide(prev.side);
         setHeadcount(prev.headcount || 1);
       }
+      setEditing(false);
       setDone(false);
       setError("");
       setOpen(true);
@@ -75,6 +78,11 @@ export default function RsvpModal() {
       (entries) => {
         if (fired || !entries.some((e) => e.isIntersecting)) return;
         if (document.body.classList.contains("overlay-open")) return;
+        // 이 세션에서 방금 제출했을 수도 있으니 발동 시점에 다시 확인한다
+        if (readSaved()) {
+          io.disconnect();
+          return;
+        }
         fired = true;
         io.disconnect();
         setDone(false);
@@ -180,7 +188,40 @@ export default function RsvpModal() {
               <X className="w-5 h-5" />
             </button>
 
-            {done ? (
+            {saved && !editing && !done ? (
+              /* 이미 응답한 사람에게는 폼 대신 지금까지의 응답을 먼저 보여준다 */
+              <motion.div
+                className="py-6 text-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <p className="text-pink text-sm">참석 여부</p>
+                <p className="mt-4 text-[19px] text-white">이미 응답해 주셨어요</p>
+
+                <div className="mx-auto mt-5 w-full max-w-[15rem] rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-[14px] text-white/85">
+                  <p>
+                    {saved.side === "groom" ? "신랑측" : "신부측"} · {saved.name}
+                  </p>
+                  <p className="mt-1 text-pink">
+                    {saved.attending ? `참석 ${saved.headcount}명` : "불참"}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setEditing(true);
+                    setError("");
+                  }}
+                  className="w-full mt-6 py-3.5 rounded-full bg-pink-soft text-ink text-sm active:scale-[0.99] transition-transform"
+                >
+                  다시 제출하기
+                </button>
+                <p className="text-[11px] text-white/45 mt-3">
+                  다시 보내면 이전 응답이 새 응답으로 바뀝니다
+                </p>
+              </motion.div>
+            ) : done ? (
               <motion.div
                 className="py-8 text-center"
                 initial={{ opacity: 0, y: 10 }}
@@ -301,7 +342,7 @@ export default function RsvpModal() {
                 </button>
                 <p className="text-[11px] text-white/45 text-center mt-3">
                   {saved
-                    ? "이전에 보내주신 응답을 불러왔어요. 다시 보내면 그 응답이 바뀝니다"
+                    ? "다시 보내면 이전 응답이 바뀝니다"
                     : "마음이 바뀌시면 다시 보내주셔도 괜찮아요"}
                 </p>
               </>
