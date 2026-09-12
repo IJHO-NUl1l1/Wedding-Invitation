@@ -57,15 +57,15 @@ export default function KakaoShareButton() {
     <button
       onClick={handleShare}
       aria-label="카카오톡으로 공유"
-      className="fixed bottom-6 right-5 z-40 flex items-center gap-2 bg-[#FEE500] text-[#3C1E1E] text-xs font-serif rounded-full px-4 py-2.5 shadow-lg active:brightness-95 transition-all"
+      className="fixed bottom-6 right-5 z-50 flex flex-col items-center justify-center w-16 h-16 rounded-full bg-kakao text-[#3C1E1E] shadow-lg active:scale-95 transition-transform"
     >
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 18 18" fill="none" aria-hidden="true">
         <path
           d="M9 1C4.582 1 1 3.91 1 7.5c0 2.284 1.44 4.29 3.622 5.476L3.75 16.5l4.02-2.675A9.317 9.317 0 009 14c4.418 0 8-2.91 8-6.5S13.418 1 9 1z"
           fill="#3C1E1E"
         />
       </svg>
-      카카오톡 공유
+      <span className="font-hand text-[13px] leading-none mt-1">카톡공유</span>
     </button>
   );
 }

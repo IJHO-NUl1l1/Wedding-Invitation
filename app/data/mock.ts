@@ -40,6 +40,7 @@ export const weddingData = {
     hall: "그레이스홀",
     address: "서울시 구로구 구로동 3-25",
     addressDetail: "신도림테크노마트 7층 그레이스홀",
+    phone: "02-2111-7000",
     meal: "예식 후 피로연 (고급 뷔페)",
     subway: "1·2호선 신도림역 직결 (테크노마트 방향 출구 이용)",
     bus: "신도림역 정류장 하차 후 테크노마트 방향 도보 1분",
@@ -47,32 +48,92 @@ export const weddingData = {
     mapQuery: "신도림 웨스턴 베니비스",
     kakaoMapUrl: "https://map.kakao.com/link/search/서울시 구로구 구로동 3-25",
     naverMapUrl: "https://map.naver.com/v5/search/서울시 구로구 구로동 3-25",
+    // 좌표 없이 동작하는 검색 스킴. 티맵 앱이 설치된 기기에서만 열린다.
+    tmapUrl: "tmap://search?name=신도림 웨스턴 베니비스",
   },
-  story: [
-    {
-      id: 1,
-      image: "https://picsum.photos/seed/wedding1/400/600",
-      caption: "2025년 2월, 첫 만남",
-    },
-    {
-      id: 2,
-      image: "https://picsum.photos/seed/wedding2/400/600",
-      caption: "함께 웃고, 때로는 울며",
-    },
-    {
-      id: 3,
-      image: "https://picsum.photos/seed/wedding3/400/600",
-      caption: "소중한 순간들을 쌓아온 우리",
-    },
-    {
-      id: 4,
-      image: "https://picsum.photos/seed/wedding4/400/600",
-      caption: "서로가 가장 편안한 존재",
-    },
+  /** 표지 */
+  cover: {
+    image: "/images/cover-couple.jpg",
+    frame: "/images/frame-lace.jpg",
+    titleEn: "Forever Begins Today!",
+    subtitleEn: "we are getting married!",
+  },
+
+  /** 인사말 — 시안 2페이지 */
+  greetingQuote: {
+    lines: [
+      "누군가 너에 대해 묻는다면",
+      "나는 대답할거야",
+      "그 애는 나의 제목같은 사람이라고",
+      "모든걸 제치고",
+      "언제나 맨 앞에 놓일 문장이라고",
+    ],
+    source: "하현, 〈제목〉",
+  },
+
+  /** 인물 선택 — 시안 3페이지 */
+  people: {
+    groom: { thumb: "/images/family-groom.jpg", label: "고기환 · 김미영의 장남", name: "고희성" },
+    bride: { thumb: "/images/family-bride.jpg", label: "박준석 · 남양희의 장녀", name: "박지서" },
+    story: { thumb: "/images/story-couple.jpg", label: "우리의", name: "이야기" },
+  },
+
+  /** 신랑/신부 상세 — 시안 4·5페이지 */
+  groomPage: {
+    letters: [
+      { image: "/images/letter-groom-mother.jpg", from: "어머니" },
+      { image: "/images/letter-groom-father.jpg", from: "아버지" },
+    ],
+    childhood: "/images/child-groom.jpg",
+    family: "/images/family-groom.jpg",
+  },
+  bridePage: {
+    letters: [
+      { image: "/images/letter-bride-father.jpg", from: "아버지" },
+      { image: "/images/letter-bride-mother.jpg", from: "어머니" },
+    ],
+    childhood: "/images/child-bride-cutout.png",
+    family: "/images/family-bride.jpg",
+  },
+
+  /** 우리 이야기 — 시안 6페이지. 메모 문구는 아직 미작성 */
+  storyPage: {
+    photos: ["/images/story-bubbles.jpg", "/images/story-bride-roses.jpg"],
+    notes: ["미작성", "미작성"],
+  },
+
+  /** 갤러리 — 기본 9장 노출, 나머지는 '더보기' */
+  gallery: [
+    "/images/gallery-01.jpg",
+    "/images/gallery-02.jpg",
+    "/images/gallery-03.jpg",
+    "/images/gallery-04.jpg",
+    "/images/gallery-05.jpg",
+    "/images/gallery-06.jpg",
+    "/images/gallery-07.jpg",
+    "/images/gallery-08.jpg",
+    "/images/gallery-09.jpg",
+    "/images/gallery-10.jpg",
+    "/images/gallery-11.jpg",
+    "/images/gallery-12.jpg",
+    "/images/gallery-13.jpg",
+    "/images/gallery-14.jpg",
+    "/images/gallery-15.jpg",
+    "/images/gallery-16.jpg",
+    "/images/gallery-17.jpg",
+    "/images/gallery-18.jpg",
+    "/images/gallery-19.jpg",
+    "/images/gallery-20.jpg",
+    "/images/gallery-21.jpg",
+    "/images/gallery-22.jpg",
   ],
-  storyQuote:
-    "2025년 2월 첫 만남을 시작으로, 함께 웃고, 때로는 울며,\n소중한 순간들을 쌓아왔고 서로가 가장 편안한 존재임을 깨달았습니다.",
-  greeting: `저희 두 사람이 사랑을 약속하는 자리에\n소중한 분들을 모시고자 합니다.\n\n함께해 주시는 발걸음 하나하나가\n저희에게 큰 기쁨과 힘이 됩니다.`,
-  closingMessage: `비로소 하나가 되는 두 사람의 소중한 첫걸음,\n부디 함께하시어 빛내주시면\n더없는 기쁨으로 간직하겠습니다.`,
+  galleryPreviewCount: 9,
+  /** 초대 문구 — 시안 2페이지 */
+  greetingLines: [
+    "소중한 분들을 모시고",
+    "첫 시작을 함께 하고자 합니다.",
+    "귀한 걸음 하시어 축복해 주신다면",
+    "더 없는 기쁨으로 간직하겠습니다.",
+  ],
   guestbookUrl: "#guestbook",
 };

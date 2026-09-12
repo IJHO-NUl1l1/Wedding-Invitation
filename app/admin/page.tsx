@@ -180,10 +180,10 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* ── 헤더 ── */}
-      <header className="sticky top-0 z-10 bg-white border-b border-slate-200 shadow-sm">
+      <header className="sticky top-0 z-10 bg-white/5 border-b border-slate-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="font-script text-gold text-2xl leading-none">H&amp;J</span>
+            <span className="font-script text-pink text-2xl leading-none">H&amp;J</span>
             <span className="h-4 w-px bg-slate-200" />
             <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
               {([
@@ -195,7 +195,7 @@ export default function AdminPage() {
                   onClick={() => setView(key)}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                     view === key
-                      ? "bg-white text-slate-800 shadow-sm"
+                      ? "bg-white/5 text-slate-800 shadow-sm"
                       : "text-slate-400 hover:text-slate-600"
                   }`}
                 >
@@ -215,7 +215,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={logout}
-              className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 bg-white px-3 py-1.5 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 bg-white/5 px-3 py-1.5 rounded-lg transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">로그아웃</span>
@@ -227,7 +227,7 @@ export default function AdminPage() {
       {/* ── 메인 카드 ── */}
       <main className="max-w-5xl mx-auto px-3 md:px-8 py-4 md:py-6">
         {view === "guestbook" && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:h-[calc(100vh-8rem)]">
+        <div className="bg-white/5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:h-[calc(100vh-8rem)]">
 
           {/* 탭 */}
           <div className="flex items-center px-3 md:px-6 border-b border-slate-100 flex-shrink-0">
@@ -393,25 +393,25 @@ export default function AdminPage() {
         <div className="space-y-4">
           {/* ── 집계 대시보드 ── */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+            <div className="bg-white/5 rounded-2xl border border-slate-200 shadow-sm p-4">
               <p className="text-[11px] font-semibold text-slate-400 tracking-wider uppercase mb-1">총 참석 인원</p>
               <p className="text-2xl font-bold text-slate-800">
                 {totalGuests}<span className="text-sm font-medium text-slate-400 ml-1">명</span>
               </p>
             </div>
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+            <div className="bg-white/5 rounded-2xl border border-slate-200 shadow-sm p-4">
               <p className="text-[11px] font-semibold text-slate-400 tracking-wider uppercase mb-1">참석 응답</p>
               <p className="text-2xl font-bold text-emerald-600">
                 {attendRsvps.length}<span className="text-sm font-medium text-slate-400 ml-1">건</span>
               </p>
             </div>
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+            <div className="bg-white/5 rounded-2xl border border-slate-200 shadow-sm p-4">
               <p className="text-[11px] font-semibold text-slate-400 tracking-wider uppercase mb-1">불참 응답</p>
               <p className="text-2xl font-bold text-rose-500">
                 {rsvps.length - attendRsvps.length}<span className="text-sm font-medium text-slate-400 ml-1">건</span>
               </p>
             </div>
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+            <div className="bg-white/5 rounded-2xl border border-slate-200 shadow-sm p-4">
               <p className="text-[11px] font-semibold text-slate-400 tracking-wider uppercase mb-1">총 응답</p>
               <p className="text-2xl font-bold text-slate-800">
                 {rsvps.length}<span className="text-sm font-medium text-slate-400 ml-1">건</span>
@@ -420,7 +420,7 @@ export default function AdminPage() {
           </div>
 
           {/* 신랑측 vs 신부측 참석 인원 */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+          <div className="bg-white/5 rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
             <p className="text-[11px] font-semibold text-slate-400 tracking-wider uppercase">측별 참석 인원</p>
             {([
               { label: "신랑측", value: groomGuests, color: "bg-sky-400" },
@@ -440,7 +440,7 @@ export default function AdminPage() {
           </div>
 
           {/* ── 응답 목록 ── */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+          <div className="bg-white/5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
             <div className="hidden md:flex items-center gap-4 px-6 py-2.5 bg-slate-50 border-b border-slate-100 rounded-t-2xl">
               <span className="w-24 flex-shrink-0 text-[11px] font-semibold text-slate-400 tracking-wider uppercase text-center">이름</span>
               <span className="w-16 flex-shrink-0 text-[11px] font-semibold text-slate-400 tracking-wider uppercase text-center">측</span>

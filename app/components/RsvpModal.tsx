@@ -2,54 +2,67 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarCheck, Minus, Plus, X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
+import { weddingData } from "@/app/data/mock";
 
-type Step = "choice" | "form" | "thanks" | "done";
-type Mode = "hidden" | "open" | "min";
-
-const STORAGE_KEY = "rsvp-status"; // "done" | "later"
 const ID_KEY = "rsvp-id"; // 마지막 응답의 uuid — 재제출 시 교체용
-const ANSWER_KEY = "rsvp-answer"; // "attend" | "decline" — done 화면 표시용
+const ANSWER_KEY = "rsvp-answer"; // "attend" | "decline"
+
+type Side = "groom" | "bride";
 
 export default function RsvpModal() {
-  const [mode, setMode] = useState<Mode>("hidden");
-  const [step, setStep] = useState<Step>("choice");
+  const { wedding, venue } = weddingData;
+
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [side, setSide] = useState<"groom" | "bride" | null>(null);
+  const [side, setSide] = useState<Side | null>(null);
+  const [attending, setAttending] = useState<boolean | null>(null);
   const [headcount, setHeadcount] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [thanksText, setThanksText] = useState("소중한 마음 감사합니다");
+  const [done, setDone] = useState(false);
 
-  // 봉투 열림 후 page.tsx가 쏘는 이벤트로 등장
   useEffect(() => {
     const show = () => {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === "done") {
-        setStep("done");
-        setMode("min"); // 이미 응답한 사람은 버튼만
-      } else {
-        setStep("choice");
-        setMode("open"); // 미응답·나중에 → 모달 자동 등장
-      }
+      setDone(false);
+      setError("");
+      setOpen(true);
     };
     window.addEventListener("rsvp-show", show);
     return () => window.removeEventListener("rsvp-show", show);
   }, []);
 
-  const minimize = (remember?: "later") => {
-    if (remember && localStorage.getItem(STORAGE_KEY) !== "done") {
-      localStorage.setItem(STORAGE_KEY, remember);
-    }
-    setMode("min");
-  };
+  // 모달이 열려 있는 동안 뒤로가기로 닫히게 하고 배경 스크롤을 잠근다
+  useEffect(() => {
+    if (!open) return;
+    document.body.classList.add("overlay-open");
+    window.history.pushState({ rsvp: true }, "");
+    let pushed = true;
+    const pop = () => {
+      pushed = false;
+      setOpen(false);
+    };
+    window.addEventListener("popstate", pop);
+    return () => {
+      window.removeEventListener("popstate", pop);
+      document.body.classList.remove("overlay-open");
+      if (pushed) window.history.back();
+    };
+  }, [open]);
 
-  const send = async (payload: {
-    attending: boolean;
-    name?: string;
-    side?: "groom" | "bride" | null;
-    headcount?: number;
-  }) => {
+  const submit = async () => {
+    if (attending === null) {
+      setError("참석 여부를 선택해주세요");
+      return;
+    }
+    if (!name.trim()) {
+      setError("성함을 입력해주세요");
+      return;
+    }
+    if (!side) {
+      setError("신랑측/신부측을 선택해주세요");
+      return;
+    }
     setSubmitting(true);
     setError("");
     try {
@@ -57,237 +70,176 @@ export default function RsvpModal() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...payload,
+          attending,
+          name: name.trim(),
+          side,
+          headcount: attending ? headcount : 0,
           replaceId: localStorage.getItem(ID_KEY) ?? undefined,
         }),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) {
         setError(data?.error ?? "전송에 실패했어요. 잠시 후 다시 시도해주세요");
-        return false;
+        return;
       }
       if (data?.id) localStorage.setItem(ID_KEY, data.id);
-      localStorage.setItem(STORAGE_KEY, "done");
-      localStorage.setItem(ANSWER_KEY, payload.attending ? "attend" : "decline");
-      return true;
+      localStorage.setItem(ANSWER_KEY, attending ? "attend" : "decline");
+      setDone(true);
+      setTimeout(() => setOpen(false), 1500);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // 불참: 입력 없이 익명 원탭 제출
-  const declineNow = async () => {
-    const ok = await send({ attending: false });
-    if (!ok) return;
-    setThanksText("마음만으로도 감사합니다");
-    setStep("thanks");
-    setTimeout(() => {
-      setStep("done");
-      setMode("min");
-    }, 1400);
-  };
-
-  const submitAttend = async () => {
-    if (!name.trim()) { setError("이름을 입력해주세요"); return; }
-    if (!side) { setError("신랑측/신부측을 선택해주세요"); return; }
-    const ok = await send({ attending: true, name: name.trim(), side, headcount });
-    if (!ok) return;
-    setThanksText("소중한 마음 감사합니다");
-    setStep("thanks");
-    setTimeout(() => {
-      setStep("done");
-      setMode("min");
-    }, 1400);
-  };
-
-  const reopen = () => {
-    if (localStorage.getItem(STORAGE_KEY) === "done") setStep("done");
-    else setStep("choice");
-    setMode("open");
-  };
-
-  const sideButton = (value: "groom" | "bride", label: string) => (
-    <button
-      onClick={() => setSide(value)}
-      className={`flex-1 py-2.5 text-xs font-serif rounded-xl border transition-colors ${
-        side === value
-          ? "bg-blush/20 border-blush-dark text-charcoal"
-          : "bg-white border-blush/30 text-charcoal-light"
-      }`}
-    >
-      {label}
-    </button>
-  );
-
-  const answered = typeof window !== "undefined" ? localStorage.getItem(ANSWER_KEY) : null;
-
   return (
-    <>
-      <AnimatePresence>
-        {mode === "open" && (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm px-4 py-6 overflow-y-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setOpen(false)}
+        >
           <motion.div
-            key="backdrop"
-            className="fixed inset-0 z-40 bg-charcoal/40"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => minimize("later")}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence mode="popLayout">
-        {mode === "open" && (
-          <motion.div
-            key="modal"
-            layoutId="rsvp"
-            className="fixed z-40 inset-x-6 top-1/2 -translate-y-1/2 max-w-sm mx-auto bg-cream rounded-3xl shadow-xl overflow-hidden"
-            transition={{ type: "spring", stiffness: 320, damping: 30 }}
+            className="relative w-full max-w-sm rounded-3xl bg-ink border border-white/15 px-6 py-7 my-auto"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 20, opacity: 0 }}
+            transition={{ type: "spring", damping: 26, stiffness: 260 }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative px-6 py-8">
-              {/* 닫기(최소화) */}
-              <button
-                onClick={() => minimize("later")}
-                aria-label="닫기"
-                className="absolute top-4 right-4 text-charcoal-light/50 active:text-charcoal transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            <button
+              onClick={() => setOpen(false)}
+              aria-label="닫기"
+              className="absolute top-4 right-4 text-white/60"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
-              {step === "choice" && (
-                <div className="text-center">
-                  <p className="font-cormorant italic text-gold tracking-widest text-xs mb-2">R.S.V.P.</p>
-                  <h3 className="font-serif text-lg text-charcoal mb-1">참석 의사 전달</h3>
-                  <p className="font-serif text-xs text-charcoal-light leading-5 mb-6">
-                    축하의 마음으로 참석해 주시는 한 분 한 분을
-                    <br />
-                    소중히 준비하고자 합니다
+            {done ? (
+              <p className="py-10 text-center text-white text-lg">
+                소중한 마음 감사합니다
+              </p>
+            ) : (
+              <>
+                {/* 시안 2-2: 감사 인사 대신 예식 정보 */}
+                <div className="text-center text-white pb-5 mb-5 border-b border-white/12">
+                  <p className="text-pink text-sm">참석 여부</p>
+                  <p className="mt-2.5 text-[15px]">
+                    {wedding.date} {wedding.dayOfWeek} {wedding.time}
                   </p>
-                  <div className="space-y-2.5">
-                    <button
-                      onClick={() => setStep("form")}
-                      className="w-full py-3 bg-blush-dark text-white text-sm font-serif rounded-xl active:brightness-95 transition-all"
-                    >
-                      참석할게요
-                    </button>
-                    <button
-                      onClick={declineNow}
-                      disabled={submitting}
-                      className="w-full py-3 bg-white border border-blush/40 text-charcoal text-sm font-serif rounded-xl active:bg-blush/10 disabled:opacity-60 transition-colors"
-                    >
-                      {submitting ? "전달 중..." : "참석이 어려워요"}
-                    </button>
-                    <button
-                      onClick={() => minimize("later")}
-                      className="w-full py-2 text-xs font-serif text-charcoal-light/60 underline underline-offset-2"
-                    >
-                      나중에 답할게요
-                    </button>
-                  </div>
-                  {error && <p className="mt-3 text-xs text-rose-400 font-serif">{error}</p>}
+                  <p className="mt-1 text-[13px] text-white/75">
+                    {venue.name} {venue.hall}
+                  </p>
                 </div>
-              )}
 
-              {step === "form" && (
-                <div>
-                  <p className="text-center font-serif text-sm text-charcoal mb-5">
-                    참석 정보를 알려주세요
-                  </p>
-                  <div className="space-y-3">
+                {/* 시안 2-1: 한 화면에 모두 */}
+                <div className="space-y-4">
+                  <Field label="참석 여부">
+                    <div className="flex gap-2">
+                      <Choice active={attending === true} onClick={() => setAttending(true)}>
+                        참석
+                      </Choice>
+                      <Choice active={attending === false} onClick={() => setAttending(false)}>
+                        불참
+                      </Choice>
+                    </div>
+                  </Field>
+
+                  <Field label="성함">
                     <input
-                      type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="성함"
+                      placeholder="성함을 입력해주세요"
                       maxLength={20}
-                      className="w-full px-4 py-3 border border-blush/30 rounded-xl text-sm font-serif text-charcoal bg-white focus:outline-none focus:border-blush-dark placeholder:text-charcoal-light/40"
+                      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-sm text-white focus:outline-none focus:border-pink placeholder:text-white/35"
                     />
+                  </Field>
+
+                  <Field label="어느 측 하객이신가요">
                     <div className="flex gap-2">
-                      {sideButton("groom", "신랑측")}
-                      {sideButton("bride", "신부측")}
+                      <Choice active={side === "groom"} onClick={() => setSide("groom")}>
+                        신랑측
+                      </Choice>
+                      <Choice active={side === "bride"} onClick={() => setSide("bride")}>
+                        신부측
+                      </Choice>
                     </div>
-                    <div className="flex items-center justify-between bg-white border border-blush/30 rounded-xl px-4 py-2.5">
-                      <span className="text-xs font-serif text-charcoal-light">본인 포함 인원</span>
-                      <div className="flex items-center gap-3">
+                  </Field>
+
+                  {attending !== false && (
+                    <Field label="참석 인원">
+                      <div className="flex items-center justify-between rounded-xl border border-white/20 bg-white/5 px-4 py-2.5">
                         <button
                           onClick={() => setHeadcount((n) => Math.max(1, n - 1))}
                           aria-label="인원 줄이기"
-                          className="w-6 h-6 flex items-center justify-center rounded-full border border-blush/40 text-charcoal-light active:bg-blush/10"
+                          className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center"
                         >
-                          <Minus className="w-3 h-3" />
+                          <Minus className="w-4 h-4" />
                         </button>
-                        <span className="w-6 text-center text-sm font-serif text-charcoal">{headcount}</span>
+                        <span className="text-white tabular-nums">{headcount}명</span>
                         <button
-                          onClick={() => setHeadcount((n) => Math.min(10, n + 1))}
+                          onClick={() => setHeadcount((n) => Math.min(20, n + 1))}
                           aria-label="인원 늘리기"
-                          className="w-6 h-6 flex items-center justify-center rounded-full border border-blush/40 text-charcoal-light active:bg-blush/10"
+                          className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center"
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="w-4 h-4" />
                         </button>
                       </div>
-                    </div>
-                    {error && <p className="text-xs text-rose-400 font-serif text-center">{error}</p>}
-                    <button
-                      onClick={submitAttend}
-                      disabled={submitting}
-                      className="w-full py-3 bg-blush-dark text-white text-sm font-serif rounded-xl active:brightness-95 disabled:opacity-60 transition-all"
-                    >
-                      {submitting ? "전달 중..." : "전달하기"}
-                    </button>
-                    <button
-                      onClick={() => setStep("choice")}
-                      className="w-full py-1.5 text-xs font-serif text-charcoal-light/60"
-                    >
-                      ← 다시 선택
-                    </button>
-                  </div>
+                    </Field>
+                  )}
                 </div>
-              )}
 
-              {step === "thanks" && (
-                <div className="text-center py-6">
-                  <p className="font-script text-blush-dark text-4xl mb-3">♥</p>
-                  <p className="font-serif text-sm text-charcoal">{thanksText}</p>
-                </div>
-              )}
+                {error && <p className="text-xs text-red-400 mt-3">{error}</p>}
 
-              {step === "done" && (
-                <div className="text-center py-2">
-                  <p className="font-script text-blush-dark text-4xl mb-3">♥</p>
-                  <p className="font-serif text-sm text-charcoal mb-1">
-                    {answered === "decline"
-                      ? "불참 의사가 전달되었어요"
-                      : "참석 의사가 전달되었어요"}
-                  </p>
-                  <p className="font-serif text-xs text-charcoal-light mb-5">
-                    사정이 바뀌면 언제든 변경할 수 있어요
-                  </p>
-                  <button
-                    onClick={() => { setError(""); setStep("choice"); }}
-                    className="text-xs font-serif text-blush-dark underline underline-offset-2"
-                  >
-                    응답 변경하기
-                  </button>
-                </div>
-              )}
-            </div>
+                <button
+                  onClick={submit}
+                  disabled={submitting}
+                  className="w-full mt-6 py-3.5 rounded-full bg-pink-soft text-ink text-sm disabled:opacity-40 active:scale-[0.99] transition-transform"
+                >
+                  {submitting ? "전송 중…" : "전달하기"}
+                </button>
+                <p className="text-[11px] text-white/45 text-center mt-3">
+                  마음이 바뀌시면 다시 보내주셔도 괜찮아요
+                </p>
+              </>
+            )}
           </motion.div>
-        )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
-        {mode === "min" && (
-          <motion.button
-            key="fab"
-            layoutId="rsvp"
-            onClick={reopen}
-            aria-label="참석 의사 전달"
-            className="fixed bottom-6 left-5 z-40 flex items-center gap-2 bg-blush-dark text-white text-xs font-serif rounded-full px-4 py-2.5 shadow-lg active:brightness-95"
-            transition={{ type: "spring", stiffness: 320, damping: 30 }}
-          >
-            <CalendarCheck className="w-4 h-4" />
-            참석 여부
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </>
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="text-[12px] text-white/60 mb-1.5">{label}</p>
+      {children}
+    </div>
+  );
+}
+
+function Choice({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex-1 py-3 rounded-xl text-sm transition-colors ${
+        active
+          ? "bg-pink-soft text-ink"
+          : "border border-white/20 bg-white/5 text-white/80"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

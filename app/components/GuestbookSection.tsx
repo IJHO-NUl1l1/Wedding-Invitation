@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle } from "lucide-react";
+import SectionTitle from "@/app/components/SectionTitle";
 
 type Entry = {
   id: string;
@@ -78,9 +79,9 @@ function GuestbookCarousel({ entries }: { entries: Entry[] }) {
   return (
     <div className="max-w-sm mx-auto px-6">
       <div className="flex items-center gap-2 mb-4">
-        <div className="flex-1 h-px bg-blush/20" />
-        <MessageCircle className="w-3.5 h-3.5 text-blush/50" />
-        <div className="flex-1 h-px bg-blush/20" />
+        <div className="flex-1 h-px bg-white/15" />
+        <MessageCircle className="w-3.5 h-3.5 text-pink/60" />
+        <div className="flex-1 h-px bg-white/15" />
       </div>
 
       <div
@@ -101,14 +102,14 @@ function GuestbookCarousel({ entries }: { entries: Entry[] }) {
             className="space-y-2"
           >
             {pageEntries.map((entry) => (
-              <div key={entry.id} className="bg-cream rounded-2xl px-5 py-4">
+              <div key={entry.id} className="rounded-2xl border border-white/15 bg-white/5 px-5 py-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-serif text-sm text-charcoal">{entry.name}</span>
-                  <span className="text-[10px] text-charcoal-light font-cormorant">
+                  <span className="text-sm text-white">{entry.name}</span>
+                  <span className="text-[10px] text-white/50">
                     {new Date(entry.created_at).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}
                   </span>
                 </div>
-                <p className="font-serif text-xs text-charcoal leading-5 whitespace-pre-wrap line-clamp-3">
+                <p className="text-xs text-white/85 leading-5 whitespace-pre-wrap line-clamp-3">
                   {entry.message}
                 </p>
               </div>
@@ -124,7 +125,7 @@ function GuestbookCarousel({ entries }: { entries: Entry[] }) {
               key={i}
               onClick={() => { setDir(i > page ? -1 : 1); setPage(i); }}
               className={`rounded-full transition-all duration-300 ${
-                i === page ? "w-4 h-1.5 bg-blush-dark" : "w-1.5 h-1.5 bg-blush/30"
+                i === page ? "w-4 h-1.5 bg-pink" : "w-1.5 h-1.5 bg-white/30"
               }`}
             />
           ))}
@@ -174,17 +175,15 @@ export default function GuestbookSection() {
 
   return (
     <motion.section
-      className="py-16 bg-white"
+      className="py-16 bg-ink"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7 }}
     >
       <div className="text-center mb-10 px-6">
-        <p className="font-cormorant italic text-gold tracking-widest text-sm mb-2">Guestbook</p>
-        <h2 className="font-serif text-2xl text-charcoal">방명록</h2>
-        <div className="w-12 h-px bg-blush mx-auto mt-3" />
-        <p className="font-serif text-xs text-charcoal-light mt-4 leading-6">
+        <SectionTitle>방명록</SectionTitle>
+        <p className="text-xs text-white/70 leading-6">
           두 사람의 새 출발을 축하하는<br />따뜻한 한마디를 남겨주세요
         </p>
       </div>
@@ -193,16 +192,16 @@ export default function GuestbookSection() {
       <div className="max-w-sm mx-auto px-6 mb-10">
         {submitted ? (
           <motion.div
-            className="bg-cream rounded-2xl p-6 text-center"
+            className="rounded-2xl border border-white/15 bg-white/5 p-6 text-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <p className="font-script text-blush-dark text-3xl mb-2">♥</p>
-            <p className="font-serif text-sm text-charcoal mb-1">소중한 메시지 감사합니다</p>
-            <p className="font-serif text-xs text-charcoal-light mb-4">검토 후 게재됩니다</p>
+            <p className="font-script text-pink text-3xl mb-2">♥</p>
+            <p className="text-sm text-white mb-1">소중한 메시지 감사합니다</p>
+            <p className="text-xs text-white/70 mb-4">검토 후 게재됩니다</p>
             <button
               onClick={() => setSubmitted(false)}
-              className="text-xs font-serif text-blush-dark underline underline-offset-2"
+              className="text-xs text-pink underline underline-offset-2"
             >
               다시 작성
             </button>
@@ -217,7 +216,7 @@ export default function GuestbookSection() {
               onChange={(e) => setName(e.target.value)}
               maxLength={20}
               required
-              className="w-full px-4 py-3 border border-blush/30 rounded-xl text-sm font-serif text-charcoal bg-cream focus:outline-none focus:border-blush-dark placeholder:text-charcoal-light/40"
+              className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-sm text-white focus:outline-none focus:border-pink placeholder:text-white/35"
             />
             <textarea
               placeholder="축하 메시지를 남겨주세요 (300자 이내)"
@@ -226,20 +225,20 @@ export default function GuestbookSection() {
               maxLength={300}
               rows={4}
               required
-              className="w-full px-4 py-3 border border-blush/30 rounded-xl text-sm font-serif text-charcoal bg-cream focus:outline-none focus:border-blush-dark placeholder:text-charcoal-light/40 resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-sm text-white focus:outline-none focus:border-pink placeholder:text-white/35 resize-none"
             />
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-charcoal-light font-cormorant">
+              <span className="text-[10px] text-white/50">
                 {message.length} / 300
               </span>
               {error && (
-                <span className="text-xs text-red-400 font-serif">{error}</span>
+                <span className="text-xs text-red-400">{error}</span>
               )}
             </div>
             <button
               type="submit"
               disabled={submitting || !name.trim() || !message.trim()}
-              className="w-full py-3 bg-blush text-white font-serif text-sm rounded-xl tracking-widest disabled:opacity-40 active:bg-blush-dark transition-colors"
+              className="w-full py-3 rounded-xl bg-pink-soft text-ink text-sm tracking-widest disabled:opacity-40 active:scale-[0.99] transition-transform"
             >
               {submitting ? "전송 중..." : "메시지 보내기"}
             </button>

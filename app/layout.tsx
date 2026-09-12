@@ -1,23 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Serif_KR, Cormorant_Garamond, Great_Vibes } from "next/font/google";
+import { Hahmlet, Nanum_Pen_Script, Yellowtail } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const notoSerifKR = Noto_Serif_KR({
-  variable: "--font-noto-serif",
+const hahmlet = Hahmlet({
+  variable: "--font-hahmlet",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const nanumPen = Nanum_Pen_Script({
+  variable: "--font-hand",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: "400",
 });
 
-const greatVibes = Great_Vibes({
-  variable: "--font-great-vibes",
+const yellowtail = Yellowtail({
+  variable: "--font-script",
   subsets: ["latin"],
   weight: "400",
 });
@@ -57,7 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${notoSerifKR.variable} ${cormorant.variable} ${greatVibes.variable} h-full`}
+      className={`${hahmlet.variable} ${nanumPen.variable} ${yellowtail.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         {children}

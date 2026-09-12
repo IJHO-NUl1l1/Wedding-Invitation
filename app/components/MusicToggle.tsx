@@ -7,7 +7,8 @@ export default function MusicToggle() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
 
-  // 봉투 열기 클릭(사용자 제스처) 시점에 재생 시작 — 자동재생 차단 회피
+  // 브라우저 자동재생 정책상 사용자 제스처가 있어야 재생된다.
+  // 봉투 화면이 사라졌으므로 첫 상호작용을 재생 트리거로 사용한다.
   useEffect(() => {
     const start = () => {
       const audio = audioRef.current;
@@ -18,8 +19,8 @@ export default function MusicToggle() {
         .then(() => setPlaying(true))
         .catch(() => setPlaying(false));
     };
-    window.addEventListener("bgm-start", start);
-    return () => window.removeEventListener("bgm-start", start);
+    window.addEventListener("pointerdown", start, { once: true });
+    return () => window.removeEventListener("pointerdown", start);
   }, []);
 
   const toggle = () => {
@@ -43,16 +44,12 @@ export default function MusicToggle() {
       <button
         onClick={toggle}
         aria-label={playing ? "배경음악 끄기" : "배경음악 켜기"}
-        className="fixed top-4 right-4 z-40 flex items-center justify-center w-9 h-9 rounded-full bg-white/70 backdrop-blur-sm shadow-md border border-blush/20 active:bg-white transition-colors"
+        className="fixed top-4 right-4 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/25 active:scale-95 transition-transform"
       >
         <span className="relative flex items-center justify-center">
-          <Music
-            className={`w-4 h-4 transition-colors ${
-              playing ? "text-blush-dark" : "text-charcoal-light/50"
-            }`}
-          />
+          <Music className={`w-4 h-4 ${playing ? "text-pink" : "text-white/50"}`} />
           {!playing && (
-            <span className="absolute w-5 h-px bg-charcoal-light/60 rotate-45 rounded-full" />
+            <span className="absolute w-5 h-px bg-white/60 rotate-45 rounded-full" />
           )}
         </span>
       </button>
