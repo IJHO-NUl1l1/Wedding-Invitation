@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
@@ -116,7 +117,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             deg={-8}
           >
             {/* 2판에는 이 사진 하나만 누를 수 있어 1판처럼 순서를 둘 필요가 없다 */}
-            <TapChip className="right-[5%] bottom-[11%]" />
+            <TapChip className="right-[5%] bottom-[11%]" appear={0.15} />
           </Tile>
 
           {/* 어린시절 사진·하트는 장식이라 눌러도 세부 페이지로 가지 않는다 */}
@@ -230,6 +231,7 @@ function Tile({
           sizes="(max-width: 448px) 90vw, 400px"
           className="block h-auto w-full"
         />
+        {onClick && <HandBorder seed={cx * 7 + cy} />}
         {children}
       </motion.div>
     </Box>
@@ -293,8 +295,17 @@ function Silhouette({
  * 누를 수 있는 사진 모서리에 붙인 분홍 스티커. 흰 UI 버튼 대신 스크랩북 페이지(리본·하트·분홍 종이)와 어울리도록
  * 연분홍 바탕 + 흰 테두리로 살짝 기울여 붙이고, 뒤로 은은한 물결이 가끔 퍼져 누를 곳임을 알린다.
  */
-function TapChip({ className, delay = 0 }: { className: string; delay?: number }) {
-  // 장식 없이 작은 흰 알약 하나. 은은하게 숨 쉬듯 깜빡여 누를 수 있다는 것만 알린다.
+function TapChip({
+  className,
+  delay = 0,
+  appear = 1.1,
+}: {
+  className: string;
+  delay?: number;
+  /** 화면에 들어온 뒤 글씨가 나타나기까지 걸리는 시간(초) */
+  appear?: number;
+}) {
+  // 배경 없이 흰 글씨만. 사진의 점선 테두리와 같은 박자로 깜빡인다.
   return (
     <motion.span
       aria-hidden
@@ -302,17 +313,87 @@ function TapChip({ className, delay = 0 }: { className: string; delay?: number }
       initial={{ opacity: 0, y: 6 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, ease: "easeOut", delay: 1.1 + delay }}
+      transition={{ duration: 0.4, ease: "easeOut", delay: appear + delay }}
     >
       <motion.span
-        className="inline-block rounded-full bg-white/90 px-[2.6cqw] py-[1.1cqw] text-[2.9cqw] font-medium leading-none tracking-[0.18em] text-pink-deep"
-        animate={{ opacity: [1, 0.55, 1] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 2 + delay }}
+        className={`inline-block font-hand text-[6.4cqw] leading-none text-white ${SHADOW}`}
+        style={{ rotate: -8 }}
+        animate={{ y: [0, "-0.8cqw", 0] }}
+        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
       >
-        CLICK
+        Click!
       </motion.span>
     </motion.span>
   );
+}
+
+/**
+ * 누를 수 있는 사진을 두르는 손으로 그린 듯한 흰 점선.
+ * 모서리·변마다 살짝 흔들린 선을 사진 실제 크기(px)로 그려, 점 간격이 사진 크기와 상관없이 일정하다.
+ * 깜빡이는 대신 점선이 사진 둘레를 천천히 돌아 시선을 끈다.
+ */
+function HandBorder({ seed }: { seed: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setSize({ w: e.contentRect.width, h: e.contentRect.height }));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const d = useMemo(() => (size ? wobblyRect(size.w, size.h, seed) : ""), [size, seed]);
+
+  return (
+    <span ref={ref} aria-hidden className="pointer-events-none absolute -inset-[2.2cqw]">
+      {size && (
+        <svg className="absolute inset-0 h-full w-full overflow-visible" viewBox={`0 0 ${size.w} ${size.h}`}>
+          <motion.path
+            d={d}
+            fill="none"
+            stroke="white"
+            strokeWidth={2.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray="9 17"
+            style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.25))" }}
+            animate={{ strokeDashoffset: [0, -52] }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: "linear" }}
+          />
+        </svg>
+      )}
+    </span>
+  );
+}
+
+/** 사각형 둘레를 따라 조금씩 어긋난 점을 찍고 부드럽게 이어 손그림처럼 만든다. seed가 같으면 모양도 같다. */
+function wobblyRect(w: number, h: number, seed: number) {
+  let s = seed * 9301 + 49297;
+  const rand = () => ((s = (s * 9301 + 49297) % 233280) / 233280) - 0.5;
+  const amp = 2.2;
+  const pts: [number, number][] = [];
+  const edge = (x0: number, y0: number, x1: number, y1: number) => {
+    const n = Math.max(3, Math.round(Math.hypot(x1 - x0, y1 - y0) / 45));
+    for (let i = 0; i < n; i++) {
+      const t = i / n;
+      pts.push([x0 + (x1 - x0) * t + rand() * amp, y0 + (y1 - y0) * t + rand() * amp]);
+    }
+  };
+  edge(0, 0, w, 0);
+  edge(w, 0, w, h);
+  edge(w, h, 0, h);
+  edge(0, h, 0, 0);
+  // 끝점을 살짝 지나치게 닫아 손으로 한 바퀴 그린 느낌을 낸다
+  const mid = (a: [number, number], b: [number, number]) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  let path = `M ${mid(pts[pts.length - 1], pts[0]).join(" ")}`;
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i];
+    const m = mid(p, pts[(i + 1) % pts.length]);
+    path += ` Q ${p[0].toFixed(1)} ${p[1].toFixed(1)} ${m[0].toFixed(1)} ${m[1].toFixed(1)}`;
+  }
+  return path;
 }
 
 function Bows({ at }: { at: [number, number][] }) {
