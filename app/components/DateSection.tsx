@@ -56,14 +56,14 @@ export default function DateSection() {
         {/* 위/아래에 여백 띠를 두고 그 안에 일러스트를 넣어 날짜와 겹치지 않게 한다 */}
         <div className="relative overflow-hidden bg-pink-soft px-5 pt-8 pb-32 text-ink">
           <Image
-            src="/images/deco-glass-right.png"
+            src="/images/date-glass-right.png"
             alt=""
             width={231}
             height={298}
             className="pointer-events-none absolute right-0 top-1 w-[23%] h-auto"
           />
           <Image
-            src="/images/deco-glass-left.png"
+            src="/images/date-glass-left.png"
             alt=""
             width={229}
             height={329}

@@ -7,7 +7,7 @@
 
 ## 1. 시안이 요구하는 것 (수정사항 7개 + 구조)
 
-### 1-1. 명시된 수정 요청 (`design-reference/00-수정사항.png`)
+### 1-1. 명시된 수정 요청 (`design-reference/00-revisions.png`)
 
 | # | 요청 | 현재 상태 | 판정 |
 |---|---|---|---|
@@ -101,6 +101,59 @@
 - 신부 어린시절 **투명 누끼본** (public에 있는 건 흰배경본)
 - 표지 블롭 마스크 형태 (사진은 원본 `IMG_6575` 사용하고 마스크 모양만 참고)
 
+**사진 이름표 (`public/images/`, 2026-09-15 정리)**
+
+규칙: `파트-번호`. 번호는 그 파트 안에서 보이는 순서다. 사진이 아닌 장식 파일은 `파트-역할`로 쓴다.
+한 사진이 두 파트에 나오면 처음 나오는 파트 이름을 쓴다.
+
+| 파트 | 파일 | 내용 |
+|---|---|---|
+| 표지 | `cover-01.jpg` | 커플사진 |
+| 표지 | `cover-frame.jpg` | 레이스 프레임 (장식) |
+| 인물 선택 | `people-01.jpg` | 신랑 가족사진 (신랑 페이지에도 사용) |
+| 인물 선택 | `people-02.jpg` | 신부 가족사진 (신부 페이지에도 사용) |
+| 인물 선택 | `people-03.jpg` | 우리 이야기 썸네일 |
+| 인물 선택 | `people-bg.jpg` | 핑크 종이 배경 (장식) |
+| 신랑 | `groom-01.jpg` | 어머니 편지 |
+| 신랑 | `groom-02.jpg` | 아버지 편지 |
+| 신랑 | `groom-03.jpg` | 어린시절 |
+| 신부 | `bride-01.jpg` | 아버지 편지 |
+| 신부 | `bride-02.jpg` | 어머니 편지 |
+| 신부 | `bride-03.png` | 어린시절 (투명 누끼) |
+| 우리 이야기 | `story-01.jpg` | 비눗방울 사진 |
+| 우리 이야기 | `story-02.jpg` | 장미 든 신부 |
+| 갤러리 | `gallery-01` ~ `gallery-21.jpg` | 01~10 야외·흰 드레스 / 11~18 한복 / 19~21 우산·다리 |
+| 달력 | `date-glass-left.png`, `date-glass-right.png` | 샴페인잔 일러스트 (장식) |
+
+쓰지 않는 파일 5개는 배포되지 않도록 `design-reference/assets/unused/`로 옮겼다
+(검정·적갈 배경 이미지, 표지 블롭 마스크본, 신부 어린시절 흰배경본, 야간 한강 컷).
+
+**시안 이미지 이름표 (`design-reference/`)**
+
+파일 이름은 모두 영어로 쓰고, 파트 이름은 위 사진 이름표와 같은 단어를 쓴다.
+
+| 파일 | 내용 |
+|---|---|
+| `00-revisions.png` | 수정사항 7개 |
+| `01-cover.png` | 표지 |
+| `02-greeting.png` | 인사말 |
+| `03-people.png` | 인물 선택 |
+| `04-groom.png` | 신랑 상세 |
+| `05-bride.png` | 신부 상세 |
+| `06-story.png` | 우리 이야기 |
+| `07-gallery.png` | 갤러리 |
+| `08-venue.png` | 오시는 길 |
+| `09-date-guestbook-rsvp.png` | 달력 · 방명록 · 참석여부 |
+| `10-date-calendar.png` | 달력 스타일 참고 |
+| `assets/date-calendar.png` | 달력 디자인 원본 |
+| `assets/section-title-pill.png` | 섹션 제목 pill 배지 |
+| `assets/cover-blob-mask.png` | 표지 블롭 마스크 |
+| `assets/people-bg.png` | 핑크 종이 배경 원본 |
+| `v2-revision-0914/01-people-top.png` | 2차 수정: 인물 선택 상단 |
+| `v2-revision-0914/02-people-bottom.png` | 2차 수정: 인물 선택 하단 |
+| `v2-revision-0914/03-groom.png` | 2차 수정: 신랑 상세 |
+| `v2-revision-0914/04-bride.png` | 2차 수정: 신부 상세 |
+
 ### ✅ 확정된 사항 (2026-09-12 사용자 확인)
 
 - **예식일**: 2026년 11월 14일 (토) 12:20 — 달력 시안의 `2026.05.02`는 템플릿 오류로 확정
@@ -150,7 +203,7 @@
 ### Phase 2 — 에셋 정리
 6. PDF에서 투명 누끼 에셋 추출 → `public/images/`로 이동
 7. `mock.ts`의 picsum 플레이스홀더를 실제 파일 경로로 전면 교체
-8. 사진 파일명을 용도 기반으로 리네이밍 (`IMG_4170` → `letter-groom-mother` 등)
+8. 사진 파일명을 `파트-번호`로 리네이밍 (`IMG_4170` → `groom-01` 등, 위 사진 이름표 참고)
 
 ### Phase 3 — 페이지별 구현
 9. 표지: 레이스 프레임 + 블롭 마스크 커플사진 + 날짜/장소

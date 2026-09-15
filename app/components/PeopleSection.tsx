@@ -6,7 +6,7 @@ import { weddingData } from "@/app/data/mock";
 
 type Person = "groom" | "bride" | "story";
 
-/** bg-pink-paper.jpg 안쪽 크림 종이 영역의 실측 위치 (944x1666 기준) */
+/** people-bg.jpg 안쪽 크림 종이 영역의 실측 위치 (944x1666 기준) */
 const CREAM = { left: "7%", top: "12.1%", width: "85.8%", height: "77.6%" };
 
 /**
@@ -23,7 +23,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
     <section id="people-section" className="bg-ink">
       <div className="relative max-w-md mx-auto">
         <Image
-          src="/images/bg-pink-paper.jpg"
+          src="/images/people-bg.jpg"
           alt=""
           width={944}
           height={1666}

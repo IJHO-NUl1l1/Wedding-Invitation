@@ -22,18 +22,18 @@ type Item = {
 
 // 배열 순서 = 뒤→앞. 가족사진(맨뒤) → 흰 편지(엄마) → 아이사진 → 갈색 편지(아빠, 맨앞은 그대로 유지).
 const GROOM: Item[] = [
-  { key: "family", src: "/images/family-groom.jpg", alt: "가족사진", cx: 32, cy: 57, w: 65, deg: 0 },
-  { key: "letter-m", src: "/images/letter-groom-mother.jpg", alt: "어머니의 편지", cx: 33, cy: 19, w: 59, deg: 17 },
-  { key: "child", src: "/images/child-groom.jpg", alt: "어린 시절", cx: 79, cy: 28, w: 29, deg: -15, card: true },
-  { key: "letter-f", src: "/images/letter-groom-father.jpg", alt: "아버지의 편지", cx: 66, cy: 76, w: 65, deg: -15 },
+  { key: "family", src: "/images/people-01.jpg", alt: "가족사진", cx: 32, cy: 57, w: 65, deg: 0 },
+  { key: "letter-m", src: "/images/groom-01.jpg", alt: "어머니의 편지", cx: 33, cy: 19, w: 59, deg: 17 },
+  { key: "child", src: "/images/groom-03.jpg", alt: "어린 시절", cx: 79, cy: 28, w: 29, deg: -15, card: true },
+  { key: "letter-f", src: "/images/groom-02.jpg", alt: "아버지의 편지", cx: 66, cy: 76, w: 65, deg: -15 },
 ];
 
 // 배열 순서 = 뒤→앞. 흰 편지가 맨 뒤, 가족사진이 맨 앞.
 const BRIDE: Item[] = [
-  { key: "letter-f", src: "/images/letter-bride-father.jpg", alt: "아버지의 편지", cx: 25, cy: 29, w: 50, deg: -5 },
-  { key: "letter-m", src: "/images/letter-bride-mother.jpg", alt: "어머니의 편지", cx: 72, cy: 40, w: 53, deg: 13 },
-  { key: "child", src: "/images/child-bride-cutout.png", alt: "어린 시절", cx: 92, cy: 22, w: 24, deg: 0 },
-  { key: "family", src: "/images/family-bride.jpg", alt: "가족사진", cx: 48, cy: 77, w: 88, deg: 0 },
+  { key: "letter-f", src: "/images/bride-01.jpg", alt: "아버지의 편지", cx: 25, cy: 29, w: 50, deg: -5 },
+  { key: "letter-m", src: "/images/bride-02.jpg", alt: "어머니의 편지", cx: 72, cy: 40, w: 53, deg: 13 },
+  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 92, cy: 22, w: 24, deg: 0 },
+  { key: "family", src: "/images/people-02.jpg", alt: "가족사진", cx: 48, cy: 77, w: 88, deg: 0 },
 ];
 
 export default function PersonDetail({ who }: { who: "groom" | "bride" }) {

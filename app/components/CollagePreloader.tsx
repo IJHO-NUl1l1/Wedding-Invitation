@@ -13,16 +13,16 @@ import Image from "next/image";
  * width만으로 srcset을 만들기 때문에, 값이 같아야 같은 URL을 요청해 캐시가 실제로 맞는다.
  */
 const WARM: { src: string; width: number; height: number }[] = [
-  { src: "/images/letter-groom-mother.jpg", width: 1000, height: 1300 },
-  { src: "/images/letter-groom-father.jpg", width: 1000, height: 1300 },
-  { src: "/images/family-groom.jpg", width: 1000, height: 1300 },
-  { src: "/images/child-groom.jpg", width: 1000, height: 1300 },
-  { src: "/images/letter-bride-father.jpg", width: 1000, height: 1300 },
-  { src: "/images/letter-bride-mother.jpg", width: 1000, height: 1300 },
-  { src: "/images/family-bride.jpg", width: 1000, height: 1300 },
-  { src: "/images/child-bride-cutout.png", width: 1000, height: 1300 },
-  { src: "/images/story-bubbles.jpg", width: 1000, height: 1400 },
-  { src: "/images/story-bride-roses.jpg", width: 1000, height: 1400 },
+  { src: "/images/groom-01.jpg", width: 1000, height: 1300 },
+  { src: "/images/groom-02.jpg", width: 1000, height: 1300 },
+  { src: "/images/people-01.jpg", width: 1000, height: 1300 },
+  { src: "/images/groom-03.jpg", width: 1000, height: 1300 },
+  { src: "/images/bride-01.jpg", width: 1000, height: 1300 },
+  { src: "/images/bride-02.jpg", width: 1000, height: 1300 },
+  { src: "/images/people-02.jpg", width: 1000, height: 1300 },
+  { src: "/images/bride-03.png", width: 1000, height: 1300 },
+  { src: "/images/story-01.jpg", width: 1000, height: 1400 },
+  { src: "/images/story-02.jpg", width: 1000, height: 1400 },
 ];
 
 export default function CollagePreloader() {

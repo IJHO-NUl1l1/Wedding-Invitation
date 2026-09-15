@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
 
-// frame-lace.jpg 안쪽 타원 구멍의 실측 위치 (868x859 기준)
+// cover-frame.jpg 안쪽 타원 구멍의 실측 위치 (868x859 기준)
 const HOLE = { left: "23.3%", top: "18.7%", width: "51.5%", height: "61.2%" };
 
 export default function HeroSection() {

@@ -99,8 +99,8 @@ export const weddingData = {
   },
   /** 표지 */
   cover: {
-    image: "/images/cover-couple.jpg",
-    frame: "/images/frame-lace.jpg",
+    image: "/images/cover-01.jpg",
+    frame: "/images/cover-frame.jpg",
     titleEn: "Forever Begins Today!",
     subtitleEn: "we are getting married!",
   },
@@ -119,64 +119,65 @@ export const weddingData = {
 
   /** 인물 선택 — 시안 3페이지 */
   people: {
-    groom: { thumb: "/images/family-groom.jpg", label: "고기환 · 김미영의 장남", name: "고희성" },
-    bride: { thumb: "/images/family-bride.jpg", label: "박준석 · 남양희의 장녀", name: "박지서" },
-    story: { thumb: "/images/story-couple.jpg", label: "우리의", name: "이야기" },
+    groom: { thumb: "/images/people-01.jpg", label: "고기환 · 김미영의 장남", name: "고희성" },
+    bride: { thumb: "/images/people-02.jpg", label: "박준석 · 남양희의 장녀", name: "박지서" },
+    story: { thumb: "/images/people-03.jpg", label: "우리의", name: "이야기" },
   },
 
-  /** 신랑/신부 상세 — 시안 4·5페이지 */
+  /** 신랑/신부 상세 — 시안 4·5페이지. 가족사진은 인물 선택 파트의 사진을 같이 쓴다 */
   groomPage: {
     letters: [
-      { image: "/images/letter-groom-mother.jpg", from: "어머니" },
-      { image: "/images/letter-groom-father.jpg", from: "아버지" },
+      { image: "/images/groom-01.jpg", from: "어머니" },
+      { image: "/images/groom-02.jpg", from: "아버지" },
     ],
-    childhood: "/images/child-groom.jpg",
-    family: "/images/family-groom.jpg",
+    childhood: "/images/groom-03.jpg",
+    family: "/images/people-01.jpg",
   },
   bridePage: {
     letters: [
-      { image: "/images/letter-bride-father.jpg", from: "아버지" },
-      { image: "/images/letter-bride-mother.jpg", from: "어머니" },
+      { image: "/images/bride-01.jpg", from: "아버지" },
+      { image: "/images/bride-02.jpg", from: "어머니" },
     ],
-    childhood: "/images/child-bride-cutout.png",
-    family: "/images/family-bride.jpg",
+    childhood: "/images/bride-03.png",
+    family: "/images/people-02.jpg",
   },
 
   /** 우리 이야기 — 시안 6페이지. 메모 문구는 아직 미작성 */
   storyPage: {
-    photos: ["/images/story-bubbles.jpg", "/images/story-bride-roses.jpg"],
+    photos: ["/images/story-01.jpg", "/images/story-02.jpg"],
     notes: ["미작성", "미작성"],
   },
 
   /**
    * 갤러리 — 촬영 회차별로 묶어 21장(3의 배수). 기본 9장 노출 + '더보기'.
-   * 야간 한강 컷은 '우리 이야기' 페이지에서 이미 쓰므로 갤러리에서는 뺐다.
+   * 야간 한강 컷은 '우리 이야기' 페이지와 겹쳐 갤러리에서 뺐다 (design-reference/assets/unused/).
+   * 파일 번호 = 갤러리에 보이는 순서.
    */
   gallery: [
-    // 야외 · 흰 드레스
+    // 01~10 야외 · 흰 드레스
     "/images/gallery-01.jpg",
-    "/images/gallery-20.jpg",
-    "/images/gallery-19.jpg",
-    "/images/gallery-18.jpg",
-    "/images/gallery-03.jpg",
-    "/images/gallery-14.jpg",
-    "/images/gallery-15.jpg",
     "/images/gallery-02.jpg",
-    "/images/gallery-16.jpg",
+    "/images/gallery-03.jpg",
+    "/images/gallery-04.jpg",
     "/images/gallery-05.jpg",
-    // 한복
     "/images/gallery-06.jpg",
     "/images/gallery-07.jpg",
-    "/images/gallery-10.jpg",
     "/images/gallery-08.jpg",
     "/images/gallery-09.jpg",
+    "/images/gallery-10.jpg",
+    // 11~18 한복
     "/images/gallery-11.jpg",
-    "/images/gallery-21.jpg",
-    "/images/gallery-22.jpg",
-    // 우산 · 다리
     "/images/gallery-12.jpg",
     "/images/gallery-13.jpg",
+    "/images/gallery-14.jpg",
+    "/images/gallery-15.jpg",
+    "/images/gallery-16.jpg",
     "/images/gallery-17.jpg",
+    "/images/gallery-18.jpg",
+    // 19~21 우산 · 다리
+    "/images/gallery-19.jpg",
+    "/images/gallery-20.jpg",
+    "/images/gallery-21.jpg",
   ],
   galleryPreviewCount: 9,
   /** 초대 문구 — 시안 2페이지 */
