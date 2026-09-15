@@ -50,10 +50,10 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             label="신랑 페이지 열기"
             src={people.groom.thumb}
             width={1536}
-            height={2048}
+            height={2100}
             cx={37}
-            cy={23.2}
-            w={63}
+            cy={33}
+            w={59}
             deg={9}
           >
             <Silhouette points={GROOM_KID} ratio={2048 / 1536} delay={0.8} />
@@ -73,8 +73,8 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             width={1078}
             height={774}
             cx={48.9}
-            cy={68.6}
-            w={93}
+            cy={75}
+            w={86}
             deg={-9.5}
             delay={0.1}
           >
@@ -119,9 +119,9 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             <TapChip className="right-[5%] bottom-[11%]" />
           </Tile>
 
+          {/* 어린시절 사진·하트는 장식이라 눌러도 세부 페이지로 가지 않는다 */}
           <Tile
-            onClick={() => onOpen("groom")}
-            label="신랑 페이지 열기"
+            label="어린 시절 신랑"
             src={people.groomChild}
             width={319}
             height={724}
@@ -134,8 +134,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
           />
 
           <Tile
-            onClick={() => onOpen("bride")}
-            label="신부 페이지 열기"
+            label="어린 시절 신부"
             src={people.brideChild}
             width={312}
             height={916}
@@ -187,7 +186,8 @@ function Tile({
   card,
   children,
 }: {
-  onClick: () => void;
+  /** 없으면 누를 수 없는 장식 사진으로 그린다 */
+  onClick?: () => void;
   label: string;
   src: string;
   width: number;
@@ -201,17 +201,18 @@ function Tile({
   card?: boolean;
   children?: React.ReactNode;
 }) {
+  const Box = onClick ? motion.button : motion.div;
   return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
+    <Box
+      {...(onClick
+        ? { type: "button" as const, onClick, "aria-label": label }
+        : { role: "img", "aria-label": label })}
       className="absolute"
       style={{ left: `${cx}%`, top: `${cy}%`, width: `${w}%`, translate: "-50% -50%" }}
       initial={{ opacity: 0, y: 18, rotate: deg }}
       whileInView={{ opacity: 1, y: 0, rotate: deg }}
       viewport={{ once: true, margin: "-40px" }}
-      whileTap={{ scale: 0.97 }}
+      whileTap={onClick ? { scale: 0.97 } : undefined}
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
@@ -231,7 +232,7 @@ function Tile({
         />
         {children}
       </motion.div>
-    </motion.button>
+    </Box>
   );
 }
 

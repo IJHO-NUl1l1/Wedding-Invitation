@@ -17,6 +17,8 @@ type Item = {
   w: number;
   /** 기울어진 각도(°, 양수 = 시계방향) */
   deg: number;
+  /** false면 눌러도 크게 보기가 열리지 않는다 */
+  zoom?: boolean;
 };
 
 /*
@@ -27,14 +29,14 @@ const GROOM: Item[] = [
   { key: "family", src: "/images/people-01.jpg", alt: "가족사진", cx: 66.7, cy: 56.8, w: 59, deg: 1.8 },
   { key: "letter-m", src: "/images/groom-01.jpg", alt: "어머니의 편지", cx: 55, cy: 15, w: 78, deg: -8.5 },
   { key: "letter-f", src: "/images/groom-02.jpg", alt: "아버지의 편지", cx: 48, cy: 89, w: 80, deg: 16 },
-  { key: "child", src: "/images/groom-03.jpg", alt: "어린 시절", cx: 17, cy: 54.1, w: 31.5, deg: -5 },
+  { key: "child", src: "/images/groom-03.jpg", alt: "어린 시절", cx: 17, cy: 54.1, w: 31.5, deg: -5, zoom: false },
 ];
 
 const BRIDE: Item[] = [
   { key: "family", src: "/images/people-02.jpg", alt: "가족사진", cx: 68, cy: 57.7, w: 75, deg: 0 },
   { key: "letter-f", src: "/images/bride-01.jpg", alt: "아버지의 편지", cx: 30, cy: 24, w: 62, deg: -7.3 },
   { key: "letter-m", src: "/images/bride-02.jpg", alt: "어머니의 편지", cx: 36, cy: 85, w: 68.9, deg: 10.1 },
-  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 75.7, cy: 21.4, w: 31, deg: 0 },
+  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 75.7, cy: 21.4, w: 31, deg: 0, zoom: false },
 ];
 
 export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
@@ -50,13 +52,18 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
       </h2>
 
       <div className="relative w-full max-w-md mx-auto aspect-[495/881]">
-        {items.map((it, i) => (
+        {items.map((it, i) => {
+          const zoomable = it.zoom !== false;
+          return (
           <motion.button
             key={it.key}
             type="button"
-            onClick={() => openZoom(it.src, it.alt)}
-            aria-label={`${it.alt} 크게 보기`}
-            className="absolute cursor-zoom-in"
+            // 어린 시절 사진은 확대하지 않는다. disabled 버튼은 탭을 삼켜 아래 사진으로 넘어가지도 않는다.
+            disabled={!zoomable}
+            tabIndex={zoomable ? undefined : -1}
+            onClick={zoomable ? () => openZoom(it.src, it.alt) : undefined}
+            aria-label={zoomable ? `${it.alt} 크게 보기` : undefined}
+            className={`absolute ${zoomable ? "cursor-zoom-in" : "cursor-default"}`}
             style={{
               left: `${it.cx}%`,
               top: `${it.cy}%`,
@@ -69,7 +76,7 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
                 ? { opacity: 1, y: 0, rotate: it.deg }
                 : { opacity: 0, y: 10, rotate: it.deg }
             }
-            whileTap={{ scale: 0.98 }}
+            whileTap={zoomable ? { scale: 0.98 } : undefined}
             transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
@@ -83,7 +90,8 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
             />
           </motion.button>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
