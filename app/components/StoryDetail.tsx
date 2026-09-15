@@ -28,15 +28,15 @@ export default function StoryDetail() {
 
   const items: Item[] = [
     { key: "bubbles", src: storyPage.photos[0], alt: "비눗방울 사진", height: 1400, cx: 30, cy: 24, w: 59, deg: 10 },
-    { key: "memo-grid", src: storyPage.memos[0], alt: "신부의 메모", height: 1000, cx: 88, cy: 25, w: 60, deg: -12 },
+    { key: "memo-grid", src: storyPage.memos[0], alt: "신부의 메모", height: 1000, cx: 80, cy: 25, w: 57, deg: -10 },
     { key: "roses", src: storyPage.photos[1], alt: "장미를 든 신부", height: 1400, cx: 67, cy: 76, w: 55, deg: 0 },
     { key: "memo-lined", src: storyPage.memos[1], alt: "신랑의 메모", height: 1000, cx: 18, cy: 72, w: 60, deg: 10 },
   ];
 
   return (
     <div className="min-h-dvh overflow-x-hidden bg-maroon px-4 pt-16 pb-24">
-      {/* 수정사항 5번: 사진 페이지는 손글씨 대신 기본 폰트를 크게 */}
-      <p className="text-[26px] text-white/90 text-center mb-3">우리의 이야기</p>
+      {/* 화면 제목은 없앴다. 스크린리더용 이름만 남긴다. */}
+      <h2 className="sr-only">우리의 이야기</h2>
 
       <div className="relative w-full max-w-md mx-auto aspect-[495/881]">
         {items.map((it, i) => (
