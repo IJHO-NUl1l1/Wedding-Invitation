@@ -108,8 +108,8 @@ export const weddingData = {
     ] as GuideItem[],
     kakaoMapUrl: "https://map.kakao.com/link/search/서울시 구로구 구로동 3-25",
     naverMapUrl: "https://map.naver.com/v5/search/서울시 구로구 구로동 3-25",
-    // 좌표 없이 동작하는 검색 스킴. 티맵 앱이 설치된 기기에서만 열린다.
-    tmapUrl: "tmap://search?name=신도림 웨스턴 베니비스",
+    /** 티맵 길안내 목적지. 좌표는 OpenStreetMap에 등록된 신도림 테크노마트 건물 위치 */
+    tmap: { name: "신도림테크노마트", lat: 37.5070089, lng: 126.8902959 },
   },
   /** 표지 */
   cover: {

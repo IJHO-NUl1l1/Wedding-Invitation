@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { weddingData, type GuideItem } from "@/app/data/mock";
 import SectionTitle from "@/app/components/SectionTitle";
+import { openTmap, type Place } from "@/lib/tmap";
 
 /** 안내 항목별 아이콘. 시안처럼 핑크로 칠해 쓴다. */
 const GUIDE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -71,7 +72,7 @@ export default function VenueSection() {
         <div className="flex gap-2 mt-3">
           <MapLink href={venue.kakaoMapUrl} label="카카오맵" icon="/icons/map-kakao.png" />
           <MapLink href={venue.naverMapUrl} label="네이버지도" icon="/icons/map-naver.png" />
-          <MapLink href={venue.tmapUrl} label="티맵" />
+          <TmapButton place={venue.tmap} />
         </div>
 
         {/* 웨딩홀 전화 */}
@@ -190,22 +191,26 @@ function GuideContent({ guide }: { guide: GuideItem }) {
   );
 }
 
-function MapLink({ href, label, icon }: { href: string; label: string; icon?: string }) {
+const MAP_BUTTON =
+  "flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-white/20 bg-white/5 text-white text-[13px] active:scale-95 transition-transform";
+
+function MapLink({ href, label, icon }: { href: string; label: string; icon: string }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-white/20 bg-white/5 text-white text-[13px] active:scale-95 transition-transform"
-    >
-      {icon ? (
-        <Image src={icon} alt="" width={16} height={16} className="rounded" />
-      ) : (
-        <span className="w-4 h-4 rounded bg-[#00A3FF] text-[9px] font-bold text-white flex items-center justify-center">
-          T
-        </span>
-      )}
+    <a href={href} target="_blank" rel="noopener noreferrer" className={MAP_BUTTON}>
+      <Image src={icon} alt="" width={16} height={16} className="rounded" />
       {label}
     </a>
+  );
+}
+
+/** 티맵은 웹 주소가 없어 새 탭 링크 대신 기기별로 앱을 직접 연다 (lib/tmap.ts) */
+function TmapButton({ place }: { place: Place }) {
+  return (
+    <button type="button" onClick={() => openTmap(place)} className={MAP_BUTTON}>
+      <span className="w-4 h-4 rounded bg-[#00A3FF] text-[9px] font-bold text-white flex items-center justify-center">
+        T
+      </span>
+      티맵
+    </button>
   );
 }
