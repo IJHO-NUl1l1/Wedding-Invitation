@@ -27,10 +27,10 @@ export default function StoryDetail() {
   const [loaded, setLoaded] = useState<Record<string, boolean>>({});
 
   const items: Item[] = [
-    { key: "bubbles", src: storyPage.photos[0], alt: "비눗방울 사진", height: 1400, cx: 30, cy: 24, w: 59, deg: 10 },
-    { key: "memo-grid", src: storyPage.memos[0], alt: "신부의 메모", height: 1000, cx: 80, cy: 25, w: 57, deg: -10 },
-    { key: "roses", src: storyPage.photos[1], alt: "장미를 든 신부", height: 1400, cx: 67, cy: 76, w: 55, deg: 0 },
-    { key: "memo-lined", src: storyPage.memos[1], alt: "신랑의 메모", height: 1000, cx: 18, cy: 72, w: 60, deg: 10 },
+    { key: "bubbles", src: storyPage.photos[0], alt: "비눗방울 사진", height: 1400, cx: 27, cy: 24, w: 59, deg: 8 },
+    { key: "memo-grid", src: storyPage.memos[0], alt: "신부의 메모", height: 1000, cx: 79, cy: 25, w: 57, deg: -10 },
+    { key: "roses", src: storyPage.photos[1], alt: "장미를 든 신부", height: 1400, cx: 72, cy: 76, w: 55, deg: 0 },
+    { key: "memo-lined", src: storyPage.memos[1], alt: "신랑의 메모", height: 1000, cx: 21, cy: 72, w: 59, deg: 10 },
   ];
 
   return (
