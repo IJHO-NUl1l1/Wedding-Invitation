@@ -6,13 +6,6 @@ import { weddingData } from "@/app/data/mock";
 
 type Person = "groom" | "bride" | "story";
 
-/**
- * 2차 수정 시안(v2-revision-0914/01-people-top, 02-people-bottom)의 인물선택 페이지.
- *
- * 시안 한 화면(833x1469)을 "판" 하나로 보고 두 판을 세로로 잇는다. 사진 위치·크기·기울기는
- * 시안에 원본 사진을 템플릿 매칭해 잰 값이고, 글씨는 cqw 단위라 화면 폭이 달라도 사진과 같은
- * 비율로 커진다. 수정사항 5번에 따라 이 페이지는 손글씨 대신 기본 폰트(Hahmlet)를 크게 쓴다.
- */
 const PANEL = "relative aspect-[833/1469]";
 
 /** 판마다 흩어진 분홍 리본 장식 위치 (left %, top %) */
@@ -119,10 +112,11 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             height={811}
             cx={48.6}
             cy={65.7}
-            w={57.8}
+            w={65}
             deg={-8}
           >
-            <TapChip className="right-[5%] bottom-[11%]" delay={1.2} />
+            {/* 2판에는 이 사진 하나만 누를 수 있어 1판처럼 순서를 둘 필요가 없다 */}
+            <TapChip className="right-[5%] bottom-[11%]" />
           </Tile>
 
           <Tile
