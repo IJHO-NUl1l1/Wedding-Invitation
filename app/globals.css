@@ -8,6 +8,8 @@
   --pink-deep: #C94E74;
   --pink-soft: #F8C8D0;
   --pink-paper: #EFAEBE;
+  /* 2차 수정 시안의 인물선택 페이지 분홍 배경 */
+  --pink-page: #ECACC0;
   --cream: #FEF8E2;
   --maroon: #360000;
   --white: #FFFFFF;
@@ -21,6 +23,7 @@
   --color-pink-deep: var(--pink-deep);
   --color-pink-soft: var(--pink-soft);
   --color-pink-paper: var(--pink-paper);
+  --color-pink-page: var(--pink-page);
   --color-cream: var(--cream);
   --color-maroon: var(--maroon);
   --color-heart: var(--heart);
@@ -32,6 +35,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* 페이지 확대 금지(핀치·더블탭). 확대는 전체화면 사진 뷰어 안에서만 된다. */
+  touch-action: pan-x pan-y;
 }
 
 body {

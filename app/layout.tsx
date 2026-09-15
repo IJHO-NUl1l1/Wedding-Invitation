@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Hahmlet, Nanum_Pen_Script, Yellowtail } from "next/font/google";
+import { Hahmlet, Yellowtail } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 
@@ -9,10 +10,16 @@ const hahmlet = Hahmlet({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const nanumPen = Nanum_Pen_Script({
+/**
+ * 2차 수정 4번: 손글씨체는 모두 교보 손글씨 2025 이유빈.
+ * 교보문고 공식 배포 파일을 그대로 쓴다. 라이선스가 포맷 변경(woff2 변환·서브셋 포함)을
+ * 금지하므로 TTF 원본을 바꾸지 말 것.
+ */
+const kyoboHand = localFont({
   variable: "--font-hand",
-  subsets: ["latin"],
+  src: "../public/fonts/KyoboHandwriting2025lyb.ttf",
   weight: "400",
+  display: "swap",
 });
 
 const yellowtail = Yellowtail({
@@ -56,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${hahmlet.variable} ${nanumPen.variable} ${yellowtail.variable} h-full`}
+      className={`${hahmlet.variable} ${kyoboHand.variable} ${yellowtail.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         {children}

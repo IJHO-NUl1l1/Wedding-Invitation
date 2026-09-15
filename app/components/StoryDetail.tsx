@@ -4,37 +4,48 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
+import { openZoom } from "@/app/components/ZoomViewer";
+
+type Item = {
+  key: string;
+  src: string;
+  alt: string;
+  height: number;
+  cx: number;
+  cy: number;
+  w: number;
+  deg: number;
+};
 
 /**
  * 시안 6페이지. 적갈 바탕에 사진 2장과 메모지 2장을 어긋나게 배치한다.
- * 시안에서 실측한 중심 좌표·폭·각도를 그대로 쓰며, 배열 순서가 z-order(뒤 → 앞)다.
- * 메모지는 시안처럼 오른쪽 위가 흰 모눈종이, 왼쪽 아래가 노란 줄종이다.
+ * 좌표는 직접 조정한 값이며 배열 순서가 z-order(뒤 → 앞)다.
+ * 메모지는 두 사람이 직접 쓴 실물 사진이다(오른쪽 위 모눈 = 신부, 왼쪽 아래 노란 줄 = 신랑).
  */
-type Item =
-  | { kind: "photo"; key: string; src: string; cx: number; cy: number; w: number; deg: number }
-  | { kind: "memo"; key: string; paper: "grid" | "lined"; text: string; cx: number; cy: number; w: number; deg: number };
-
 export default function StoryDetail() {
   const { storyPage } = weddingData;
-  // 사진은 로딩이 끝난 뒤 나타나게 한다. 메모지는 이미지가 아니라 바로 등장.
   const [loaded, setLoaded] = useState<Record<string, boolean>>({});
 
   const items: Item[] = [
-    { kind: "photo", key: "bubbles", src: storyPage.photos[0], cx: 30, cy: 24, w: 59, deg: 10 },
-    { kind: "memo", key: "memo1", paper: "grid", text: storyPage.notes[0], cx: 88, cy: 25, w: 60, deg: -12 },
-    { kind: "photo", key: "roses", src: storyPage.photos[1], cx: 67, cy: 76, w: 55, deg: 0 },
-    { kind: "memo", key: "memo2", paper: "lined", text: storyPage.notes[1], cx: 18, cy: 72, w: 60, deg: 10 },
+    { key: "bubbles", src: storyPage.photos[0], alt: "비눗방울 사진", height: 1400, cx: 30, cy: 24, w: 59, deg: 10 },
+    { key: "memo-grid", src: storyPage.memos[0], alt: "신부의 메모", height: 1000, cx: 88, cy: 25, w: 60, deg: -12 },
+    { key: "roses", src: storyPage.photos[1], alt: "장미를 든 신부", height: 1400, cx: 67, cy: 76, w: 55, deg: 0 },
+    { key: "memo-lined", src: storyPage.memos[1], alt: "신랑의 메모", height: 1000, cx: 18, cy: 72, w: 60, deg: 10 },
   ];
 
   return (
-    <div className="min-h-dvh bg-maroon px-4 pt-16 pb-24">
-      <p className="font-hand text-[27px] text-white/85 text-center mb-3">우리의 이야기</p>
+    <div className="min-h-dvh overflow-x-hidden bg-maroon px-4 pt-16 pb-24">
+      {/* 수정사항 5번: 사진 페이지는 손글씨 대신 기본 폰트를 크게 */}
+      <p className="text-[26px] text-white/90 text-center mb-3">우리의 이야기</p>
 
       <div className="relative w-full max-w-md mx-auto aspect-[495/881]">
         {items.map((it, i) => (
-          <motion.div
+          <motion.button
             key={it.key}
-            className="absolute"
+            type="button"
+            onClick={() => openZoom(it.src, it.alt)}
+            aria-label={`${it.alt} 크게 보기`}
+            className="absolute cursor-zoom-in"
             style={{
               left: `${it.cx}%`,
               top: `${it.cy}%`,
@@ -43,50 +54,25 @@ export default function StoryDetail() {
             }}
             initial={{ opacity: 0, y: 10, rotate: it.deg }}
             animate={
-              it.kind === "memo" || loaded[it.key]
+              loaded[it.key]
                 ? { opacity: 1, y: 0, rotate: it.deg }
                 : { opacity: 0, y: 10, rotate: it.deg }
             }
+            whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
           >
-            {it.kind === "photo" ? (
-              <Image
-                src={it.src}
-                alt=""
-                width={1000}
-                height={1400}
-                quality={90}
-                className="w-full h-auto"
-                onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
-              />
-            ) : (
-              <Memo paper={it.paper} text={it.text} />
-            )}
-          </motion.div>
+            <Image
+              src={it.src}
+              alt={it.alt}
+              width={1000}
+              height={it.height}
+              quality={90}
+              className="block w-full h-auto"
+              onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
+            />
+          </motion.button>
         ))}
       </div>
-    </div>
-  );
-}
-
-function Memo({ paper, text }: { paper: "grid" | "lined"; text: string }) {
-  const grid = paper === "grid";
-  return (
-    <div
-      className={`relative aspect-[5/4] px-4 py-6 ${grid ? "bg-white" : "bg-[#FBF3B6]"}`}
-      style={
-        grid
-          ? {
-              backgroundImage:
-                "repeating-linear-gradient(rgba(90,140,200,.28) 0 1px, transparent 1px 15px), repeating-linear-gradient(90deg, rgba(90,140,200,.28) 0 1px, transparent 1px 15px)",
-            }
-          : {
-              backgroundImage:
-                "repeating-linear-gradient(transparent 0 26px, rgba(0,0,0,.12) 26px 27px)",
-            }
-      }
-    >
-      <p className="font-hand text-[24px] text-ink/75">{text}</p>
     </div>
   );
 }

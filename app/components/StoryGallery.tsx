@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, animate, motion } from "framer-motion";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react";
 import { weddingData } from "@/app/data/mock";
 import Overlay from "@/app/components/Overlay";
 
-/** 접힌 상태에서 보일 높이 = 3행 + 다음 행이 살짝 걸치는 만큼 */
-const PEEK_ROWS = 3.18;
+/** 접힌 상태에서 4번째 줄(10·11·12)이 위쪽만 보이는 비율 */
+const PEEK = 0.32;
 
 export default function StoryGallery() {
   const { gallery, galleryPreviewCount } = weddingData;
@@ -17,7 +17,13 @@ export default function StoryGallery() {
 
   // maxHeight의 %는 부모 높이를 참조해 여기선 쓸 수 없다. 실제 셀 높이를 재서 픽셀로 계산한다.
   const gridRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
   const [peekHeight, setPeekHeight] = useState<number | null>(null);
+  /** 페이드는 4번째 줄에만 건다. 3번째 줄까지 덮으면 처음 보이는 9장이 어두워진다. */
+  const [fadeHeight, setFadeHeight] = useState(0);
+  /** 21장을 모두 펼친 실제 높이. 넉넉한 값(4000 등)을 목표로 두면 애니메이션 초반에 다 펼쳐져 순식간에 끝난다. */
+  const [fullHeight, setFullHeight] = useState<number | null>(null);
 
   useEffect(() => {
     const grid = gridRef.current;
@@ -26,13 +32,43 @@ export default function StoryGallery() {
       const cell = grid.firstElementChild as HTMLElement | null;
       if (!cell) return;
       const gap = parseFloat(getComputedStyle(grid).rowGap) || 0;
-      setPeekHeight(cell.offsetHeight * PEEK_ROWS + gap * 3);
+      setPeekHeight(cell.offsetHeight * (3 + PEEK) + gap * 3);
+      setFadeHeight(cell.offsetHeight * PEEK + gap);
+      setFullHeight(grid.offsetHeight);
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(grid);
     return () => ro.disconnect();
   }, []);
+
+  // 펼치는 동안 화면도 같이 천천히 내려가 새로 드러나는 사진을 따라 보게 한다
+  const expand = () => {
+    setExpanded(true);
+    if (peekHeight === null || fullHeight === null) return;
+    const from = window.scrollY;
+    const to = from + (fullHeight - peekHeight) * 0.7;
+    animate(from, to, {
+      duration: 1.8,
+      ease: [0.65, 0, 0.35, 1],
+      // html에 scroll-behavior: smooth가 걸려 있어 매 프레임 이동은 즉시 이동으로 줘야 끊기지 않는다
+      onUpdate: (v) => window.scrollTo({ top: v, behavior: "instant" }),
+    });
+  };
+
+  // 접으면 아래쪽 사진들이 사라지며 화면이 갤러리 밑으로 떨어지므로 갤러리 맨 위로 올려준다
+  // scrollIntoView의 부드러운 스크롤은 높이가 줄어드는 도중 끊겨 목표를 지나치므로, 위치를 정해 직접 옮긴다
+  const collapse = () => {
+    setExpanded(false);
+    const section = sectionRef.current;
+    if (!section) return;
+    const target = section.getBoundingClientRect().top + window.scrollY;
+    animate(window.scrollY, target, {
+      duration: 1,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (v) => window.scrollTo({ top: v, behavior: "instant" }),
+    });
+  };
 
   /** 넘김 방향. 0이면 처음 열린 것이라 좌우 이동 없이 페이드로만 등장한다. */
   const [dir, setDir] = useState(0);
@@ -49,22 +85,38 @@ export default function StoryGallery() {
 
   return (
     /* 시안 지시: 갤러리는 섹션 제목 없음 */
-    <section className="bg-ink px-5 py-12">
+    <section ref={sectionRef} className="bg-ink px-5 py-12">
       <div className="max-w-md mx-auto">
         <motion.div
           className="relative overflow-hidden"
           initial={false}
           animate={{
-            maxHeight: expanded || peekHeight === null ? 4000 : peekHeight,
+            maxHeight:
+              peekHeight === null || fullHeight === null
+                ? undefined
+                : expanded
+                  ? fullHeight
+                  : peekHeight,
           }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          // 펼칠 때는 화면이 내려가는 게 눈에 보이도록 천천히, 접을 때는 조금 빠르게
+          transition={
+            expanded
+              ? { duration: 1.8, ease: [0.65, 0, 0.35, 1] }
+              : { duration: 1, ease: [0.22, 1, 0.36, 1] }
+          }
         >
           <div ref={gridRef} className="grid grid-cols-3 gap-1.5">
-            {gallery.map((src, i) => (
+            {gallery.map((src, i) => {
+              // 더보기 전에는 살짝 걸쳐 보이는 10번째 사진부터 누를 수 없다
+              const locked = !expanded && i >= galleryPreviewCount;
+              return (
               <motion.button
                 key={src}
                 onClick={() => openViewer(i)}
-                className="relative aspect-square overflow-hidden"
+                disabled={locked}
+                tabIndex={locked ? -1 : undefined}
+                aria-hidden={locked || undefined}
+                className={`relative aspect-square overflow-hidden ${locked ? "pointer-events-none" : ""}`}
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-40px" }}
@@ -82,7 +134,8 @@ export default function StoryGallery() {
                   className="object-cover"
                 />
               </motion.button>
-            ))}
+              );
+            })}
           </div>
 
           {/* 접힌 동안 아래쪽을 검은 바탕으로 덮었다가, 펼치면 아래로 걷힌다 */}
@@ -90,7 +143,8 @@ export default function StoryGallery() {
             {!expanded && (
               <motion.div
                 aria-hidden
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent via-ink/85 to-ink"
+                className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-b from-ink/10 via-ink/55 to-ink"
+                style={{ height: fadeHeight }}
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0, y: 40 }}
                 transition={{ duration: 0.5 }}
@@ -99,15 +153,20 @@ export default function StoryGallery() {
           </AnimatePresence>
         </motion.div>
 
-        <AnimatePresence>
-          {!expanded && (
+        {/* 펼치기 ↔ 접기. 같은 자리에서 버튼만 바뀐다. */}
+        <AnimatePresence mode="wait" initial={false}>
+          {!expanded ? (
             <motion.div
+              key="more"
               className="flex justify-center -mt-2"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3 }}
             >
               <button
-                onClick={() => setExpanded(true)}
+                onClick={expand}
+                aria-expanded={false}
                 className="flex flex-col items-center gap-1 px-9 py-3 text-pink-soft active:scale-95 transition-transform"
               >
                 <span className="text-[17px]">더보기</span>
@@ -117,6 +176,29 @@ export default function StoryGallery() {
                 >
                   <ChevronDown className="w-5 h-5" />
                 </motion.span>
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="less"
+              className="flex justify-center mt-4"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
+            >
+              <button
+                onClick={collapse}
+                aria-expanded
+                className="flex flex-col items-center gap-1 px-9 py-3 text-pink-soft active:scale-95 transition-transform"
+              >
+                <motion.span
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <ChevronUp className="w-5 h-5" />
+                </motion.span>
+                <span className="text-[17px]">접기</span>
               </button>
             </motion.div>
           )}

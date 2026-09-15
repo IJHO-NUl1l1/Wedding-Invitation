@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Minus, Plus, X } from "lucide-react";
 import { weddingData } from "@/app/data/mock";
+import { useBackLayer } from "@/lib/backstack";
 
 /**
  * 직전 응답을 브라우저에 저장해 둔다. id를 함께 보내면 서버가 이전 행을 지우고
@@ -95,23 +96,9 @@ export default function RsvpModal() {
     return () => io.disconnect();
   }, []);
 
-  // 모달이 열려 있는 동안 뒤로가기로 닫히게 하고 배경 스크롤을 잠근다
-  useEffect(() => {
-    if (!open) return;
-    document.body.classList.add("overlay-open");
-    window.history.pushState({ rsvp: true }, "");
-    let pushed = true;
-    const pop = () => {
-      pushed = false;
-      setOpen(false);
-    };
-    window.addEventListener("popstate", pop);
-    return () => {
-      window.removeEventListener("popstate", pop);
-      document.body.classList.remove("overlay-open");
-      if (pushed) window.history.back();
-    };
-  }, [open]);
+  // 모달이 열려 있는 동안 뒤로가기로 닫히게 하고 배경 스크롤을 잠근다.
+  // 내부 페이지 위에서도 열리므로 레이어 깊이를 공유하는 훅을 쓴다.
+  useBackLayer(open, () => setOpen(false));
 
   const submit = async () => {
     if (attending === null) {

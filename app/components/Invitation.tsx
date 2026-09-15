@@ -17,6 +17,7 @@ import MusicToggle from "@/app/components/MusicToggle";
 import RsvpButton from "@/app/components/RsvpButton";
 import RsvpModal from "@/app/components/RsvpModal";
 import CollagePreloader from "@/app/components/CollagePreloader";
+import ZoomViewer from "@/app/components/ZoomViewer";
 import { CLOSE_AT, isClosed } from "@/lib/expiry";
 
 type Person = "groom" | "bride" | "story";
@@ -54,6 +55,9 @@ export default function Invitation() {
 
       {/* 내부 페이지 사진을 미리 받아둔다 */}
       <CollagePreloader />
+
+      {/* 사진 전체화면 확대 뷰어 (표지·내부 페이지 사진에서 연다) */}
+      <ZoomViewer />
 
       <Overlay
         open={person !== null}

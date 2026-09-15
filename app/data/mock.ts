@@ -1,12 +1,17 @@
 /** 오시는 길 안내 한 항목. steps(경로 단계) 또는 note(단문) 중 하나를 쓴다. */
 export type GuideItem = {
   label: string;
+  /** 제목만 보이고 화살표를 눌러야 내용이 펼쳐진다 (2차 수정 9번) */
+  collapsible?: boolean;
   /** 버스 노선처럼 나열이 필요한 값 */
   badges?: string[];
   steps?: string[];
   note?: string;
   sub?: string;
 };
+
+/** 마음 전하실 곳의 계좌 한 줄 */
+export type Account = { role: string; name: string; bank: string; number: string };
 
 export const weddingData = {
   groom: {
@@ -37,6 +42,19 @@ export const weddingData = {
     decisionStory:
       "한결같은 믿음과 신뢰로 저를 배려해 주는 모습에 큰 감동을 받았습니다. 누구보다도 믿음직스럽고 단단한 사람이라는 확신이 들어 결혼을 결심하게 되었습니다.",
   },
+  /** 마음 전하실 곳 (2차 수정 8번: 부모님 계좌 추가). 순서는 받은 그대로. */
+  accounts: {
+    groom: [
+      { role: "신랑", name: "고희성", bank: "신한은행", number: "110522761711" },
+      { role: "어머니", name: "김미영", bank: "국민은행", number: "846601-01-197306" },
+      { role: "아버지", name: "고기환", bank: "우리은행", number: "753-08-330370" },
+    ] as Account[],
+    bride: [
+      { role: "신부", name: "박지서", bank: "농협", number: "351-03442622-43" },
+      { role: "아버지", name: "박준석", bank: "국민은행", number: "608-002-04068215" },
+      { role: "어머니", name: "남양희", bank: "농협", number: "735013-52-157075" },
+    ] as Account[],
+  },
   wedding: {
     date: "2026년 11월 14일",
     dayOfWeek: "토요일",
@@ -59,6 +77,7 @@ export const weddingData = {
     guide: [
       {
         label: "지하철",
+        collapsible: true,
         steps: [
           "1·2호선 신도림역 하차",
           "2·3번 출구쪽 개찰구로 이동",
@@ -69,20 +88,15 @@ export const weddingData = {
       },
       {
         label: "버스",
+        collapsible: true,
         badges: [
           "5619", "6411", "6511", "6611", "6650", "6651", "5615", "5714",
           "6512", "6513", "6516", "6637", "6640", "160", "503", "600",
           "670", "662", "301", "320", "510", "10", "11-1", "11-2", "83", "88",
         ],
-        steps: [
-          "위 노선 이용해 신도림역 하차",
-          "신도림 지하철역 지하로 이동",
-          "2·3번 출구쪽 개찰구를 지나 테크노마트(지하 1층)로 이동",
-          "입구쪽 안내직원이 서 있는 우측 출입문으로 내부 진입",
-          "전용 엘리베이터를 타고 7층 그레이스홀 도착",
-        ],
+        steps: ["신도림역 정류장 하차 → 테크노마트 7층 (도보 10분 소요)"],
       },
-      { label: "자가용", note: "네비게이션에 '신도림테크노마트' 검색" },
+      { label: "자가용", collapsible: true, note: "네비게이션에 '신도림테크노마트' 검색" },
       {
         label: "주차",
         note: "신도림 테크노마트 지하주차장 이용",
@@ -103,9 +117,11 @@ export const weddingData = {
     frame: "/images/cover-frame.jpg",
     titleEn: "Forever Begins Today!",
     subtitleEn: "we are getting married!",
+    /** 2차 수정 2번: 부제목 아래, 사진 바로 위에 들어가는 영어 이름 */
+    namesEn: "Go Hee Sung ✻ Park Ji Seo",
   },
 
-  /** 인사말 — 시안 2페이지 */
+  /** 인사말 — 시안 2페이지. 2차 수정에서 흰 편지지(greeting-bg.jpg) 위에 올린다 */
   greetingQuote: {
     lines: [
       "누군가 너에 대해 묻는다면",
@@ -117,14 +133,17 @@ export const weddingData = {
     source: "하현, 〈제목〉",
   },
 
-  /** 인물 선택 — 시안 3페이지 */
+  /** 인물 선택 — 2차 수정 시안(v2-revision-0914/01·02) */
   people: {
     groom: { thumb: "/images/people-01.jpg", label: "고기환 · 김미영의 장남", name: "고희성" },
     bride: { thumb: "/images/people-02.jpg", label: "박준석 · 남양희의 장녀", name: "박지서" },
     story: { thumb: "/images/people-03.jpg", label: "우리의", name: "이야기" },
+    /** 인물선택 2판의 어린시절 사진 (2차 수정 새 사진). 내부 페이지는 이전 사진(groomPage/bridePage.childhood)을 그대로 쓴다 */
+    groomChild: "/images/people-04.jpg",
+    brideChild: "/images/people-05.png",
   },
 
-  /** 신랑/신부 상세 — 시안 4·5페이지. 가족사진은 인물 선택 파트의 사진을 같이 쓴다 */
+  /** 신랑/신부 상세 — 2차 수정 시안(v2-revision-0914/03·04). 가족사진은 인물 선택 파트의 사진을 같이 쓴다 */
   groomPage: {
     letters: [
       { image: "/images/groom-01.jpg", from: "어머니" },
@@ -142,19 +161,20 @@ export const weddingData = {
     family: "/images/people-02.jpg",
   },
 
-  /** 우리 이야기 — 시안 6페이지. 메모 문구는 아직 미작성 */
+  /** 우리 이야기 — 시안 6페이지. 메모지는 두 사람이 직접 쓴 실물 사진 */
   storyPage: {
     photos: ["/images/story-01.jpg", "/images/story-02.jpg"],
-    notes: ["미작성", "미작성"],
+    /** [모눈종이 = 신부가 쓴 메모, 노란 줄종이 = 신랑이 쓴 메모] */
+    memos: ["/images/story-03.jpg", "/images/story-04.jpg"],
   },
 
   /**
-   * 갤러리 — 촬영 회차별로 묶어 21장(3의 배수). 기본 9장 노출 + '더보기'.
-   * 야간 한강 컷은 '우리 이야기' 페이지와 겹쳐 갤러리에서 뺐다 (design-reference/assets/unused/).
+   * 갤러리 — 21장(3의 배수). 기본 9장 노출 + '더보기'.
+   * 01~09는 두 사람이 고른 대표 사진(2차 수정 7번), 10~21은 나머지.
    * 파일 번호 = 갤러리에 보이는 순서.
    */
   gallery: [
-    // 01~10 야외 · 흰 드레스
+    // 01~09 대표 사진 (처음에 보이는 3x3)
     "/images/gallery-01.jpg",
     "/images/gallery-02.jpg",
     "/images/gallery-03.jpg",
@@ -164,8 +184,8 @@ export const weddingData = {
     "/images/gallery-07.jpg",
     "/images/gallery-08.jpg",
     "/images/gallery-09.jpg",
+    // 10~21 나머지
     "/images/gallery-10.jpg",
-    // 11~18 한복
     "/images/gallery-11.jpg",
     "/images/gallery-12.jpg",
     "/images/gallery-13.jpg",
@@ -174,7 +194,6 @@ export const weddingData = {
     "/images/gallery-16.jpg",
     "/images/gallery-17.jpg",
     "/images/gallery-18.jpg",
-    // 19~21 우산 · 다리
     "/images/gallery-19.jpg",
     "/images/gallery-20.jpg",
     "/images/gallery-21.jpg",

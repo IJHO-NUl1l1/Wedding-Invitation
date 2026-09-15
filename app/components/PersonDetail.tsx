@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
+import { openZoom } from "@/app/components/ZoomViewer";
 
 type Item = {
   key: string;
@@ -14,26 +15,27 @@ type Item = {
   cy: number;
   /** 시안 페이지 폭 대비 요소 폭(%) */
   w: number;
-  /** 시안에서 기울어진 각도(°, 양수 = 시계방향) */
+  /** 기울어진 각도(°, 양수 = 시계방향) */
   deg: number;
-  /** 흰 여백을 두른 폴라로이드 느낌 */
-  card?: boolean;
 };
 
-// 배열 순서 = 뒤→앞. 가족사진(맨뒤) → 흰 편지(엄마) → 아이사진 → 갈색 편지(아빠, 맨앞은 그대로 유지).
+/*
+ * 2차 수정 시안(v2-revision-0914/03-groom, 04-bride) 실측값. 배열 순서 = 뒤→앞.
+ * 수정사항 5번에 따라 손글씨 제목을 없애고 사진을 화면 가득 키웠다.
+ */
 const GROOM: Item[] = [
-  { key: "family", src: "/images/people-01.jpg", alt: "가족사진", cx: 32, cy: 57, w: 65, deg: 0 },
-  { key: "letter-m", src: "/images/groom-01.jpg", alt: "어머니의 편지", cx: 33, cy: 19, w: 59, deg: 17 },
-  { key: "child", src: "/images/groom-03.jpg", alt: "어린 시절", cx: 79, cy: 28, w: 29, deg: -15, card: true },
-  { key: "letter-f", src: "/images/groom-02.jpg", alt: "아버지의 편지", cx: 66, cy: 76, w: 65, deg: -15 },
+  { key: "letter-m", src: "/images/groom-01.jpg", alt: "어머니의 편지", cx: 53.9, cy: 18.1, w: 72.6, deg: -7.7 },
+  { key: "family", src: "/images/people-01.jpg", alt: "가족사진", cx: 66.7, cy: 56.8, w: 57.5, deg: 1.8 },
+  { key: "child", src: "/images/groom-03.jpg", alt: "어린 시절", cx: 17.6, cy: 54.1, w: 30, deg: -4 },
+  { key: "letter-f", src: "/images/groom-02.jpg", alt: "아버지의 편지", cx: 46.9, cy: 86.5, w: 76, deg: 11.8 },
 ];
 
-// 배열 순서 = 뒤→앞. 흰 편지가 맨 뒤, 가족사진이 맨 앞.
 const BRIDE: Item[] = [
-  { key: "letter-f", src: "/images/bride-01.jpg", alt: "아버지의 편지", cx: 25, cy: 29, w: 50, deg: -5 },
-  { key: "letter-m", src: "/images/bride-02.jpg", alt: "어머니의 편지", cx: 72, cy: 40, w: 53, deg: 13 },
-  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 92, cy: 22, w: 24, deg: 0 },
-  { key: "family", src: "/images/people-02.jpg", alt: "가족사진", cx: 48, cy: 77, w: 88, deg: 0 },
+  { key: "letter-f", src: "/images/bride-01.jpg", alt: "아버지의 편지", cx: 31.2, cy: 24.5, w: 62, deg: -7.3 },
+  // 이전 버전 사진은 가로가 더 넓어서(595x1149), 시안의 새 사진과 높이가 비슷하도록 폭을 키웠다
+  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 75.7, cy: 21.4, w: 30, deg: 0 },
+  { key: "family", src: "/images/people-02.jpg", alt: "가족사진", cx: 64.8, cy: 57.7, w: 65.4, deg: 0 },
+  { key: "letter-m", src: "/images/bride-02.jpg", alt: "어머니의 편지", cx: 37.5, cy: 82.2, w: 68.9, deg: 10.1 },
 ];
 
 export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
@@ -43,16 +45,19 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
   const [loaded, setLoaded] = useState<Record<string, boolean>>({});
 
   return (
-    <div className="min-h-dvh bg-cream px-4 pt-16 pb-24">
-      <p className="font-hand text-[27px] text-ink/85 text-center mb-3">
+    <div className="min-h-dvh bg-cream px-2 pt-14 pb-28">
+      <h2 className="sr-only">
         {who === "groom" ? "신랑" : "신부"} {person.name}
-      </p>
+      </h2>
 
       <div className="relative w-full max-w-md mx-auto aspect-[495/881]">
         {items.map((it, i) => (
-          <motion.div
+          <motion.button
             key={it.key}
-            className={`absolute ${it.card ? "bg-white p-1.5" : ""}`}
+            type="button"
+            onClick={() => openZoom(it.src, it.alt)}
+            aria-label={`${it.alt} 크게 보기`}
+            className="absolute cursor-zoom-in"
             style={{
               left: `${it.cx}%`,
               top: `${it.cy}%`,
@@ -65,6 +70,7 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
                 ? { opacity: 1, y: 0, rotate: it.deg }
                 : { opacity: 0, y: 10, rotate: it.deg }
             }
+            whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
@@ -74,10 +80,10 @@ export default function PersonDetail({ who }: { who: "groom" | "bride" }) {
               height={1300}
               // 손글씨 편지라 기본 압축(75)에서는 획이 뭉갠다
               quality={90}
-              className="w-full h-auto"
+              className="block w-full h-auto"
               onLoad={() => setLoaded((m) => ({ ...m, [it.key]: true }))}
             />
-          </motion.div>
+          </motion.button>
         ))}
       </div>
     </div>

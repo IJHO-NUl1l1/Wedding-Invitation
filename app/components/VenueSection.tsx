@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import {
   Phone,
@@ -11,8 +12,9 @@ import {
   Banknote,
   ArrowUpDown,
   Utensils,
+  ChevronDown,
 } from "lucide-react";
-import { weddingData } from "@/app/data/mock";
+import { weddingData, type GuideItem } from "@/app/data/mock";
 import SectionTitle from "@/app/components/SectionTitle";
 
 /** 안내 항목별 아이콘. 시안처럼 핑크로 칠해 쓴다. */
@@ -28,6 +30,8 @@ const GUIDE_ICONS: Record<string, React.ComponentType<{ className?: string }>> =
 
 export default function VenueSection() {
   const { venue, wedding } = weddingData;
+  const collapsible = venue.guide.filter((g) => g.collapsible);
+  const plain = venue.guide.filter((g) => !g.collapsible);
 
   return (
     <motion.section
@@ -79,54 +83,110 @@ export default function VenueSection() {
           웨딩홀 전화 {venue.phone}
         </a>
 
+        {/* 2차 수정 9번: 지하철·버스·자가용은 제목만 보이고 화살표를 눌러야 펼쳐진다 */}
+        <div className="mt-9 space-y-2.5">
+          {collapsible.map((g) => (
+            <CollapsibleGuide key={g.label} guide={g} />
+          ))}
+        </div>
+
         <div className="mt-9 space-y-7">
-          {venue.guide.map((g) => {
+          {plain.map((g) => {
             const Icon = GUIDE_ICONS[g.label];
             return (
-            <div key={g.label}>
-              <p className="flex items-center gap-2 text-[17px] text-pink">
-                {Icon && <Icon className="w-[18px] h-[18px]" />}
-                {g.label}
-              </p>
-
-              {g.badges && (
-                <div className="flex flex-wrap gap-1.5 mt-2.5">
-                  {g.badges.map((n) => (
-                    <span
-                      key={n}
-                      className="rounded-md border border-white/20 bg-white/5 px-2 py-1 text-[13px] tabular-nums text-white/85"
-                    >
-                      {n}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {g.steps && (
-                <ol className="mt-2.5 space-y-1.5">
-                  {g.steps.map((step, i) => (
-                    <li key={step} className="flex gap-2.5">
-                      <span className="shrink-0 mt-[3px] w-5 h-5 rounded-full bg-white/10 text-[11px] text-pink flex items-center justify-center tabular-nums">
-                        {i + 1}
-                      </span>
-                      <span className="text-[14px] leading-6 text-white/80 break-keep">{step}</span>
-                    </li>
-                  ))}
-                </ol>
-              )}
-
-              {g.note && (
-                <p className="mt-2 text-[14px] leading-6 text-white/80 break-keep">{g.note}</p>
-              )}
-              {g.sub && (
-                <p className="mt-1 text-[13px] leading-6 text-white/55 break-keep">{g.sub}</p>
-              )}
-            </div>
+              <div key={g.label}>
+                <p className="flex items-center gap-2 text-[17px] text-pink">
+                  {Icon && <Icon className="w-[18px] h-[18px]" />}
+                  {g.label}
+                </p>
+                <GuideContent guide={g} />
+              </div>
             );
           })}
         </div>
       </div>
     </motion.section>
+  );
+}
+
+function CollapsibleGuide({ guide }: { guide: GuideItem }) {
+  const [open, setOpen] = useState(false);
+  const Icon = GUIDE_ICONS[guide.label];
+
+  return (
+    <div className="rounded-xl border border-white/15 bg-white/5">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex w-full items-center gap-2 px-4 py-3.5 text-[17px] text-pink"
+      >
+        {Icon && <Icon className="w-[18px] h-[18px]" />}
+        <span className="flex-1 text-left">{guide.label}</span>
+        <ChevronDown
+          className={`h-5 w-5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            className="overflow-hidden"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="px-4 pb-4">
+              <GuideContent guide={guide} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function GuideContent({ guide }: { guide: GuideItem }) {
+  return (
+    <>
+      {guide.badges && (
+        <div className="flex flex-wrap gap-1.5 mt-2.5">
+          {guide.badges.map((n) => (
+            <span
+              key={n}
+              className="rounded-md border border-white/20 bg-white/5 px-2 py-1 text-[13px] tabular-nums text-white/85"
+            >
+              {n}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* 단계가 하나뿐이면 번호 없이 한 줄로 */}
+      {guide.steps?.length === 1 && (
+        <p className="mt-2.5 text-[14px] leading-6 text-white/80 break-keep">{guide.steps[0]}</p>
+      )}
+
+      {guide.steps && guide.steps.length > 1 && (
+        <ol className="mt-2.5 space-y-1.5">
+          {guide.steps.map((step, i) => (
+            <li key={step} className="flex gap-2.5">
+              <span className="shrink-0 mt-[3px] w-5 h-5 rounded-full bg-white/10 text-[11px] text-pink flex items-center justify-center tabular-nums">
+                {i + 1}
+              </span>
+              <span className="text-[14px] leading-6 text-white/80 break-keep">{step}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+
+      {guide.note && (
+        <p className="mt-2 text-[14px] leading-6 text-white/80 break-keep">{guide.note}</p>
+      )}
+      {guide.sub && (
+        <p className="mt-1 text-[13px] leading-6 text-white/55 break-keep">{guide.sub}</p>
+      )}
+    </>
   );
 }
 
@@ -149,4 +209,3 @@ function MapLink({ href, label, icon }: { href: string; label: string; icon?: st
     </a>
   );
 }
-

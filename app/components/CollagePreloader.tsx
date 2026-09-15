@@ -23,6 +23,8 @@ const WARM: { src: string; width: number; height: number }[] = [
   { src: "/images/bride-03.png", width: 1000, height: 1300 },
   { src: "/images/story-01.jpg", width: 1000, height: 1400 },
   { src: "/images/story-02.jpg", width: 1000, height: 1400 },
+  { src: "/images/story-03.jpg", width: 1000, height: 1000 },
+  { src: "/images/story-04.jpg", width: 1000, height: 1000 },
 ];
 
 export default function CollagePreloader() {

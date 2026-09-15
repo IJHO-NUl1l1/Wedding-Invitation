@@ -6,149 +6,336 @@ import { weddingData } from "@/app/data/mock";
 
 type Person = "groom" | "bride" | "story";
 
-/** people-bg.jpg 안쪽 크림 종이 영역의 실측 위치 (944x1666 기준) */
-const CREAM = { left: "7%", top: "12.1%", width: "85.8%", height: "77.6%" };
-
 /**
- * 시안 3페이지: 분홍 종이 위 스크랩북 콜라주.
+ * 2차 수정 시안(v2-revision-0914/01-people-top, 02-people-bottom)의 인물선택 페이지.
  *
- * 배경을 잘라내지 않고 전체가 보이도록 이미지를 그대로 깔고, 사진·글씨는
- * 안쪽 크림 영역 안에만 배치한다. 좌표는 모두 크림 영역 기준 %이며
- * 시안에서 실측했다. 글씨는 cqw 단위라 컬럼 폭이 좁아져도 같은 비율을 유지한다.
+ * 시안 한 화면(833x1469)을 "판" 하나로 보고 두 판을 세로로 잇는다. 사진 위치·크기·기울기는
+ * 시안에 원본 사진을 템플릿 매칭해 잰 값이고, 글씨는 cqw 단위라 화면 폭이 달라도 사진과 같은
+ * 비율로 커진다. 수정사항 5번에 따라 이 페이지는 손글씨 대신 기본 폰트(Hahmlet)를 크게 쓴다.
  */
+const PANEL = "relative aspect-[833/1469]";
+
+/** 판마다 흩어진 분홍 리본 장식 위치 (left %, top %) */
+const BOWS_TOP: [number, number][] = [[1, 1], [89, 1], [89, 53], [46, 89], [1, 92], [88, 92]];
+const BOWS_BOTTOM: [number, number][] = [[1, 1], [89, 1], [46, 9], [-1, 53], [89, 53], [1, 92], [88, 92]];
+
+const SHADOW = "[text-shadow:0_1px_8px_rgba(0,0,0,0.55)]";
+
+/*
+ * 가족사진 속 어린 신랑·신부의 실루엣 윤곽. 사진 기준 % 좌표이며 시계방향.
+ * 확대 격자를 대고 모자·귀·옷깃·손 끝을 따라 찍었다. 동생이 앞을 가리는 부분은 그 경계를 따라 닫는다.
+ */
+const GROOM_KID: [number, number][] = [
+  [34.8, 27.3], [38.7, 28.2], [40.6, 30.1], [41.6, 32.6], [41.3, 35.5], [43.2, 36.7],
+  [46.8, 38.4], [49.1, 40.6], [50.7, 44.5], [51.4, 46.7], [46.5, 44.8], [41.3, 44.6],
+  [37.4, 46.2], [36.1, 48.7], [35.1, 53.0], [34.8, 57.4], [30.9, 57.9], [27.7, 56.9],
+  [25.4, 55.5], [23.8, 50.6], [24.7, 47.4], [24.7, 42.1], [27.0, 38.9], [25.7, 36.0],
+  [26.4, 34.0], [29.0, 29.6], [31.6, 27.9],
+];
+const BRIDE_KID: [number, number][] = [
+  [64.6, 32.8], [68.7, 34.0], [69.2, 37.7], [69.5, 42.5], [70.1, 49.0], [71.3, 52.6],
+  [71.3, 60.6], [71.3, 65.9], [68.1, 70.7], [66.5, 73.5], [61.0, 74.5], [56.5, 73.0],
+  [56.2, 70.7], [54.7, 64.7], [55.3, 56.6], [57.0, 50.6], [59.1, 47.3], [58.2, 42.5],
+  [58.5, 37.7], [60.2, 34.0],
+];
+
 export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void }) {
   const { people } = weddingData;
+  const [groomParents, groomRole] = people.groom.label.split("의 ");
+  const [brideParents, brideRole] = people.bride.label.split("의 ");
 
   return (
     <section id="people-section" className="bg-ink">
-      <div className="relative max-w-md mx-auto">
-        <Image
-          src="/images/people-bg.jpg"
-          alt=""
-          width={944}
-          height={1666}
-          className="w-full h-auto"
-        />
+      {/* 테마 토큰(bg-pink-page)은 dev 서버를 재시작해야 생성되므로 CSS 변수를 직접 쓴다 */}
+      <div className="max-w-md mx-auto overflow-hidden bg-[var(--pink-page)]" style={{ containerType: "inline-size" }}>
+        {/* ── 1판: 양가 가족사진 ── */}
+        <div className={PANEL}>
+          <Bows at={BOWS_TOP} />
 
-        <div className="absolute" style={{ ...CREAM, containerType: "inline-size" }}>
-          {/* 신랑 */}
-          <Photo
+          <Tile
             onClick={() => onOpen("groom")}
+            label="신랑 페이지 열기"
             src={people.groom.thumb}
-            alt="신랑 가족사진"
-            cx={24}
-            cy={20}
-            w={33}
-            delay={0}
-          />
-          <Caption left={50} top={7}>
-            <p className="text-[5.4cqw] text-ink/80 break-keep">{people.groom.label}</p>
-            <p className="mt-[2cqw] text-[7.6cqw]">
-              <span className="text-pink-deep">신랑</span>{" "}
-              <span className="text-ink">{people.groom.name}</span>
-            </p>
-          </Caption>
+            width={1536}
+            height={2048}
+            cx={37}
+            cy={23.2}
+            w={63}
+            deg={9}
+          >
+            <Silhouette points={GROOM_KID} ratio={2048 / 1536} delay={0.8} />
+            <div className={`absolute inset-x-0 top-[5%] text-center text-white text-[5.6cqw] leading-snug ${SHADOW}`}>
+              <p>{groomParents}의</p>
+              <p>
+                {groomRole}, <span className="text-pink">신랑</span> {people.groom.name}
+              </p>
+            </div>
+            <TapChip className="right-[4%] bottom-[9%]" />
+          </Tile>
 
-          {/* 신부 */}
-          <Photo
+          <Tile
             onClick={() => onOpen("bride")}
+            label="신부 페이지 열기"
             src={people.bride.thumb}
-            alt="신부 가족사진"
-            cx={72}
-            cy={48}
-            w={48}
+            width={1078}
+            height={774}
+            cx={48.9}
+            cy={68.6}
+            w={93}
+            deg={-9.5}
             delay={0.1}
-          />
-          <Caption left={3} top={41}>
-            <p className="text-[5.4cqw] text-ink/80 break-keep">{people.bride.label}</p>
-            <p className="mt-[2cqw] text-[7.6cqw]">
-              <span className="text-pink-deep">신부</span>{" "}
-              <span className="text-ink">{people.bride.name}</span>
-            </p>
-          </Caption>
+          >
+            <Silhouette points={BRIDE_KID} ratio={774 / 1078} delay={1} />
+            <div className={`absolute left-[4%] top-[9%] text-left text-white text-[5.4cqw] leading-[1.45] ${SHADOW}`}>
+              <p>{brideParents}의</p>
+              <p>{brideRole},</p>
+              <p className="text-pink">신부</p>
+              <p>{people.bride.name}</p>
+            </div>
+            <TapChip className="right-[9%] bottom-[5%]" delay={0.6} />
+          </Tile>
 
-          {/* 우리의 이야기 */}
-          <Photo
+          <motion.div
+            className="pointer-events-none absolute right-[3%] top-[9%] w-max text-right text-[4.6cqw] leading-[1.35] text-ink"
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+          >
+            <p>사진을</p>
+            <p>눌러보세요!</p>
+          </motion.div>
+        </div>
+
+        {/* ── 2판: 어린시절 두 사람 + 우리의 이야기 ── */}
+        <div className={PANEL}>
+          <Bows at={BOWS_BOTTOM} />
+
+          <Tile
             onClick={() => onOpen("story")}
+            label="우리의 이야기 열기"
             src={people.story.thumb}
-            alt="우리의 이야기"
-            cx={52}
-            cy={79}
-            w={35}
+            width={540}
+            height={811}
+            cx={48.6}
+            cy={65.7}
+            w={57.8}
+            deg={-8}
+          >
+            <TapChip className="right-[5%] bottom-[11%]" delay={1.2} />
+          </Tile>
+
+          <Tile
+            onClick={() => onOpen("groom")}
+            label="신랑 페이지 열기"
+            src={people.groomChild}
+            width={319}
+            height={724}
+            cx={25.3}
+            cy={29.7}
+            w={33.8}
+            deg={6}
+            delay={0.1}
+            card
+          />
+
+          <Tile
+            onClick={() => onOpen("bride")}
+            label="신부 페이지 열기"
+            src={people.brideChild}
+            width={312}
+            height={916}
+            cx={73.2}
+            cy={31.9}
+            w={22.4}
+            deg={-10.25}
             delay={0.2}
           />
-          {/* 사진 좌우로 같은 간격(5%)만큼 띄우려고 왼쪽 글씨는 오른쪽 끝을 기준으로 앵커한다 */}
-          <Caption right={70.5} top={63} fit>
-            <p className="text-[10cqw] text-ink">{people.story.label}</p>
-          </Caption>
-          <Caption left={74.5} top={83} fit>
-            <p className="text-[10cqw] text-ink">{people.story.name}</p>
-          </Caption>
+
+          {/* 시안의 손그림 하트 원본. 톡 나타난 뒤 아주 느리게 한 번씩 뛴다. */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute"
+            style={{ left: "50.9%", top: "35.7%", width: "18.6%", translate: "-50% -50%" }}
+            initial={{ opacity: 0, scale: 0.6 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 220, damping: 14, delay: 0.5 }}
+          >
+            <motion.div
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 0.9, repeat: Infinity, repeatDelay: 2.6, ease: "easeInOut", delay: 1.6 }}
+            >
+              <Image src="/images/people-heart.png" alt="" width={155} height={143} unoptimized className="block h-auto w-full" />
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
 
-function Photo({
-  src,
-  alt,
+/**
+ * 누를 수 있는 사진. 바깥은 위치·기울기·등장, 안쪽은 화면에 들어올 때 한 번 살짝 톡 튀는 동작만 맡는다.
+ * 계속 흔들리게 하면 산만해서, 누를 수 있다는 신호는 TapChip이 조용히 준다.
+ */
+function Tile({
   onClick,
+  label,
+  src,
+  width,
+  height,
   cx,
   cy,
   w,
-  delay,
+  deg,
+  delay = 0,
+  card,
+  children,
 }: {
-  src: string;
-  alt: string;
   onClick: () => void;
+  label: string;
+  src: string;
+  width: number;
+  height: number;
   cx: number;
   cy: number;
   w: number;
-  delay: number;
+  deg: number;
+  delay?: number;
+  /** 흰 배경이 붙은 사진을 카드처럼 보이게 */
+  card?: boolean;
+  children?: React.ReactNode;
 }) {
   return (
     <motion.button
+      type="button"
       onClick={onClick}
-      aria-label={alt}
-      className="absolute active:scale-[0.98] transition-transform"
+      aria-label={label}
+      className="absolute"
       style={{ left: `${cx}%`, top: `${cy}%`, width: `${w}%`, translate: "-50% -50%" }}
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
+      initial={{ opacity: 0, y: 18, rotate: deg }}
+      whileInView={{ opacity: 1, y: 0, rotate: deg }}
+      viewport={{ once: true, margin: "-40px" }}
+      whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
     >
-      <Image src={src} alt={alt} width={700} height={520} className="w-full h-auto" />
+      <motion.div
+        className={`relative ${card ? "bg-white" : ""}`}
+        initial={{ scale: 1 }}
+        whileInView={{ scale: [1, 1.035, 1] }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.7, delay: 0.9 + delay, ease: "easeInOut" }}
+      >
+        <Image
+          src={src}
+          alt=""
+          width={width}
+          height={height}
+          sizes="(max-width: 448px) 90vw, 400px"
+          className="block h-auto w-full"
+        />
+        {children}
+      </motion.div>
     </motion.button>
   );
 }
 
-function Caption({
-  left,
-  right,
-  top,
-  fit,
-  children,
+/**
+ * 실루엣 좌표를 부드러운 곡선(캣멀-롬 → 베지어)으로 이어 흰 테두리를 그린다.
+ * SVG 좌표계를 사진 비율 그대로(가로 100 × 세로 100·ratio) 잡아 균일하게 늘어나게 한다.
+ * 비균일 확대 + non-scaling-stroke 조합은 pathLength 애니메이션의 선 길이를 어긋나게 해 윤곽이 일부만 그려진다.
+ */
+function Silhouette({
+  points,
+  ratio,
+  delay,
 }: {
-  left?: number;
-  /** 오른쪽 끝을 기준으로 앵커할 때 사용 */
-  right?: number;
-  top: number;
-  /** 한 단어짜리 글씨는 줄바꿈 없이 내용만큼만 차지하게 한다 */
-  fit?: boolean;
-  children: React.ReactNode;
+  points: [number, number][];
+  /** 사진 세로/가로 비율 */
+  ratio: number;
+  delay: number;
 }) {
+  // 아이를 선이 덮지 않도록 윤곽 중심에서 살짝 바깥으로 벌린 뒤, 세로 좌표를 사진 비율로 바꾼다
+  const cxm = points.reduce((s, p) => s + p[0], 0) / points.length;
+  const cym = points.reduce((s, p) => s + p[1], 0) / points.length;
+  const pts = points.map(
+    ([x, y]) => [cxm + (x - cxm) * 1.06, (cym + (y - cym) * 1.04) * ratio] as [number, number]
+  );
+
+  const n = pts.length;
+  let d = `M${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C${c1[0].toFixed(2)} ${c1[1].toFixed(2)} ${c2[0].toFixed(2)} ${c2[1].toFixed(2)} ${p2[0]} ${p2[1]}`;
+  }
+
   return (
-    <div
-      className={`absolute font-hand ${fit ? "w-max" : ""}`}
-      style={{
-        left: left === undefined ? undefined : `${left}%`,
-        right: right === undefined ? undefined : `${right}%`,
-        top: `${top}%`,
-        width: fit ? undefined : "44%",
-      }}
+    <svg
+      viewBox={`0 0 100 ${(100 * ratio).toFixed(2)}`}
+      aria-hidden
+      className="pointer-events-none absolute inset-0 h-full w-full [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.35))]"
     >
-      {children}
-    </div>
+      <motion.path
+        d={d + " Z"}
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth={1.1}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        initial={{ pathLength: 0 }}
+        whileInView={{ pathLength: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.4, delay, ease: "easeInOut" }}
+      />
+    </svg>
+  );
+}
+
+/**
+ * 누를 수 있는 사진 모서리에 붙인 분홍 스티커. 흰 UI 버튼 대신 스크랩북 페이지(리본·하트·분홍 종이)와 어울리도록
+ * 연분홍 바탕 + 흰 테두리로 살짝 기울여 붙이고, 뒤로 은은한 물결이 가끔 퍼져 누를 곳임을 알린다.
+ */
+function TapChip({ className, delay = 0 }: { className: string; delay?: number }) {
+  // 장식 없이 작은 흰 알약 하나. 은은하게 숨 쉬듯 깜빡여 누를 수 있다는 것만 알린다.
+  return (
+    <motion.span
+      aria-hidden
+      className={`pointer-events-none absolute ${className}`}
+      initial={{ opacity: 0, y: 6 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: "easeOut", delay: 1.1 + delay }}
+    >
+      <motion.span
+        className="inline-block rounded-full bg-white/90 px-[2.6cqw] py-[1.1cqw] text-[2.9cqw] font-medium leading-none tracking-[0.18em] text-pink-deep"
+        animate={{ opacity: [1, 0.55, 1] }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 2 + delay }}
+      >
+        CLICK
+      </motion.span>
+    </motion.span>
+  );
+}
+
+function Bows({ at }: { at: [number, number][] }) {
+  return (
+    <>
+      {at.map(([left, top], i) => (
+        <Image
+          key={i}
+          src="/images/people-bow.png"
+          alt=""
+          width={100}
+          height={110}
+          // 100x110짜리 투명 장식이라 최적화할 이득이 없고, 최적화 캐시가 옛 파일을 계속 내보낸 적이 있다
+          unoptimized
+          className="pointer-events-none absolute h-auto w-[12%]"
+          style={{ left: `${left}%`, top: `${top}%` }}
+        />
+      ))}
+    </>
   );
 }
