@@ -127,10 +127,10 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             src={people.groomChild}
             width={1080}
             height={1440}
-            cx={25.3}
-            cy={29.7}
-            w={33.8}
-            deg={6}
+            cx={23}
+            cy={27}
+            w={105}
+            deg={2}
             delay={0.1}
           />
 
@@ -139,7 +139,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             src={people.brideChild}
             width={312}
             height={916}
-            cx={73.2}
+            cx={74.5}
             cy={31.9}
             w={22.4}
             deg={-10.25}
