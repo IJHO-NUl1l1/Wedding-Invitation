@@ -33,12 +33,14 @@ const PINK = [240, 144, 168]; // --pink #F090A8
 const INK = "#101010";
 
 const FONTS = [
-  { key: "yellowtail", family: "Yellowtail", weight: 400, italic: false, note: "표지 제목과 같은 흘림체" },
-  { key: "playfair", family: "Playfair Display", weight: 700, italic: false, note: "굵고 안정적인 세리프" },
-  { key: "bodoni", family: "Bodoni Moda", weight: 700, italic: false, note: "획 굵기 대비가 큰 세리프" },
-  { key: "italiana", family: "Italiana", weight: 400, italic: false, note: "가늘고 넓게 퍼지는 세리프" },
-  { key: "prata", family: "Prata", weight: 400, italic: false, note: "묵직하고 또렷한 세리프" },
-  { key: "cormorant", family: "Cormorant Garamond", weight: 600, italic: true, note: "기울어진 우아한 세리프" },
+  { key: "cinzel", family: "Cinzel Decorative", weight: 700, italic: false, note: "장식 붙은 로마자 대문자" },
+  { key: "abril", family: "Abril Fatface", weight: 400, italic: false, note: "두툼한 디도네 디스플레이" },
+  { key: "rozha", family: "Rozha One", weight: 400, italic: false, note: "획 대비가 극단적인 디스플레이" },
+  { key: "ultra", family: "Ultra", weight: 400, italic: false, note: "묵직한 슬래브, 멀리서도 보임" },
+  { key: "monsieur", family: "Monsieur La Doulaise", weight: 400, italic: false, note: "화려한 장식 캘리그래피" },
+  { key: "pinyon", family: "Pinyon Script", weight: 400, italic: false, note: "고전 동판 인쇄체" },
+  { key: "tangerine", family: "Tangerine", weight: 700, italic: false, note: "예식 청첩장에 흔한 필기체" },
+  { key: "lavishly", family: "Lavishly Yours", weight: 400, italic: false, note: "가늘게 흐르는 손글씨" },
 ];
 
 if (APPLY && !FONTS.some((f) => f.key === APPLY)) {
