@@ -12,7 +12,7 @@
  * 모바일 홈 화면에서는 OS 가 모서리를 알아서 깎으므로, 배경을 끝까지 채운 정사각형으로 그린다.
  */
 import puppeteer from "puppeteer-core";
-import { copyFileSync, mkdirSync } from "fs";
+import { copyFileSync, mkdirSync, readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -27,14 +27,20 @@ const APPLY = arg("apply");
 const INK = "#101010";
 const PINK = "#F090A8";
 const SOFT = "#F8C8D0";
+const MAROON = "#360000"; // 우리 이야기 페이지 배경
 
 /** 크기를 바꿔도 비율이 유지되도록 값은 모두 SIZE 기준으로 계산한다 */
 const px = (ratio) => Math.round(SIZE * ratio);
 
+/** 청첩장에 실제로 쓰는 그림을 아이콘에도 쓴다. 로컬 파일은 data 주소로 넣어야 불러와진다 */
+const asData = (path, mime) => `data:${mime};base64,${readFileSync(join(root, path)).toString("base64")}`;
+const LACE = asData("public/images/cover-frame.jpg", "image/jpeg"); // 표지의 레이스 프레임
+const HEART = asData("public/images/people-heart.png", "image/png"); // 인물선택의 손그림 하트
+
 const head = `
   <meta charset="utf-8">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600&family=Yellowtail&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -42,10 +48,12 @@ const head = `
       align-items: center; justify-content: center; font-family: 'Hahmlet', serif;
     }
     .tile {
-      width: 100%; height: 100%; position: relative; display: flex;
+      width: 100%; height: 100%; position: relative; overflow: hidden; display: flex;
       flex-direction: column; align-items: center; justify-content: center;
     }
     .mark { line-height: 1; white-space: nowrap; letter-spacing: -0.02em; font-weight: 600; }
+    .script { font-family: 'Yellowtail', cursive; line-height: 1; white-space: nowrap; }
+    .serif { font-family: 'Hahmlet', serif; line-height: 1; white-space: nowrap; font-weight: 600; }
   </style>`;
 
 const VARIANTS = {
@@ -62,6 +70,33 @@ const VARIANTS = {
   c: `<div class="tile" style="background:${INK}">
         <span class="mark" style="font-size:${px(0.332)}px;color:${PINK}">H&amp;J</span>
         <span style="margin-top:${px(0.035)}px;font-size:${px(0.086)}px;font-weight:400;color:${SOFT};letter-spacing:0.06em">2026.11.14</span>
+      </div>`,
+  // D. 표지의 레이스 프레임을 핑크로 물들이고 가운데 구멍에 스크립트 모노그램.
+  //    레이스 원본은 검정 바탕의 흰 무늬라 밝기를 마스크로 삼아야 무늬만 남는다
+  d: `<div class="tile" style="background:${INK}">
+        <div style="position:absolute;inset:-6%;background:${PINK};
+          -webkit-mask-image:url('${LACE}');mask-image:url('${LACE}');
+          -webkit-mask-size:contain;mask-size:contain;mask-repeat:no-repeat;mask-position:center;
+          -webkit-mask-mode:luminance;mask-mode:luminance;"></div>
+        <span class="script" style="position:relative;font-size:${px(0.293)}px;color:${SOFT}">H&amp;J</span>
+      </div>`,
+  // E. 손그림 하트. 하트가 선 그림이라 안쪽 글자는 밝은 색이어야 보인다
+  e: `<div class="tile" style="background:${INK}">
+        <div style="position:absolute;width:94%;height:94%;background:${PINK};
+          -webkit-mask-image:url('${HEART}');mask-image:url('${HEART}');
+          -webkit-mask-size:contain;mask-size:contain;mask-repeat:no-repeat;mask-position:center;"></div>
+        <span class="serif" style="position:relative;font-size:${px(0.195)}px;color:${SOFT};margin-top:${px(0.039)}px">H&amp;J</span>
+      </div>`,
+  // F. 대각선 투톤. 작은 크기에서도 면 분할이 살아남는다. 가운데 &로 두 글자를 묶는다
+  f: `<div class="tile" style="background:${PINK}">
+        <div style="position:absolute;inset:0;background:${INK};clip-path:polygon(0 0,100% 0,0 100%)"></div>
+        <span class="script" style="position:absolute;left:11%;top:9%;font-size:${px(0.303)}px;color:${PINK}">H</span>
+        <span class="serif" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:${px(0.146)}px;color:${SOFT}">&amp;</span>
+        <span class="script" style="position:absolute;right:11%;bottom:6%;font-size:${px(0.303)}px;color:${INK}">J</span>
+      </div>`,
+  // G. 스크립트 모노그램을 타일 밖으로 흘려 잘리게. 배경은 우리 이야기 페이지의 적갈색
+  g: `<div class="tile" style="background:${MAROON}">
+        <span class="script" style="font-size:${px(0.605)}px;color:${PINK};transform:translateY(-4%)">H&amp;J</span>
       </div>`,
 };
 
