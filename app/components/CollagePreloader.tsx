@@ -16,7 +16,7 @@ const WARM: { src: string; width: number; height: number }[] = [
   { src: "/images/groom-01.jpg", width: 1000, height: 1300 },
   { src: "/images/groom-02.jpg", width: 1000, height: 1300 },
   { src: "/images/people-01.jpg", width: 1000, height: 1300 },
-  { src: "/images/groom-03.jpg", width: 1000, height: 1300 },
+  { src: "/images/groom-03.png", width: 1000, height: 1300 },
   { src: "/images/bride-01.jpg", width: 1000, height: 1300 },
   { src: "/images/bride-02.jpg", width: 1000, height: 1300 },
   { src: "/images/people-02.jpg", width: 1000, height: 1300 },

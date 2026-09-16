@@ -44,7 +44,7 @@ export default function KakaoShareButton() {
       content: {
         title: `${weddingData.groom.name} ♥ ${weddingData.bride.name} 결혼합니다`,
         description: `${weddingData.wedding.date} ${weddingData.wedding.dayOfWeek} ${weddingData.wedding.time} · ${weddingData.venue.name}`,
-        imageUrl: `${SITE_URL}/icons/icon.png`,
+        imageUrl: `${SITE_URL}/images/cover-01.jpg`,
         link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
       },
       buttons: [

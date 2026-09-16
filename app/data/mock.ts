@@ -139,7 +139,7 @@ export const weddingData = {
     bride: { thumb: "/images/people-02.jpg", label: "박준석 · 남양희의 장녀", name: "박지서" },
     story: { thumb: "/images/people-03.jpg", label: "우리의", name: "이야기" },
     /** 인물선택 2판의 어린시절 사진 (2차 수정 새 사진). 내부 페이지는 이전 사진(groomPage/bridePage.childhood)을 그대로 쓴다 */
-    groomChild: "/images/people-04.jpg",
+    groomChild: "/images/people-04.png",
     brideChild: "/images/people-05.png",
   },
 
@@ -149,7 +149,7 @@ export const weddingData = {
       { image: "/images/groom-01.jpg", from: "어머니" },
       { image: "/images/groom-02.jpg", from: "아버지" },
     ],
-    childhood: "/images/groom-03.jpg",
+    childhood: "/images/groom-03.png",
     family: "/images/people-01.jpg",
   },
   bridePage: {

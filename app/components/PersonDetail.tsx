@@ -29,14 +29,14 @@ const GROOM: Item[] = [
   { key: "family", src: "/images/people-01.jpg", alt: "가족사진", cx: 66.7, cy: 56.8, w: 59, deg: 1.8 },
   { key: "letter-m", src: "/images/groom-01.jpg", alt: "어머니의 편지", cx: 55, cy: 15, w: 78, deg: -8.5 },
   { key: "letter-f", src: "/images/groom-02.jpg", alt: "아버지의 편지", cx: 48, cy: 89, w: 80, deg: 16 },
-  { key: "child", src: "/images/groom-03.jpg", alt: "어린 시절", cx: 17, cy: 54.1, w: 31.5, deg: -5, zoom: false },
+  { key: "child", src: "/images/groom-03.png", alt: "어린 시절", cx: 17, cy: 54.1, w: 68, deg: -5, zoom: false },
 ];
 
 const BRIDE: Item[] = [
   { key: "family", src: "/images/people-02.jpg", alt: "가족사진", cx: 68, cy: 57.7, w: 75, deg: 0 },
   { key: "letter-f", src: "/images/bride-01.jpg", alt: "아버지의 편지", cx: 30, cy: 24, w: 62, deg: -7.3 },
   { key: "letter-m", src: "/images/bride-02.jpg", alt: "어머니의 편지", cx: 36, cy: 85, w: 68.9, deg: 10.1 },
-  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 75.7, cy: 21.4, w: 31, deg: 0, zoom: false },
+  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 85, cy: 28, w: 50, deg: 0, zoom: false },
 ];
 
 export default function PersonDetail({ who }: { who: "groom" | "bride" }) {

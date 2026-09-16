@@ -121,17 +121,17 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
           </Tile>
 
           {/* 어린시절 사진·하트는 장식이라 눌러도 세부 페이지로 가지 않는다 */}
+          {/* 누끼 사진이라 흰 배경(card)을 깔지 않는다. 깔면 투명한 부분이 흰 사각형으로 보인다 */}
           <Tile
             label="어린 시절 신랑"
             src={people.groomChild}
-            width={319}
-            height={724}
+            width={1080}
+            height={1440}
             cx={25.3}
             cy={29.7}
             w={33.8}
             deg={6}
             delay={0.1}
-            card
           />
 
           <Tile
