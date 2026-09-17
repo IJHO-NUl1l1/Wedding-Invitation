@@ -10,6 +10,16 @@ import Overlay from "@/app/components/Overlay";
 /** 접힌 상태에서 4번째 줄(10·11·12)이 위쪽만 보이는 비율 */
 const PEEK = 0.32;
 
+/*
+ * 확대 뷰어의 사진 요청 조건. 미리 받아두는 사진도 반드시 같은 값을 써야 한다.
+ * next/image는 sizes·quality로 주소를 만들기 때문에, 값이 하나라도 다르면 다른 주소를 받아 캐시가 맞지 않는다.
+ * 뷰어 폭은 max-w-md(448px)라 그보다 큰 화면에서도 448px 기준으로만 받는다.
+ */
+const VIEWER_SIZES = "(max-width: 448px) 100vw, 448px";
+const VIEWER_QUALITY = 75;
+/** 지금 사진 기준으로 미리 받아둘 사진. 다음 쪽으로 넘기는 경우가 많아 뒤로 두 장을 받는다. */
+const PRELOAD_OFFSETS = [1, 2, -1];
+
 export default function StoryGallery() {
   const { gallery, galleryPreviewCount } = weddingData;
   const [expanded, setExpanded] = useState(false);
@@ -247,13 +257,33 @@ export default function StoryGallery() {
                     src={gallery[viewerIndex]}
                     alt=""
                     fill
-                    quality={90}
-                    sizes="100vw"
+                    quality={VIEWER_QUALITY}
+                    sizes={VIEWER_SIZES}
+                    loading="eager"
                     draggable={false}
                     className="object-contain select-none"
                   />
                 </motion.div>
               </AnimatePresence>
+
+              {/* 앞뒤 사진을 뷰어와 같은 주소로 미리 받아 둔다. 넘기는 순간 캐시에서 바로 뜬다. */}
+              <div aria-hidden className="pointer-events-none absolute inset-0 opacity-0">
+                {PRELOAD_OFFSETS.map((offset) => {
+                  const j = (viewerIndex + offset + gallery.length) % gallery.length;
+                  return (
+                    <Image
+                      key={j}
+                      src={gallery[j]}
+                      alt=""
+                      fill
+                      quality={VIEWER_QUALITY}
+                      sizes={VIEWER_SIZES}
+                      loading="eager"
+                      className="object-contain"
+                    />
+                  );
+                })}
+              </div>
             </div>
 
             <div className="flex items-center gap-6 text-white/80">
