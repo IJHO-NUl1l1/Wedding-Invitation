@@ -13,7 +13,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-dvh bg-ink flex flex-col items-center justify-center gap-1 px-4 pt-8 pb-24">
-      {/* 2차 수정: 분홍·흰 제목 모두 1.5배. 좁은 화면에서 넘치지 않게 vw로 상한을 둔다 */}
+      {/* 2차 수정: 분홍 제목 1.5배. 좁은 화면에서 넘치지 않게 vw로 상한을 둔다 */}
       <motion.h1
         className="font-script text-pink text-[min(4.35rem,16vw)] leading-[1.1] text-center -rotate-2"
         initial={{ opacity: 0, y: 16 }}
@@ -23,18 +23,13 @@ export default function HeroSection() {
         {cover.titleEn}
       </motion.h1>
 
+      {/*
+       * 2차 수정: 영어 이름을 사진 바로 위에 흰색으로.
+       * 3차 수정: 그 위의 "we are getting married!" 문구는 삭제했고, 분홍 제목을 뺀
+       * 이 화면의 글자는 모두 맨 아래 줄(16px)과 같은 크기로 줄였다.
+       */}
       <motion.p
-        className="font-hand text-white text-[min(34.5px,8vw)] mt-3 tracking-wide whitespace-nowrap"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-      >
-        ✻ {cover.subtitleEn} ✻
-      </motion.p>
-
-      {/* 2차 수정: 영어 이름을 사진 바로 위에 흰색으로 */}
-      <motion.p
-        className="mt-4 text-white text-[min(20px,5vw)] tracking-wide whitespace-nowrap"
+        className="mt-5 text-white text-[16px] tracking-wide whitespace-nowrap"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.8 }}
@@ -83,10 +78,10 @@ export default function HeroSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.8 }}
       >
-        <p className="text-[19px] tracking-tight">
+        <p className="text-[16px] tracking-tight">
           {wedding.date} ({wedding.dayOfWeek.charAt(0)}) 12:20분
         </p>
-        <p className="text-[19px] tracking-tight">{venue.name}</p>
+        <p className="text-[16px] tracking-tight">{venue.name}</p>
         <p className="text-[16px] text-white/70">{venue.addressDetail}</p>
       </motion.div>
     </section>

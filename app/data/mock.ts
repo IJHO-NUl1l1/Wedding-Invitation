@@ -46,8 +46,8 @@ export const weddingData = {
   accounts: {
     groom: [
       { role: "신랑", name: "고희성", bank: "신한은행", number: "110522761711" },
-      { role: "어머니", name: "김미영", bank: "국민은행", number: "846601-01-197306" },
       { role: "아버지", name: "고기환", bank: "우리은행", number: "753-08-330370" },
+      { role: "어머니", name: "김미영", bank: "국민은행", number: "846601-01-197306" },
     ] as Account[],
     bride: [
       { role: "신부", name: "박지서", bank: "농협", number: "351-03442622-43" },
@@ -99,11 +99,11 @@ export const weddingData = {
       { label: "자가용", collapsible: true, note: "네비게이션에 '신도림테크노마트' 검색" },
       {
         label: "주차",
-        note: "신도림 테크노마트 지하주차장 이용",
+        note: "신도림 테크노마트 지하주차장(B3~B7) 이용",
         sub: "7층 상담실 앞 안내데스크에서 3시간 무료주차권 등록 · 초과 시 30분당 1,500원",
       },
       { label: "ATM", note: "지하 1층 · 1층 에스컬레이터 근처" },
-      { label: "엘리베이터", note: "혼잡 시 에스컬레이터 이용 부탁드립니다" },
+      { label: "엘리베이터", note: "엘리베이터 이용객이 많을 수 있어 에스컬레이터 이용을 추천드립니다." },
       { label: "식사", note: "11시 50분 ~ 13시 50분" },
     ] as GuideItem[],
     kakaoMapUrl: "https://map.kakao.com/link/search/서울시 구로구 구로동 3-25",
@@ -116,7 +116,6 @@ export const weddingData = {
     image: "/images/cover-01.jpg",
     frame: "/images/cover-frame.jpg",
     titleEn: "Forever Begins Today!",
-    subtitleEn: "we are getting married!",
     /** 2차 수정 2번: 부제목 아래, 사진 바로 위에 들어가는 영어 이름 */
     namesEn: "Go Hee Sung ✻ Park Ji Seo",
   },
@@ -169,8 +168,8 @@ export const weddingData = {
   },
 
   /**
-   * 갤러리 — 21장(3의 배수). 기본 9장 노출 + '더보기'.
-   * 01~09는 두 사람이 고른 대표 사진(2차 수정 7번), 10~21은 나머지.
+   * 갤러리 — 22장. 기본 9장 노출 + '더보기'.
+   * 01~09는 두 사람이 고른 대표 사진(2차 수정 7번), 10~22는 나머지.
    * 파일 번호 = 갤러리에 보이는 순서.
    */
   gallery: [
@@ -184,7 +183,7 @@ export const weddingData = {
     "/images/gallery-07.jpg",
     "/images/gallery-08.jpg",
     "/images/gallery-09.jpg",
-    // 10~21 나머지
+    // 10~22 나머지 (3차 수정: 사진첩은 22장. 빠져 있던 야간 한강 컷을 22번으로 넣었다)
     "/images/gallery-10.jpg",
     "/images/gallery-11.jpg",
     "/images/gallery-12.jpg",
@@ -197,6 +196,7 @@ export const weddingData = {
     "/images/gallery-19.jpg",
     "/images/gallery-20.jpg",
     "/images/gallery-21.jpg",
+    "/images/gallery-22.jpg",
   ],
   galleryPreviewCount: 9,
   /** 초대 문구 — 시안 2페이지 */

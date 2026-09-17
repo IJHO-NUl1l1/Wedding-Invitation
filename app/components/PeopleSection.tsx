@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
+import CrayonHeart from "@/app/components/CrayonHeart";
 
 type Person = "groom" | "bride" | "story";
 
@@ -58,7 +59,8 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             deg={9}
           >
             <Silhouette points={GROOM_KID} ratio={2048 / 1536} delay={0.8} />
-            <div className={`absolute inset-x-0 top-[5%] text-center text-white text-[5.6cqw] leading-snug ${SHADOW}`}>
+            {/* 3차 수정: 소개 글은 교보 손글씨로, 조금 작게 */}
+            <div className={`absolute inset-x-0 top-[5%] text-center text-white font-hand text-[4.8cqw] leading-snug ${SHADOW}`}>
               <p>{groomParents}의</p>
               <p>
                 {groomRole}, <span className="text-pink">신랑</span> {people.groom.name}
@@ -80,7 +82,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             delay={0.1}
           >
             <Silhouette points={BRIDE_KID} ratio={774 / 1078} delay={1} />
-            <div className={`absolute left-[4%] top-[9%] text-left text-white text-[5.4cqw] leading-[1.45] ${SHADOW}`}>
+            <div className={`absolute left-[4%] top-[9%] text-left text-white font-hand text-[4.6cqw] leading-[1.45] ${SHADOW}`}>
               <p>{brideParents}의</p>
               <p>{brideRole},</p>
               <p className="text-pink">신부</p>
@@ -128,7 +130,7 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             width={1080}
             height={1440}
             cx={23}
-            cy={27}
+            cy={24}
             w={105}
             deg={2}
             delay={0.1}
@@ -140,29 +142,29 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             width={312}
             height={916}
             cx={74.5}
-            cy={31.9}
+            cy={28.9}
             w={22.4}
             deg={-10.25}
             delay={0.2}
           />
 
-          {/* 시안의 손그림 하트 원본. 톡 나타난 뒤 아주 느리게 한 번씩 뛴다. */}
-          <motion.div
+          {/*
+           * 3차 수정: 손그림 대신 하트. 하트 구멍 뚫린 종이를 대고 크레파스로 대각선 지그재그를 칠한 뒤
+           * 종이를 뗀 느낌이다. 화면에 들어오면 칠해지는 과정이 보이고(CrayonHeart), 다 칠한 뒤 아주 느리게 한 번씩 뛴다.
+           */}
+          <div
             aria-hidden
             className="pointer-events-none absolute"
-            style={{ left: "50.9%", top: "35.7%", width: "18.6%", translate: "-50% -50%" }}
-            initial={{ opacity: 0, scale: 0.6 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 220, damping: 14, delay: 0.5 }}
+            style={{ left: "50.9%", top: "32.7%", width: "18.6%", translate: "-50% -50%" }}
           >
             <motion.div
               animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 0.9, repeat: Infinity, repeatDelay: 2.6, ease: "easeInOut", delay: 1.6 }}
+              transition={{ duration: 0.9, repeat: Infinity, repeatDelay: 2.6, ease: "easeInOut", delay: 3 }}
             >
-              <Image src="/images/people-heart.png" alt="" width={155} height={143} unoptimized className="block h-auto w-full" />
+              {/* 기다림 없이 바로 칠하기 시작하고, 칠하는 과정이 잘 보이도록 천천히 칠한다 */}
+              <CrayonHeart duration={3.2} delay={0} />
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

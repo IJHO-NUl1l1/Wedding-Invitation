@@ -129,14 +129,14 @@
 | 우리 이야기 | `story-03.jpg` | 신부가 쓴 메모 (모눈종이) |
 | 우리 이야기 | `story-04.jpg` | 신랑이 쓴 메모 (노란 줄종이) |
 
-| 갤러리 | `gallery-01` ~ `gallery-21.jpg` | 01~09 두 사람이 고른 대표 사진(처음 보이는 3x3) / 10~21 나머지 |
+| 갤러리 | `gallery-01` ~ `gallery-22.jpg` | 01~09 두 사람이 고른 대표 사진(처음 보이는 3x3) / 10~22 나머지 (22 = 야간 한강 컷) |
 | 달력 | `date-glass-left.png`, `date-glass-right.png` | 샴페인잔 일러스트 (장식) |
 
 손글씨 폰트: `public/fonts/KyoboHandwriting2025lyb.ttf` — 교보문고 공식 배포본(상업용 무료).
 라이선스가 포맷 변경·개작을 금지하므로 woff2 변환이나 서브셋 없이 원본 그대로 쓴다.
 
 쓰지 않는 파일은 배포되지 않도록 `design-reference/assets/unused/`로 옮겼다
-(검정·적갈 배경, 표지 블롭 마스크본, 신부 어린시절 흰배경본, 야간 한강 컷, 1차 분홍 종이 배경 `people-bg-v1.jpg`,
+(검정·적갈 배경, 표지 블롭 마스크본, 신부 어린시절 흰배경본, 1차 분홍 종이 배경 `people-bg-v1.jpg`,
 안 쓰는 GreatVibes 폰트, 2차 수정으로 교체된 편지·아이사진의 이전 버전 `old-*`).
 받은 원본은 `design-reference/assets/source-파트-번호-내용.jpg`로 이름을 붙여 두었다.
 
