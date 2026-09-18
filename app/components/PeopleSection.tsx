@@ -130,8 +130,8 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             width={1080}
             height={1440}
             cx={23}
-            cy={24}
-            w={105}
+            cy={31}
+            w={43}
             deg={2}
             delay={0.1}
           />
@@ -141,10 +141,10 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             src={people.brideChild}
             width={312}
             height={916}
-            cx={74.5}
-            cy={28.9}
-            w={22.4}
-            deg={-10.25}
+            cx={76}
+            cy={29.5}
+            w={24}
+            deg={-9}
             delay={0.2}
           />
 
@@ -172,9 +172,9 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
 }
 
 /**
- * 누를 수 있는 사진. 바깥은 위치·기울기·등장, 안쪽은 화면에 들어올 때 한 번 살짝 톡 튀는 동작만 맡는다.
- * 계속 흔들리게 하면 산만해서, 누를 수 있다는 신호는 TapChip이 조용히 준다.
- */
+  * 누를 수 있는 사진. 바깥은 위치·기울기·등장, 안쪽은 화면에 들어올 때 한 번 살짝 톡 튀는 동작만 맡는다.
+  * 계속 흔들리게 하면 산만해서, 누를 수 있다는 신호는 TapChip이 조용히 준다.
+  */
 function Tile({
   onClick,
   label,
@@ -241,10 +241,10 @@ function Tile({
 }
 
 /**
- * 실루엣 좌표를 부드러운 곡선(캣멀-롬 → 베지어)으로 이어 흰 테두리를 그린다.
- * SVG 좌표계를 사진 비율 그대로(가로 100 × 세로 100·ratio) 잡아 균일하게 늘어나게 한다.
- * 비균일 확대 + non-scaling-stroke 조합은 pathLength 애니메이션의 선 길이를 어긋나게 해 윤곽이 일부만 그려진다.
- */
+  * 실루엣 좌표를 부드러운 곡선(캣멀-롬 → 베지어)으로 이어 흰 테두리를 그린다.
+  * SVG 좌표계를 사진 비율 그대로(가로 100 × 세로 100·ratio) 잡아 균일하게 늘어나게 한다.
+  * 비균일 확대 + non-scaling-stroke 조합은 pathLength 애니메이션의 선 길이를 어긋나게 해 윤곽이 일부만 그려진다.
+  */
 function Silhouette({
   points,
   ratio,
@@ -294,9 +294,9 @@ function Silhouette({
 }
 
 /**
- * 누를 수 있는 사진 모서리에 붙인 분홍 스티커. 흰 UI 버튼 대신 스크랩북 페이지(리본·하트·분홍 종이)와 어울리도록
- * 연분홍 바탕 + 흰 테두리로 살짝 기울여 붙이고, 뒤로 은은한 물결이 가끔 퍼져 누를 곳임을 알린다.
- */
+  * 누를 수 있는 사진 모서리에 붙인 분홍 스티커. 흰 UI 버튼 대신 스크랩북 페이지(리본·하트·분홍 종이)와 어울리도록
+  * 연분홍 바탕 + 흰 테두리로 살짝 기울여 붙이고, 뒤로 은은한 물결이 가끔 퍼져 누를 곳임을 알린다.
+  */
 function TapChip({
   className,
   delay = 0,
@@ -330,10 +330,10 @@ function TapChip({
 }
 
 /**
- * 누를 수 있는 사진을 두르는 손으로 그린 듯한 흰 점선.
- * 모서리·변마다 살짝 흔들린 선을 사진 실제 크기(px)로 그려, 점 간격이 사진 크기와 상관없이 일정하다.
- * 깜빡이는 대신 점선이 사진 둘레를 천천히 돌아 시선을 끈다.
- */
+  * 누를 수 있는 사진을 두르는 손으로 그린 듯한 흰 점선.
+  * 모서리·변마다 살짝 흔들린 선을 사진 실제 크기(px)로 그려, 점 간격이 사진 크기와 상관없이 일정하다.
+  * 깜빡이는 대신 점선이 사진 둘레를 천천히 돌아 시선을 끈다.
+  */
 function HandBorder({ seed }: { seed: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
