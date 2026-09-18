@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
-import CrayonHeart from "@/app/components/CrayonHeart";
 
 type Person = "groom" | "bride" | "story";
 
@@ -149,20 +148,37 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
           />
 
           {/*
-           * 3차 수정: 손그림 대신 하트. 하트 구멍 뚫린 종이를 대고 크레파스로 대각선 지그재그를 칠한 뒤
-           * 종이를 뗀 느낌이다. 화면에 들어오면 칠해지는 과정이 보이고(CrayonHeart), 다 칠한 뒤 아주 느리게 한 번씩 뛴다.
+           * 3차 수정: 손그림 대신 하트. 화면에 들어오면 톡 나타나고, 그 뒤로 아주 느리게 한 번씩 뛴다.
+           * 크레파스로 칠하듯 그려지던 하트는 app/components/CrayonHeart.tsx 에 그대로 남겨 두었다.
+           * 크기와 자리는 아래 style의 width·left·top(판 기준 %)로 정한다.
            */}
           <div
             aria-hidden
             className="pointer-events-none absolute"
-            style={{ left: "50.9%", top: "32.7%", width: "18.6%", translate: "-50% -50%" }}
+            style={{ left: "50.9%", top: "32.7%", width: "14.5%", translate: "-50% -50%" }}
           >
             <motion.div
-              animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 0.9, repeat: Infinity, repeatDelay: 2.6, ease: "easeInOut", delay: 3 }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ type: "spring", stiffness: 260, damping: 16 }}
             >
-              {/* 기다림 없이 바로 칠하기 시작하고, 칠하는 과정이 잘 보이도록 천천히 칠한다 */}
-              <CrayonHeart duration={3.2} delay={0} />
+              {/*
+               * 모양은 이모지 하트 그대로지만 그림을 직접 그린다. 이모지 글자를 쓰면 기기 서체가 정한
+               * 진한 빨강과 검은 테두리를 그대로 받게 되고, 분홍 판 위에서 그 채도가 혼자 튀었다.
+               * 색은 빨강으로 읽히되 채도를 낮춘 값이다. 더 밝게 하려면 #EF4450, 더 진하게 하려면 #C8303E.
+               */}
+              <motion.svg
+                viewBox="0 0 32 29"
+                className="block h-auto w-full"
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 0.9, repeat: Infinity, repeatDelay: 2.6, ease: "easeInOut", delay: 3 }}
+              >
+                <path
+                  d="M16 29C16 29 0 18.6 0 8.9 0 4 3.9 0 8.6 0 12 0 14.9 2 16 4.9 17.1 2 20 0 23.4 0 28.1 0 32 4 32 8.9 32 18.6 16 29 16 29Z"
+                  fill="#E03A45"
+                />
+              </motion.svg>
             </motion.div>
           </div>
         </div>
