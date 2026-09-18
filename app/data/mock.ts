@@ -45,7 +45,7 @@ export const weddingData = {
   /** 마음 전하실 곳 (2차 수정 8번: 부모님 계좌 추가). 순서는 받은 그대로. */
   accounts: {
     groom: [
-      { role: "신랑", name: "고희성", bank: "신한은행", number: "110522761711" },
+      { role: "신랑", name: "고희성", bank: "신한은행", number: "110-522-761711" },
       { role: "아버지", name: "고기환", bank: "우리은행", number: "753-08-330370" },
       { role: "어머니", name: "김미영", bank: "국민은행", number: "846601-01-197306" },
     ] as Account[],
