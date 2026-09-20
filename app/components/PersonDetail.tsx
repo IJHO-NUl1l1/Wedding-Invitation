@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { motion } from "framer-motion";
+import * as img from "@/app/data/images";
 import { weddingData } from "@/app/data/mock";
 import { openZoom } from "@/app/components/ZoomViewer";
 
 type Item = {
   key: string;
-  src: string;
+  src: StaticImageData;
   alt: string;
   /** 시안 페이지 기준 중심 좌표(%) */
   cx: number;
@@ -26,17 +27,17 @@ type Item = {
  * 수정사항 5번에 따라 손글씨 제목을 없애고 사진을 화면 가득 키웠다.
  */
 const GROOM: Item[] = [
-  { key: "family", src: "/images/people-01.jpg", alt: "가족사진", cx: 66.7, cy: 56.8, w: 59, deg: 1.8 },
-  { key: "letter-m", src: "/images/groom-01.jpg", alt: "어머니의 편지", cx: 55, cy: 15, w: 78, deg: -8.5 },
-  { key: "letter-f", src: "/images/groom-02.jpg", alt: "아버지의 편지", cx: 48, cy: 89, w: 80, deg: 16 },
-  { key: "child", src: "/images/groom-03.png", alt: "어린 시절", cx: 17, cy: 54.1, w: 68, deg: -5, zoom: false },
+  { key: "family", src: img.groomFamily, alt: "가족사진", cx: 66.7, cy: 56.8, w: 59, deg: 1.8 },
+  { key: "letter-m", src: img.groomLetterMother, alt: "어머니의 편지", cx: 55, cy: 15, w: 78, deg: -8.5 },
+  { key: "letter-f", src: img.groomLetterFather, alt: "아버지의 편지", cx: 48, cy: 89, w: 80, deg: 16 },
+  { key: "child", src: img.groomChild, alt: "어린 시절", cx: 17, cy: 54.1, w: 68, deg: -5, zoom: false },
 ];
 
 const BRIDE: Item[] = [
-  { key: "family", src: "/images/people-02.jpg", alt: "가족사진", cx: 68, cy: 57.7, w: 75, deg: 0 },
-  { key: "letter-f", src: "/images/bride-01.jpg", alt: "아버지의 편지", cx: 30, cy: 24, w: 62, deg: -7.3 },
-  { key: "letter-m", src: "/images/bride-02.jpg", alt: "어머니의 편지", cx: 36, cy: 85, w: 68.9, deg: 10.1 },
-  { key: "child", src: "/images/bride-03.png", alt: "어린 시절", cx: 85, cy: 28, w: 50, deg: 0, zoom: false },
+  { key: "family", src: img.brideFamily, alt: "가족사진", cx: 68, cy: 57.7, w: 75, deg: 0 },
+  { key: "letter-f", src: img.brideLetterFather, alt: "아버지의 편지", cx: 30, cy: 24, w: 62, deg: -7.3 },
+  { key: "letter-m", src: img.brideLetterMother, alt: "어머니의 편지", cx: 36, cy: 85, w: 68.9, deg: 10.1 },
+  { key: "child", src: img.brideChild, alt: "어린 시절", cx: 85, cy: 28, w: 50, deg: 0, zoom: false },
 ];
 
 export default function PersonDetail({ who }: { who: "groom" | "bride" }) {

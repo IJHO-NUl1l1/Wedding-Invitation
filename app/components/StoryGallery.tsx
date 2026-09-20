@@ -121,7 +121,7 @@ export default function StoryGallery() {
               const locked = !expanded && i >= galleryPreviewCount;
               return (
               <motion.button
-                key={src}
+                key={src.src}
                 onClick={() => openViewer(i)}
                 disabled={locked}
                 tabIndex={locked ? -1 : undefined}

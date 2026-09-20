@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { coverPhoto } from "@/app/data/images";
 import { weddingData } from "@/app/data/mock";
 
 declare global {
@@ -44,7 +45,8 @@ export default function KakaoShareButton() {
       content: {
         title: `${weddingData.groom.name} ♥ ${weddingData.bride.name} 결혼합니다`,
         description: `${weddingData.wedding.date} ${weddingData.wedding.dayOfWeek} ${weddingData.wedding.time} · ${weddingData.venue.name}`,
-        imageUrl: `${SITE_URL}/images/cover-01.jpg`,
+        // 내용 해시가 붙은 주소라 사진을 바꾸면 카톡 썸네일 캐시도 저절로 갱신된다
+        imageUrl: `${SITE_URL}${coverPhoto.src}`,
         link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
       },
       buttons: [

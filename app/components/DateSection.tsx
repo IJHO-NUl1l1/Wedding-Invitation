@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { dateGlassLeft, dateGlassRight } from "@/app/data/images";
 import { weddingData } from "@/app/data/mock";
 import SectionTitle from "@/app/components/SectionTitle";
 
@@ -56,14 +57,14 @@ export default function DateSection() {
         {/* 위/아래에 여백 띠를 두고 그 안에 일러스트를 넣어 날짜와 겹치지 않게 한다 */}
         <div className="relative overflow-hidden bg-pink-soft px-5 pt-8 pb-32 text-ink">
           <Image
-            src="/images/date-glass-right.png"
+            src={dateGlassRight}
             alt=""
             width={231}
             height={298}
             className="pointer-events-none absolute right-0 top-1 w-[23%] h-auto"
           />
           <Image
-            src="/images/date-glass-left.png"
+            src={dateGlassLeft}
             alt=""
             width={229}
             height={329}

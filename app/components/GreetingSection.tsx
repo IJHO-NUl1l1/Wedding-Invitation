@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { greetingBg } from "@/app/data/images";
 import { weddingData } from "@/app/data/mock";
 
 /** 초대 문구 주변에 흩뿌린 분홍 장식 (꽃·하트·점), 문구 영역 기준 % */
@@ -25,7 +26,7 @@ export default function GreetingSection() {
     <section className="bg-ink px-4 py-10">
       <div className="relative max-w-md mx-auto" style={{ containerType: "inline-size" }}>
         <Image
-          src="/images/greeting-bg.jpg"
+          src={greetingBg}
           alt=""
           width={900}
           height={1417}

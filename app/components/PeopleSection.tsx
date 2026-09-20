@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { motion } from "framer-motion";
+import { peopleBow } from "@/app/data/images";
 import { weddingData } from "@/app/data/mock";
 
 type Person = "groom" | "bride" | "story";
@@ -50,8 +51,6 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             onClick={() => onOpen("groom")}
             label="신랑 페이지 열기"
             src={people.groom.thumb}
-            width={1536}
-            height={2100}
             cx={37}
             cy={33}
             w={59}
@@ -72,8 +71,6 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             onClick={() => onOpen("bride")}
             label="신부 페이지 열기"
             src={people.bride.thumb}
-            width={1078}
-            height={774}
             cx={48.9}
             cy={75}
             w={86}
@@ -110,8 +107,6 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             onClick={() => onOpen("story")}
             label="우리의 이야기 열기"
             src={people.story.thumb}
-            width={540}
-            height={811}
             cx={48.6}
             cy={65.7}
             w={65}
@@ -126,8 +121,6 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
           <Tile
             label="어린 시절 신랑"
             src={people.groomChild}
-            width={1080}
-            height={1440}
             cx={23}
             cy={31}
             w={43}
@@ -138,8 +131,6 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
           <Tile
             label="어린 시절 신부"
             src={people.brideChild}
-            width={312}
-            height={916}
             cx={76}
             cy={29.5}
             w={24}
@@ -195,8 +186,6 @@ function Tile({
   onClick,
   label,
   src,
-  width,
-  height,
   cx,
   cy,
   w,
@@ -208,9 +197,8 @@ function Tile({
   /** 없으면 누를 수 없는 장식 사진으로 그린다 */
   onClick?: () => void;
   label: string;
-  src: string;
-  width: number;
-  height: number;
+  /** 정적 import한 사진. 가로·세로는 파일에서 읽어오므로 따로 적지 않는다 */
+  src: StaticImageData;
   cx: number;
   cy: number;
   w: number;
@@ -244,8 +232,6 @@ function Tile({
         <Image
           src={src}
           alt=""
-          width={width}
-          height={height}
           sizes="(max-width: 448px) 90vw, 400px"
           className="block h-auto w-full"
         />
@@ -420,11 +406,9 @@ function Bows({ at }: { at: [number, number][] }) {
       {at.map(([left, top], i) => (
         <Image
           key={i}
-          src="/images/people-bow.png"
+          src={peopleBow}
           alt=""
-          width={100}
-          height={110}
-          // 100x110짜리 투명 장식이라 최적화할 이득이 없고, 최적화 캐시가 옛 파일을 계속 내보낸 적이 있다
+          // 작은 투명 장식이라 최적화할 이득이 없다. 정적 import라 주소에 내용 해시가 붙어 캐시도 안전하다
           unoptimized
           className="pointer-events-none absolute h-auto w-[12%]"
           style={{ left: `${left}%`, top: `${top}%` }}

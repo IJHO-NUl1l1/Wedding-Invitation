@@ -1,3 +1,5 @@
+import * as img from "@/app/data/images";
+
 /** 오시는 길 안내 한 항목. steps(경로 단계) 또는 note(단문) 중 하나를 쓴다. */
 export type GuideItem = {
   label: string;
@@ -113,8 +115,8 @@ export const weddingData = {
   },
   /** 표지 */
   cover: {
-    image: "/images/cover-01.jpg",
-    frame: "/images/cover-frame.jpg",
+    image: img.coverPhoto,
+    frame: img.coverFrame,
     titleEn: "Forever Begins Today!",
     /** 2차 수정 2번: 부제목 아래, 사진 바로 위에 들어가는 영어 이름 */
     namesEn: "Go Hee Sung ✻ Park Ji Seo",
@@ -134,37 +136,37 @@ export const weddingData = {
 
   /** 인물 선택 — 2차 수정 시안(v2-revision-0914/01·02) */
   people: {
-    groom: { thumb: "/images/people-01.jpg", label: "고기환 · 김미영의 장남", name: "고희성" },
-    bride: { thumb: "/images/people-02.jpg", label: "박준석 · 남양희의 장녀", name: "박지서" },
-    story: { thumb: "/images/people-03.jpg", label: "우리의", name: "이야기" },
+    groom: { thumb: img.groomFamily, label: "고기환 · 김미영의 장남", name: "고희성" },
+    bride: { thumb: img.brideFamily, label: "박준석 · 남양희의 장녀", name: "박지서" },
+    story: { thumb: img.storyThumb, label: "우리의", name: "이야기" },
     /** 인물선택 2판의 어린시절 사진 (2차 수정 새 사진). 내부 페이지는 이전 사진(groomPage/bridePage.childhood)을 그대로 쓴다 */
-    groomChild: "/images/people-04.png",
-    brideChild: "/images/people-05.png",
+    groomChild: img.groomChildPanel,
+    brideChild: img.brideChildPanel,
   },
 
   /** 신랑/신부 상세 — 2차 수정 시안(v2-revision-0914/03·04). 가족사진은 인물 선택 파트의 사진을 같이 쓴다 */
   groomPage: {
     letters: [
-      { image: "/images/groom-01.jpg", from: "어머니" },
-      { image: "/images/groom-02.jpg", from: "아버지" },
+      { image: img.groomLetterMother, from: "어머니" },
+      { image: img.groomLetterFather, from: "아버지" },
     ],
-    childhood: "/images/groom-03.png",
-    family: "/images/people-01.jpg",
+    childhood: img.groomChild,
+    family: img.groomFamily,
   },
   bridePage: {
     letters: [
-      { image: "/images/bride-01.jpg", from: "아버지" },
-      { image: "/images/bride-02.jpg", from: "어머니" },
+      { image: img.brideLetterFather, from: "아버지" },
+      { image: img.brideLetterMother, from: "어머니" },
     ],
-    childhood: "/images/bride-03.png",
-    family: "/images/people-02.jpg",
+    childhood: img.brideChild,
+    family: img.brideFamily,
   },
 
   /** 우리 이야기 — 시안 6페이지. 메모지는 두 사람이 직접 쓴 실물 사진 */
   storyPage: {
-    photos: ["/images/story-01.jpg", "/images/story-02.jpg"],
+    photos: [img.storyBubbles, img.storyRoses],
     /** [모눈종이 = 신부가 쓴 메모, 노란 줄종이 = 신랑이 쓴 메모] */
-    memos: ["/images/story-03.jpg", "/images/story-04.jpg"],
+    memos: [img.storyMemoBride, img.storyMemoGroom],
   },
 
   /**
@@ -172,32 +174,7 @@ export const weddingData = {
    * 01~09는 두 사람이 고른 대표 사진(2차 수정 7번), 10~22는 나머지.
    * 파일 번호 = 갤러리에 보이는 순서.
    */
-  gallery: [
-    // 01~09 대표 사진 (처음에 보이는 3x3)
-    "/images/gallery-01.jpg",
-    "/images/gallery-02.jpg",
-    "/images/gallery-03.jpg",
-    "/images/gallery-04.jpg",
-    "/images/gallery-05.jpg",
-    "/images/gallery-06.jpg",
-    "/images/gallery-07.jpg",
-    "/images/gallery-08.jpg",
-    "/images/gallery-09.jpg",
-    // 10~22 나머지 (3차 수정: 사진첩은 22장. 빠져 있던 야간 한강 컷을 22번으로 넣었다)
-    "/images/gallery-10.jpg",
-    "/images/gallery-11.jpg",
-    "/images/gallery-12.jpg",
-    "/images/gallery-13.jpg",
-    "/images/gallery-14.jpg",
-    "/images/gallery-15.jpg",
-    "/images/gallery-16.jpg",
-    "/images/gallery-17.jpg",
-    "/images/gallery-18.jpg",
-    "/images/gallery-19.jpg",
-    "/images/gallery-20.jpg",
-    "/images/gallery-21.jpg",
-    "/images/gallery-22.jpg",
-  ],
+  gallery: img.galleryPhotos,
   galleryPreviewCount: 9,
   /** 초대 문구 — 시안 2페이지 */
   greetingLines: [

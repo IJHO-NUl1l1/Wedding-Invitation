@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { motion } from "framer-motion";
 import { weddingData } from "@/app/data/mock";
 import { openZoom } from "@/app/components/ZoomViewer";
 
 type Item = {
   key: string;
-  src: string;
+  src: StaticImageData;
   alt: string;
   height: number;
   cx: number;

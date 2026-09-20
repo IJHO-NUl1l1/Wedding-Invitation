@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { useBackLayer } from "@/lib/backstack";
 
-type Target = { src: string; alt: string };
+type Target = { src: string | StaticImageData; alt: string };
 
 /** 어디서든 사진을 전체화면 확대 뷰어로 연다. */
-export function openZoom(src: string, alt = "") {
+export function openZoom(src: string | StaticImageData, alt = "") {
   window.dispatchEvent(new CustomEvent<Target>("zoom-open", { detail: { src, alt } }));
 }
 
