@@ -21,9 +21,9 @@ function AccountRow({ account }: { account: Account }) {
         <p className="text-[13px] text-pink">
           {account.role} {account.name}
         </p>
-        <p className="mt-1 text-[16px] text-white tabular-nums break-keep">
-          {account.bank} {account.number}
-        </p>
+        {/* 은행과 계좌번호는 줄을 나눠 어느 계좌든 같은 모양으로 읽히게 한다 */}
+        <p className="mt-1 text-[14px] text-white/70">{account.bank}</p>
+        <p className="text-[16px] text-white tabular-nums break-all">{account.number}</p>
       </div>
       <button
         onClick={handleCopy}

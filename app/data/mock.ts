@@ -102,7 +102,8 @@ export const weddingData = {
       {
         label: "주차",
         note: "신도림 테크노마트 지하주차장(B3~B7) 이용",
-        sub: "7층 상담실 앞 안내데스크에서 3시간 무료주차권 등록 · 초과 시 30분당 1,500원",
+        // 가운뎃점에서 줄을 나눠 두 줄로 보여준다
+        sub: "7층 상담실 앞 안내데스크에서 3시간 무료주차권 등록\n초과 시 30분당 1,500원",
       },
       { label: "ATM", note: "지하 1층 · 1층 에스컬레이터 근처" },
       { label: "엘리베이터", note: "엘리베이터 이용객이 많을 수 있어 에스컬레이터 이용을 추천드립니다." },
@@ -119,7 +120,7 @@ export const weddingData = {
     frame: img.coverFrame,
     titleEn: "Forever Begins Today!",
     /** 2차 수정 2번: 부제목 아래, 사진 바로 위에 들어가는 영어 이름 */
-    namesEn: "Go Hee Sung ✻ Park Ji Seo",
+    namesEn: "Goh Hee Sung ✻ Park Ji Seo",
   },
 
   /** 인사말 — 시안 2페이지. 2차 수정에서 흰 편지지(greeting-bg.jpg) 위에 올린다 */

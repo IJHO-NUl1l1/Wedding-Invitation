@@ -78,17 +78,18 @@ export default function PeopleSection({ onOpen }: { onOpen: (p: Person) => void 
             delay={0.1}
           >
             <Silhouette points={BRIDE_KID} ratio={774 / 1078} delay={1} />
-            <div className={`absolute left-[4%] top-[9%] text-left text-white font-hand text-[4.6cqw] leading-[1.45] ${SHADOW}`}>
+            {/* 3차 수정: 신랑 쪽과 같은 모양으로, 가운데 정렬 두 줄 */}
+            <div className={`absolute inset-x-0 top-[7%] text-center text-white font-hand text-[4.6cqw] leading-snug ${SHADOW}`}>
               <p>{brideParents}의</p>
-              <p>{brideRole},</p>
-              <p className="text-pink">신부</p>
-              <p>{people.bride.name}</p>
+              <p>
+                {brideRole}, <span className="text-pink">신부</span> {people.bride.name}
+              </p>
             </div>
             <TapChip className="right-[9%] bottom-[5%]" delay={0.6} />
           </Tile>
 
           <motion.div
-            className="pointer-events-none absolute right-[3%] top-[9%] w-max text-right text-[4.6cqw] leading-[1.35] text-ink"
+            className="pointer-events-none absolute right-[3%] top-[9%] w-max text-center text-[4.6cqw] leading-[1.35] text-ink"
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

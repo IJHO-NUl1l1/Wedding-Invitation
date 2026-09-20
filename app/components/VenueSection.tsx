@@ -15,6 +15,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { weddingData, type GuideItem } from "@/app/data/mock";
+import NaverMap from "@/app/components/NaverMap";
 import SectionTitle from "@/app/components/SectionTitle";
 import { openTmap, type Place } from "@/lib/tmap";
 
@@ -55,18 +56,12 @@ export default function VenueSection() {
           </p>
         </div>
 
-        <div className="rounded-2xl overflow-hidden border border-white/15">
-          <iframe
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address)}&output=embed&z=16`}
-            width="100%"
-            height="260"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="웨딩홀 위치"
-          />
-        </div>
+        <NaverMap
+          lat={venue.tmap.lat}
+          lng={venue.tmap.lng}
+          label={venue.addressDetail}
+          href={venue.naverMapUrl}
+        />
 
         {/* 지도 앱 3종 */}
         <div className="flex gap-2 mt-3">
@@ -185,7 +180,9 @@ function GuideContent({ guide }: { guide: GuideItem }) {
         <p className="mt-2 text-[14px] leading-6 text-white/80 break-keep">{guide.note}</p>
       )}
       {guide.sub && (
-        <p className="mt-1 text-[13px] leading-6 text-white/55 break-keep">{guide.sub}</p>
+        <p className="mt-1 text-[13px] leading-6 text-white/55 break-keep whitespace-pre-line">
+          {guide.sub}
+        </p>
       )}
     </>
   );
