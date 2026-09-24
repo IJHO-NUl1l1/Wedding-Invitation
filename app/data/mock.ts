@@ -66,7 +66,7 @@ export const weddingData = {
     day: 14,
   },
   venue: {
-    name: "신도림 웨스턴 베니비스",
+    name: "서울 신도림 웨스턴 베니비스",
     hall: "그레이스홀",
     address: "서울시 구로구 구로동 3-25",
     addressDetail: "신도림테크노마트 7층 그레이스홀",
