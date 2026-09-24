@@ -66,35 +66,39 @@ export default function RsvpModal() {
     return () => window.removeEventListener("rsvp-show", show);
   }, []);
 
-  // 맨 아래까지 내려가면 한 번만 자동으로 띄운다. 이미 응답했으면 띄우지 않는다.
-  // 모바일은 주소창 때문에 innerHeight가 계속 바뀌어 스크롤 계산이 어긋나므로,
-  // 페이지 끝에 둔 감시용 요소가 화면에 들어오는지로 판단한다.
-  useEffect(() => {
-    if (readSaved()) return;
-    const sentinel = document.getElementById("rsvp-bottom-sentinel");
-    if (!sentinel) return;
-
-    let fired = false;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (fired || !entries.some((e) => e.isIntersecting)) return;
-        if (document.body.classList.contains("overlay-open")) return;
-        // 이 세션에서 방금 제출했을 수도 있으니 발동 시점에 다시 확인한다
-        if (readSaved()) {
-          io.disconnect();
-          return;
-        }
-        fired = true;
-        io.disconnect();
-        setDone(false);
-        setError("");
-        setOpen(true);
-      },
-      { rootMargin: "0px 0px 120px 0px" }
-    );
-    io.observe(sentinel);
-    return () => io.disconnect();
-  }, []);
+  /*
+   * 맨 아래까지 내려가면 자동으로 띄우던 기능. 하객이 직접 '참석 여부' 버튼을 눌렀을 때만
+   * 열리도록 방향을 바꿔 꺼 두었다. 되살리려면 아래 주석을 풀면 된다.
+   * (페이지 끝의 #rsvp-bottom-sentinel 요소도 그대로 남겨 두었다. 모바일은 주소창 때문에
+   *  innerHeight가 계속 바뀌어 스크롤 계산이 어긋나므로 그 요소가 보이는지로 판단했다.)
+   *
+   * useEffect(() => {
+   *   if (readSaved()) return;
+   *   const sentinel = document.getElementById("rsvp-bottom-sentinel");
+   *   if (!sentinel) return;
+   *
+   *   let fired = false;
+   *   const io = new IntersectionObserver(
+   *     (entries) => {
+   *       if (fired || !entries.some((e) => e.isIntersecting)) return;
+   *       if (document.body.classList.contains("overlay-open")) return;
+   *       // 이 세션에서 방금 제출했을 수도 있으니 발동 시점에 다시 확인한다
+   *       if (readSaved()) {
+   *         io.disconnect();
+   *         return;
+   *       }
+   *       fired = true;
+   *       io.disconnect();
+   *       setDone(false);
+   *       setError("");
+   *       setOpen(true);
+   *     },
+   *     { rootMargin: "0px 0px 120px 0px" }
+   *   );
+   *   io.observe(sentinel);
+   *   return () => io.disconnect();
+   * }, []);
+   */
 
   // 모달이 열려 있는 동안 뒤로가기로 닫히게 하고 배경 스크롤을 잠근다.
   // 내부 페이지 위에서도 열리므로 레이어 깊이를 공유하는 훅을 쓴다.
