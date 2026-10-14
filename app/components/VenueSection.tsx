@@ -6,6 +6,7 @@ import Image from "next/image";
 import {
   Phone,
   Train,
+  TrainFront,
   Bus,
   Car,
   SquareParking,
@@ -21,6 +22,7 @@ import { openTmap, type Place } from "@/lib/tmap";
 
 /** 안내 항목별 아이콘. 시안처럼 핑크로 칠해 쓴다. */
 const GUIDE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  KTX: TrainFront,
   지하철: Train,
   버스: Bus,
   자가용: Car,

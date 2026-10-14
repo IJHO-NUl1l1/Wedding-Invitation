@@ -78,6 +78,14 @@ export const weddingData = {
      */
     guide: [
       {
+        label: "KTX",
+        collapsible: true,
+        steps: [
+          "서울 · 용산 · 영등포역 하차 후 지하철 1호선 탑승",
+          "신도림역 하차 후 3번 출구로 나와 예식장으로 이동",
+        ],
+      },
+      {
         label: "지하철",
         collapsible: true,
         steps: [
