@@ -14,6 +14,66 @@ type Entry = {
 
 const PAGE_SIZE = 3;
 
+/** 접었을 때 보여줄 줄 수 */
+const CLAMP_LINES = 3;
+
+/**
+ * 축하 글 한 칸. 세 줄이 넘으면 눌러서 펼치고, 다시 누르면 접는다.
+ *
+ * '더보기' 같은 글씨는 두지 않고 칸 자체가 늘었다 줄어든다. line-clamp는 높이가 뚝 바뀌어
+ * 애니메이션이 안 먹으므로, 줄 높이로 접힌 높이를 재고 실제 높이까지 높이값을 움직인다.
+ */
+function ExpandableMessage({ text }: { text: string }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState<number | null>(null);
+  const [full, setFull] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => {
+      const line = parseFloat(getComputedStyle(el).lineHeight) || 20;
+      setCollapsed(line * CLAMP_LINES);
+      setFull(el.scrollHeight);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [text]);
+
+  // 세 줄 안에 다 들어가면 누를 것도 없다
+  const overflowing = collapsed !== null && full !== null && full > collapsed + 1;
+
+  return (
+    <motion.div
+      className={`overflow-hidden ${overflowing ? "cursor-pointer" : ""}`}
+      animate={{ height: collapsed === null ? "auto" : open ? full! : Math.min(collapsed, full ?? collapsed) }}
+      initial={false}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      onClick={overflowing ? () => setOpen((v) => !v) : undefined}
+      role={overflowing ? "button" : undefined}
+      tabIndex={overflowing ? 0 : undefined}
+      aria-expanded={overflowing ? open : undefined}
+      onKeyDown={
+        overflowing
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setOpen((v) => !v);
+              }
+            }
+          : undefined
+      }
+    >
+      <p ref={ref} className="text-xs text-white/85 leading-5 whitespace-pre-wrap">
+        {text}
+      </p>
+    </motion.div>
+  );
+}
+
 function GuestbookCarousel({ entries }: { entries: Entry[] }) {
   const [page, setPage] = useState(0);
   const [dir, setDir] = useState(0);
@@ -109,9 +169,7 @@ function GuestbookCarousel({ entries }: { entries: Entry[] }) {
                     {new Date(entry.created_at).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}
                   </span>
                 </div>
-                <p className="text-xs text-white/85 leading-5 whitespace-pre-wrap line-clamp-3">
-                  {entry.message}
-                </p>
+                <ExpandableMessage text={entry.message} />
               </div>
             ))}
           </motion.div>
