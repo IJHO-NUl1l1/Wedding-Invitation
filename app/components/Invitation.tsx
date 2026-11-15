@@ -18,7 +18,8 @@ import RsvpButton from "@/app/components/RsvpButton";
 import RsvpModal from "@/app/components/RsvpModal";
 import CollagePreloader from "@/app/components/CollagePreloader";
 import ZoomViewer from "@/app/components/ZoomViewer";
-import { CLOSE_AT, isClosed } from "@/lib/expiry";
+import ClosedNotice from "@/app/components/ClosedNotice";
+import { CLOSE_AT, CLOSED_PARTS, isClosed } from "@/lib/expiry";
 
 type Person = "groom" | "bride" | "story";
 
@@ -37,7 +38,7 @@ export default function Invitation() {
   useEffect(() => setClosed(isClosed()), []);
 
   if (closed === null) return <main className="min-h-dvh bg-ink" />;
-  if (closed) return <ClosedNotice />;
+  if (closed) return <ThankYouPage />;
 
   return (
     <main className="relative bg-ink">
@@ -45,10 +46,24 @@ export default function Invitation() {
       <GreetingSection />
       <PeopleSection onOpen={setPerson} />
       <StoryGallery />
-      <VenueSection />
+      {CLOSED_PARTS.venue ? (
+        <ClosedNotice
+          title="오시는 길"
+          lines={["예식이 끝나 길 안내를 마감했습니다.", "찾아와 주신 걸음에 깊이 감사드립니다."]}
+        />
+      ) : (
+        <VenueSection />
+      )}
       <DateSection />
       <GuestbookSection />
       <AccountSection />
+
+      {CLOSED_PARTS.rsvp && (
+        <ClosedNotice
+          title="참석 여부"
+          lines={["예식이 끝나 참석 여부 확인을 마감했습니다.", "함께해 주셔서 감사합니다."]}
+        />
+      )}
 
       {/* 이 지점이 보이면 참석여부 모달이 자동으로 열린다 (RsvpModal이 감시) */}
       <div id="rsvp-bottom-sentinel" aria-hidden className="h-px" />
@@ -73,14 +88,15 @@ export default function Invitation() {
 
       {/* 항상 떠 있는 컨트롤 */}
       <MusicToggle />
-      <RsvpButton />
+      {/* 마감한 뒤에는 하트 버튼과 입력창을 띄우지 않는다 */}
+      {!CLOSED_PARTS.rsvp && <RsvpButton />}
       <KakaoShareButton />
-      <RsvpModal />
+      {!CLOSED_PARTS.rsvp && <RsvpModal />}
     </main>
   );
 }
 
-function ClosedNotice() {
+function ThankYouPage() {
   return (
     <main className="min-h-dvh bg-ink flex flex-col items-center justify-center px-8 text-center">
       <p className="font-script text-pink text-4xl leading-tight">Thank You</p>

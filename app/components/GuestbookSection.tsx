@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import SectionTitle from "@/app/components/SectionTitle";
+import ClosedNotice from "@/app/components/ClosedNotice";
+import { CLOSED_PARTS } from "@/lib/expiry";
 
 type Entry = {
   id: string;
@@ -242,11 +244,23 @@ export default function GuestbookSection() {
       <div className="text-center mb-10 px-6">
         <SectionTitle>방명록</SectionTitle>
         <p className="text-xs text-white/70 leading-6">
-          두 사람의 새 출발을 축하하는<br />따뜻한 한마디를 남겨주세요
+          {CLOSED_PARTS.guestbookForm ? (
+            <>남겨주신 따뜻한 한마디를<br />오래 간직하겠습니다</>
+          ) : (
+            <>두 사람의 새 출발을 축하하는<br />따뜻한 한마디를 남겨주세요</>
+          )}
         </p>
       </div>
 
-      {/* 작성 폼 */}
+      {/* 작성 폼 — 예식이 끝나면 안내로 덮고, 남겨진 글은 아래에 그대로 둔다 */}
+      {CLOSED_PARTS.guestbookForm ? (
+        <div className="px-6 mb-10">
+          <ClosedNotice
+            compact
+            lines={["예식이 끝나 방명록 작성을 마감했습니다.", "축하해 주신 마음 감사합니다."]}
+          />
+        </div>
+      ) : (
       <div className="max-w-sm mx-auto px-6 mb-10">
         {submitted ? (
           <motion.div
@@ -303,6 +317,7 @@ export default function GuestbookSection() {
           </form>
         )}
       </div>
+      )}
 
       {/* 승인된 방명록 — 가로 스와이프 캐러셀 */}
       {entries.length > 0 && <GuestbookCarousel entries={entries} />}
